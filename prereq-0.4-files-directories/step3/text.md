@@ -66,7 +66,8 @@ Make sure you have:
 <summary>Hint</summary>
 
 ```bash
+cd /home/user/lab-workspace
 chmod 600 secret_config.cfg
-chmod u+x important_script.sh
+chmod 744 important_script.sh
 ```
 </details>

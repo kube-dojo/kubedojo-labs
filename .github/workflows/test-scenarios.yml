@@ -1,0 +1,67 @@
+name: Test Lab Scenarios
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  validate-json:
+    name: Validate index.json
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate all index.json files
+        run: |
+          ERRORS=0
+          for f in $(find . -name "index.json" -not -path "./templates/*"); do
+            if ! python3 -c "import json; json.load(open('$f'))" 2>/dev/null; then
+              echo "FAIL: Invalid JSON in $f"
+              ERRORS=$((ERRORS + 1))
+            else
+              # Check required fields
+              python3 -c "
+          import json, sys
+          d = json.load(open('$f'))
+          errors = []
+          if 'title' not in d: errors.append('missing title')
+          if 'backend' not in d or 'imageid' not in d.get('backend', {}): errors.append('missing backend.imageid')
+          if 'details' not in d or 'steps' not in d.get('details', {}): errors.append('missing details.steps')
+          if errors:
+              print(f'FAIL: $f — {', '.join(errors)}')
+              sys.exit(1)
+          print(f'OK: $f — {len(d[\"details\"][\"steps\"])} steps')
+          " || ERRORS=$((ERRORS + 1))
+            fi
+          done
+          echo ""
+          echo "Validated $(find . -name 'index.json' -not -path './templates/*' | wc -l) scenarios"
+          [ "$ERRORS" -eq 0 ] || exit 1
+
+  test-verify-scripts:
+    name: Test verify.sh scripts (Ubuntu scenarios)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check verify scripts are executable and valid bash
+        run: |
+          ERRORS=0
+          for f in $(find . -name "verify.sh"); do
+            if ! bash -n "$f" 2>/dev/null; then
+              echo "FAIL: Syntax error in $f"
+              ERRORS=$((ERRORS + 1))
+            fi
+          done
+          echo "Checked $(find . -name 'verify.sh' | wc -l) verify scripts"
+          [ "$ERRORS" -eq 0 ] || exit 1
+
+  test-ubuntu-scenarios:
+    name: Run Ubuntu scenarios in Docker
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Test all Ubuntu scenarios
+        run: |
+          chmod +x scripts/test-scenario.sh
+          bash scripts/test-scenario.sh --all
