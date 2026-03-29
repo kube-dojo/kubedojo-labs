@@ -1,0 +1,23 @@
+{
+  "title": "TEMPLATE: Ubuntu Lab",
+  "description": "Base template for Ubuntu/Linux labs",
+  "backend": {
+    "imageid": "ubuntu"
+  },
+  "details": {
+    "intro": {
+      "text": "intro.md"
+    },
+    "steps": [
+      {
+        "title": "Step 1",
+        "text": "step1/text.md",
+        "verify": "step1/verify.sh"
+      }
+    ],
+    "finish": {
+      "text": "finish.md"
+    }
+  },
+  "time": "20 minutes"
+}
