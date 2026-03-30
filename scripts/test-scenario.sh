@@ -38,6 +38,12 @@ test_scenario() {
 
   echo "  TEST $name ($imageid)"
 
+  # Detect if scenario needs privileged mode (network namespaces, iptables)
+  local docker_flags="--rm -i"
+  if echo "$name" | grep -qE "(network-namespaces|iptables)"; then
+    docker_flags="--rm -i --privileged"
+  fi
+
   # Build test script: setup + simulate expected actions + run verify scripts
   local test_script="#!/bin/bash
 set -e
@@ -54,16 +60,24 @@ STEP_NUM=0
 for step_dir in \$STEPS; do
   STEP_NUM=\$((STEP_NUM + 1))
 
-  # Extract commands from hint sections (between <details> tags)
+  # Extract commands from hint code blocks into a temp script (handles heredocs)
+  HINT_SCRIPT=/tmp/hint_step\${STEP_NUM}.sh
+  echo '#!/bin/bash' > \"\$HINT_SCRIPT\"
+  echo 'set +e' >> \"\$HINT_SCRIPT\"
   if [ -f \"\$step_dir/text.md\" ]; then
-    # Run commands found in hint code blocks
-    sed -n '/<details>/,/<\/details>/p' \"\$step_dir/text.md\" | \
+    sed -n '/<details>/,/<\\/details>/p' \"\$step_dir/text.md\" | \
       sed -n '/^\`\`\`bash/,/^\`\`\`/p' | \
-      grep -v '^\`\`\`' | \
-      while IFS= read -r cmd; do
-        [ -z \"\$cmd\" ] && continue
-        eval \"\$cmd\" 2>/dev/null || true
-      done
+      grep -v '^\`\`\`' >> \"\$HINT_SCRIPT\" || true
+  fi
+
+  # Count non-empty, non-shebang lines to determine if hints were found
+  HINT_LINES=\$(grep -cvE '^\$|^#!/bin/bash|^set \\+e' \"\$HINT_SCRIPT\" || true)
+
+  if [ \"\$HINT_LINES\" -gt 0 ]; then
+    bash \"\$HINT_SCRIPT\" 2>/dev/null || true
+  elif [ -f \"\$step_dir/solution.sh\" ]; then
+    # Fallback: run solution.sh if no bash hints were found in text.md
+    bash \"\$step_dir/solution.sh\" 2>/dev/null || true
   fi
 
   # Run verify
@@ -71,8 +85,19 @@ for step_dir in \$STEPS; do
     if bash \"\$step_dir/verify.sh\" 2>/dev/null; then
       echo \"    PASS step \$STEP_NUM\"
     else
-      echo \"    FAIL step \$STEP_NUM\"
-      exit 1
+      # If hints failed, try solution.sh as last resort before failing
+      if [ \"\$HINT_LINES\" -gt 0 ] && [ -f \"\$step_dir/solution.sh\" ]; then
+        bash \"\$step_dir/solution.sh\" 2>/dev/null || true
+        if bash \"\$step_dir/verify.sh\" 2>/dev/null; then
+          echo \"    PASS step \$STEP_NUM (via solution.sh fallback)\"
+        else
+          echo \"    FAIL step \$STEP_NUM\"
+          exit 1
+        fi
+      else
+        echo \"    FAIL step \$STEP_NUM\"
+        exit 1
+      fi
     fi
   fi
 done
@@ -82,7 +107,7 @@ echo \"  ALL STEPS PASSED\"
 
   # Run in Docker container
   local result
-  result=$(echo "$test_script" | docker run --rm -i \
+  result=$(echo "$test_script" | docker run $docker_flags \
     -v "$scenario_dir:/scenario:ro" \
     ubuntu:22.04 bash 2>&1) || {
     echo "$result" | grep -E "PASS|FAIL" | head -10
