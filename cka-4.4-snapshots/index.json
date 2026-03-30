@@ -1,0 +1,33 @@
+{
+  "title": "Volume Snapshots — Create & Restore from Snapshots",
+  "description": "Install the VolumeSnapshot CRDs, create volume snapshots, and restore data from snapshots into new PersistentVolumeClaims.",
+  "backend": {
+    "imageid": "kubernetes-kubeadm-1node"
+  },
+  "details": {
+    "intro": {
+      "text": "intro.md"
+    },
+    "steps": [
+      {
+        "title": "Install snapshot CRDs and controller",
+        "text": "step1/text.md",
+        "verify": "step1/verify.sh"
+      },
+      {
+        "title": "Create a VolumeSnapshot",
+        "text": "step2/text.md",
+        "verify": "step2/verify.sh"
+      },
+      {
+        "title": "Restore from a snapshot",
+        "text": "step3/text.md",
+        "verify": "step3/verify.sh"
+      }
+    ],
+    "finish": {
+      "text": "finish.md"
+    }
+  },
+  "time": "30 minutes"
+}

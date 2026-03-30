@@ -1,0 +1,38 @@
+{
+  "title": "Network Troubleshooting — DNS Failures, Unreachable Services & CNI Issues",
+  "description": "Diagnose and fix network problems: DNS resolution failures, services not reachable, and CNI plugin issues preventing pod communication.",
+  "backend": {
+    "imageid": "kubernetes-kubeadm-1node"
+  },
+  "details": {
+    "intro": {
+      "text": "intro.md"
+    },
+    "steps": [
+      {
+        "title": "Fix DNS resolution failure",
+        "text": "step1/text.md",
+        "verify": "step1/verify.sh"
+      },
+      {
+        "title": "Fix unreachable service",
+        "text": "step2/text.md",
+        "verify": "step2/verify.sh"
+      },
+      {
+        "title": "Diagnose pod connectivity",
+        "text": "step3/text.md",
+        "verify": "step3/verify.sh"
+      },
+      {
+        "title": "Fix NetworkPolicy blocking traffic",
+        "text": "step4/text.md",
+        "verify": "step4/verify.sh"
+      }
+    ],
+    "finish": {
+      "text": "finish.md"
+    }
+  },
+  "time": "45 minutes"
+}

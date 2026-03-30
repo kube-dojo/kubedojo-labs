@@ -1,0 +1,33 @@
+{
+  "title": "Troubleshooting Methodology — Systematic Approach, kubectl debug & describe",
+  "description": "Learn a systematic approach to Kubernetes troubleshooting using kubectl debug, describe, logs, and events to diagnose cluster issues.",
+  "backend": {
+    "imageid": "kubernetes-kubeadm-1node"
+  },
+  "details": {
+    "intro": {
+      "text": "intro.md"
+    },
+    "steps": [
+      {
+        "title": "Systematic troubleshooting with describe and events",
+        "text": "step1/text.md",
+        "verify": "step1/verify.sh"
+      },
+      {
+        "title": "Using kubectl debug",
+        "text": "step2/text.md",
+        "verify": "step2/verify.sh"
+      },
+      {
+        "title": "Comprehensive diagnosis exercise",
+        "text": "step3/text.md",
+        "verify": "step3/verify.sh"
+      }
+    ],
+    "finish": {
+      "text": "finish.md"
+    }
+  },
+  "time": "30 minutes"
+}

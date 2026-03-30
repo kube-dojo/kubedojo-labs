@@ -1,0 +1,38 @@
+{
+  "title": "Services — ClusterIP, NodePort, LoadBalancer & ExternalName",
+  "description": "Master all Kubernetes service types: ClusterIP for internal traffic, NodePort for external access, LoadBalancer for cloud integration, and ExternalName for external DNS mapping.",
+  "backend": {
+    "imageid": "kubernetes-kubeadm-1node"
+  },
+  "details": {
+    "intro": {
+      "text": "intro.md"
+    },
+    "steps": [
+      {
+        "title": "ClusterIP services",
+        "text": "step1/text.md",
+        "verify": "step1/verify.sh"
+      },
+      {
+        "title": "NodePort services",
+        "text": "step2/text.md",
+        "verify": "step2/verify.sh"
+      },
+      {
+        "title": "LoadBalancer services",
+        "text": "step3/text.md",
+        "verify": "step3/verify.sh"
+      },
+      {
+        "title": "ExternalName services",
+        "text": "step4/text.md",
+        "verify": "step4/verify.sh"
+      }
+    ],
+    "finish": {
+      "text": "finish.md"
+    }
+  },
+  "time": "40 minutes"
+}

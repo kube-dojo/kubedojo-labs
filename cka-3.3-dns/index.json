@@ -1,0 +1,33 @@
+{
+  "title": "CoreDNS — Configuration, Service Discovery & DNS Debugging",
+  "description": "Configure CoreDNS, understand Kubernetes service discovery patterns, and debug DNS resolution issues in the cluster.",
+  "backend": {
+    "imageid": "kubernetes-kubeadm-1node"
+  },
+  "details": {
+    "intro": {
+      "text": "intro.md"
+    },
+    "steps": [
+      {
+        "title": "CoreDNS configuration",
+        "text": "step1/text.md",
+        "verify": "step1/verify.sh"
+      },
+      {
+        "title": "Service discovery patterns",
+        "text": "step2/text.md",
+        "verify": "step2/verify.sh"
+      },
+      {
+        "title": "DNS debugging",
+        "text": "step3/text.md",
+        "verify": "step3/verify.sh"
+      }
+    ],
+    "finish": {
+      "text": "finish.md"
+    }
+  },
+  "time": "35 minutes"
+}

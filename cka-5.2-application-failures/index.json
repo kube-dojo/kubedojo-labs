@@ -1,0 +1,38 @@
+{
+  "title": "Application Failures — CrashLoopBackOff, ImagePull, OOMKill & Readiness",
+  "description": "Diagnose and fix the most common application failures: CrashLoopBackOff, ImagePullBackOff, OOMKilled containers, and failing readiness probes.",
+  "backend": {
+    "imageid": "kubernetes-kubeadm-1node"
+  },
+  "details": {
+    "intro": {
+      "text": "intro.md"
+    },
+    "steps": [
+      {
+        "title": "Fix CrashLoopBackOff",
+        "text": "step1/text.md",
+        "verify": "step1/verify.sh"
+      },
+      {
+        "title": "Fix ImagePullBackOff",
+        "text": "step2/text.md",
+        "verify": "step2/verify.sh"
+      },
+      {
+        "title": "Fix OOMKilled",
+        "text": "step3/text.md",
+        "verify": "step3/verify.sh"
+      },
+      {
+        "title": "Fix failing readiness probe",
+        "text": "step4/text.md",
+        "verify": "step4/verify.sh"
+      }
+    ],
+    "finish": {
+      "text": "finish.md"
+    }
+  },
+  "time": "45 minutes"
+}

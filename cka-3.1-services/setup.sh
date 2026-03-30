@@ -1,0 +1,22 @@
+#!/bin/bash
+# Setup script — runs before user starts
+
+# Wait for cluster to be ready
+kubectl wait --for=condition=Ready node --all --timeout=120s 2>/dev/null
+
+# Set up aliases
+echo 'alias k=kubectl' >> /root/.bashrc
+echo 'source <(kubectl completion bash)' >> /root/.bashrc
+echo 'complete -o default -F __start_kubectl k' >> /root/.bashrc
+
+# Create practice namespace
+kubectl create namespace practice --dry-run=client -o yaml | kubectl apply -f -
+
+# Deploy backend pods for service exercises
+kubectl run web-backend --image=nginx:1.25 --namespace=practice --labels="app=web,tier=backend" --port=80
+kubectl run web-frontend --image=nginx:1.25 --namespace=practice --labels="app=web,tier=frontend" --port=80
+
+# Wait for pods to be ready
+kubectl wait --for=condition=Ready pod --all -n practice --timeout=60s 2>/dev/null
+
+echo "Kubernetes cluster ready."

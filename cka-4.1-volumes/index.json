@@ -1,0 +1,33 @@
+{
+  "title": "Volumes — emptyDir, hostPath & Projected Volumes",
+  "description": "Use emptyDir for temporary scratch space, hostPath for node filesystem access, and projected volumes to combine multiple sources into a single mount.",
+  "backend": {
+    "imageid": "kubernetes-kubeadm-1node"
+  },
+  "details": {
+    "intro": {
+      "text": "intro.md"
+    },
+    "steps": [
+      {
+        "title": "emptyDir volumes",
+        "text": "step1/text.md",
+        "verify": "step1/verify.sh"
+      },
+      {
+        "title": "hostPath volumes",
+        "text": "step2/text.md",
+        "verify": "step2/verify.sh"
+      },
+      {
+        "title": "Projected volumes",
+        "text": "step3/text.md",
+        "verify": "step3/verify.sh"
+      }
+    ],
+    "finish": {
+      "text": "finish.md"
+    }
+  },
+  "time": "35 minutes"
+}

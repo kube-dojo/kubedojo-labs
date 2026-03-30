@@ -1,0 +1,38 @@
+{
+  "title": "PersistentVolumes & PersistentVolumeClaims — Create, Bind & Reclaim",
+  "description": "Create PersistentVolumes and PersistentVolumeClaims, understand binding mechanics, and configure reclaim policies for data lifecycle management.",
+  "backend": {
+    "imageid": "kubernetes-kubeadm-1node"
+  },
+  "details": {
+    "intro": {
+      "text": "intro.md"
+    },
+    "steps": [
+      {
+        "title": "Create PersistentVolumes",
+        "text": "step1/text.md",
+        "verify": "step1/verify.sh"
+      },
+      {
+        "title": "Create PersistentVolumeClaims",
+        "text": "step2/text.md",
+        "verify": "step2/verify.sh"
+      },
+      {
+        "title": "Use PVCs in pods",
+        "text": "step3/text.md",
+        "verify": "step3/verify.sh"
+      },
+      {
+        "title": "Reclaim policies",
+        "text": "step4/text.md",
+        "verify": "step4/verify.sh"
+      }
+    ],
+    "finish": {
+      "text": "finish.md"
+    }
+  },
+  "time": "40 minutes"
+}

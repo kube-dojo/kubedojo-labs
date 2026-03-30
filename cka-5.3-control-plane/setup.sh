@@ -1,0 +1,18 @@
+#!/bin/bash
+# Setup script — runs before user starts
+
+# Wait for cluster to be ready
+kubectl wait --for=condition=Ready node --all --timeout=120s 2>/dev/null
+
+# Set up aliases
+echo 'alias k=kubectl' >> /root/.bashrc
+echo 'source <(kubectl completion bash)' >> /root/.bashrc
+echo 'complete -o default -F __start_kubectl k' >> /root/.bashrc
+
+# Create practice namespace
+kubectl create namespace practice --dry-run=client -o yaml | kubectl apply -f -
+
+# Backup the scheduler manifest for later breaking
+cp /etc/kubernetes/manifests/kube-scheduler.yaml /root/kube-scheduler-backup.yaml
+
+echo "Kubernetes cluster ready."

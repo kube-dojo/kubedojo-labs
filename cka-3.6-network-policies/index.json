@@ -1,0 +1,38 @@
+{
+  "title": "Network Policies — Ingress, Egress, Default Deny & Namespace Isolation",
+  "description": "Create and test NetworkPolicy resources for ingress and egress filtering, implement default deny policies, and configure namespace isolation.",
+  "backend": {
+    "imageid": "kubernetes-kubeadm-1node"
+  },
+  "details": {
+    "intro": {
+      "text": "intro.md"
+    },
+    "steps": [
+      {
+        "title": "Ingress network policies",
+        "text": "step1/text.md",
+        "verify": "step1/verify.sh"
+      },
+      {
+        "title": "Egress network policies",
+        "text": "step2/text.md",
+        "verify": "step2/verify.sh"
+      },
+      {
+        "title": "Default deny policies",
+        "text": "step3/text.md",
+        "verify": "step3/verify.sh"
+      },
+      {
+        "title": "Namespace isolation",
+        "text": "step4/text.md",
+        "verify": "step4/verify.sh"
+      }
+    ],
+    "finish": {
+      "text": "finish.md"
+    }
+  },
+  "time": "45 minutes"
+}
