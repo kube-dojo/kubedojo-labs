@@ -1,5 +1,11 @@
 #!/bin/bash
 # Verify deployment image is back to nginx:1.25
-IMAGE=$(kubectl get deployment webapp -o jsonpath='{.spec.template.spec.containers[0].image}' 2>/dev/null)
-[ "$IMAGE" = "nginx:1.25" ] || exit 1
-exit 0
+# Wait up to 60s for the rollback to complete
+for i in $(seq 1 30); do
+  IMAGE=$(kubectl get deployment webapp -o jsonpath='{.spec.template.spec.containers[0].image}' 2>/dev/null)
+  if [ "$IMAGE" = "nginx:1.25" ]; then
+    exit 0
+  fi
+  sleep 2
+done
+exit 1

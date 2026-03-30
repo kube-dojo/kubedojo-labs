@@ -41,6 +41,7 @@ Scale the `webapp` deployment to **5 replicas**.
 
 ```bash
 kubectl scale deployment webapp --replicas=5
+kubectl rollout status deployment/webapp --timeout=60s
 ```
 
 Verify:

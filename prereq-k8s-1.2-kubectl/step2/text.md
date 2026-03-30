@@ -4,8 +4,17 @@
 
 ### Describe the node
 
+First, find your node's name:
+
 ```bash
-kubectl describe node controlplane
+NODE=$(kubectl get nodes -o jsonpath='{.items[0].metadata.name}')
+echo $NODE
+```
+
+Then describe it:
+
+```bash
+kubectl describe node $NODE
 ```
 
 This outputs a wall of text. Here's what to look for:
@@ -24,7 +33,7 @@ This outputs a wall of text. Here's what to look for:
 You can pipe through `grep` to find exactly what you need:
 
 ```bash
-kubectl describe node controlplane | grep "Kubelet Version"
+kubectl describe node $NODE | grep "Kubelet Version"
 ```
 
 ### Your task
@@ -41,12 +50,14 @@ The file should contain just the version string (e.g., `v1.31.0`).
 <summary>Hint</summary>
 
 ```bash
-kubectl get node controlplane -o jsonpath='{.status.nodeInfo.kubeletVersion}' > /root/kubelet-version.txt
+NODE=$(kubectl get nodes -o jsonpath='{.items[0].metadata.name}')
+kubectl get node $NODE -o jsonpath='{.status.nodeInfo.kubeletVersion}' > /root/kubelet-version.txt
 ```
 
 Or using describe and grep:
 
 ```bash
-kubectl describe node controlplane | grep "Kubelet Version" | awk '{print $NF}' > /root/kubelet-version.txt
+NODE=$(kubectl get nodes -o jsonpath='{.items[0].metadata.name}')
+kubectl describe node $NODE | grep "Kubelet Version" | awk '{print $NF}' > /root/kubelet-version.txt
 ```
 </details>

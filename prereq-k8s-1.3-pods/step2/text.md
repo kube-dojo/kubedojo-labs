@@ -58,6 +58,7 @@ Apply it:
 
 ```bash
 kubectl apply -f /root/api-pod.yaml
+kubectl wait --for=condition=Ready pod/api --timeout=60s
 ```
 
 Verify:

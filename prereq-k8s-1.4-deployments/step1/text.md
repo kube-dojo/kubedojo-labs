@@ -45,6 +45,7 @@ Create a deployment named `webapp` with the `nginx:1.25` image and **3 replicas*
 
 ```bash
 kubectl create deployment webapp --image=nginx:1.25 --replicas=3
+kubectl rollout status deployment/webapp --timeout=60s
 ```
 
 Verify:

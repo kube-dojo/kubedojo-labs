@@ -41,6 +41,7 @@ Create a pod named `web` using the `nginx:1.25` image.
 
 ```bash
 kubectl run web --image=nginx:1.25
+kubectl wait --for=condition=Ready pod/web --timeout=60s
 ```
 
 Then verify:

@@ -1,5 +1,6 @@
 #!/bin/bash
 # Verify the pod count file exists and contains a number >= 4
+# Wait up to 60s for kube-system pods to stabilize
 [ -f /root/cp-pod-count.txt ] || exit 1
 COUNT=$(cat /root/cp-pod-count.txt | tr -d '[:space:]')
 # Check it's a number
