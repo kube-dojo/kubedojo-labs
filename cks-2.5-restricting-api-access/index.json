@@ -1,0 +1,31 @@
+{
+  "title": "CKS 2.5: Restricting API Access",
+  "description": "Limit API server access using network controls, authentication restrictions, and API request throttling",
+  "difficulty": "Advanced",
+  "time": "35 minutes",
+  "details": {
+    "intro": { "text": "intro.md" },
+    "steps": [
+      {
+        "title": "Restrict API server network access",
+        "text": "step1/text.md",
+        "verify": "step1/verify.sh",
+        "solution": "step1/solution.sh"
+      },
+      {
+        "title": "Configure anonymous and token-based access controls",
+        "text": "step2/text.md",
+        "verify": "step2/verify.sh",
+        "solution": "step2/solution.sh"
+      },
+      {
+        "title": "Implement API request rate limiting",
+        "text": "step3/text.md",
+        "verify": "step3/verify.sh",
+        "solution": "step3/solution.sh"
+      }
+    ],
+    "finish": { "text": "finish.md" }
+  },
+  "backend": { "imageid": "kubernetes-kubeadm-1node" }
+}

@@ -1,0 +1,31 @@
+{
+  "title": "CKS 3.3: Kernel-Level Hardening",
+  "description": "Harden the Linux kernel for container security using sysctl, capabilities, and security modules",
+  "difficulty": "Advanced",
+  "time": "35 minutes",
+  "details": {
+    "intro": { "text": "intro.md" },
+    "steps": [
+      {
+        "title": "Configure kernel sysctl parameters for security",
+        "text": "step1/text.md",
+        "verify": "step1/verify.sh",
+        "solution": "step1/solution.sh"
+      },
+      {
+        "title": "Manage Linux capabilities in pods",
+        "text": "step2/text.md",
+        "verify": "step2/verify.sh",
+        "solution": "step2/solution.sh"
+      },
+      {
+        "title": "Apply comprehensive system hardening",
+        "text": "step3/text.md",
+        "verify": "step3/verify.sh",
+        "solution": "step3/solution.sh"
+      }
+    ],
+    "finish": { "text": "finish.md" }
+  },
+  "backend": { "imageid": "kubernetes-kubeadm-1node" }
+}

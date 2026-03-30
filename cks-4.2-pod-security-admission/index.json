@@ -1,0 +1,31 @@
+{
+  "title": "CKS 4.2: Pod Security Admission",
+  "description": "Configure Pod Security Standards enforcement using the built-in PodSecurity admission controller",
+  "difficulty": "Intermediate",
+  "time": "35 minutes",
+  "details": {
+    "intro": { "text": "intro.md" },
+    "steps": [
+      {
+        "title": "Apply Pod Security Standards to namespaces",
+        "text": "step1/text.md",
+        "verify": "step1/verify.sh",
+        "solution": "step1/solution.sh"
+      },
+      {
+        "title": "Test enforcement of restricted standard",
+        "text": "step2/text.md",
+        "verify": "step2/verify.sh",
+        "solution": "step2/solution.sh"
+      },
+      {
+        "title": "Configure warn and audit modes",
+        "text": "step3/text.md",
+        "verify": "step3/verify.sh",
+        "solution": "step3/solution.sh"
+      }
+    ],
+    "finish": { "text": "finish.md" }
+  },
+  "backend": { "imageid": "kubernetes-kubeadm-1node" }
+}

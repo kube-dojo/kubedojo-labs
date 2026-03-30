@@ -1,0 +1,31 @@
+{
+  "title": "CKS 6.4: Immutable Container Infrastructure",
+  "description": "Enforce immutable containers that cannot be modified at runtime for maximum security",
+  "difficulty": "Advanced",
+  "time": "35 minutes",
+  "details": {
+    "intro": { "text": "intro.md" },
+    "steps": [
+      {
+        "title": "Create immutable containers with readOnlyRootFilesystem",
+        "text": "step1/text.md",
+        "verify": "step1/verify.sh",
+        "solution": "step1/solution.sh"
+      },
+      {
+        "title": "Enforce immutability with security policies",
+        "text": "step2/text.md",
+        "verify": "step2/verify.sh",
+        "solution": "step2/solution.sh"
+      },
+      {
+        "title": "Verify and audit immutability across the cluster",
+        "text": "step3/text.md",
+        "verify": "step3/verify.sh",
+        "solution": "step3/solution.sh"
+      }
+    ],
+    "finish": { "text": "finish.md" }
+  },
+  "backend": { "imageid": "kubernetes-kubeadm-1node" }
+}

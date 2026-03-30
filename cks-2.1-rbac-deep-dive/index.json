@@ -1,0 +1,37 @@
+{
+  "title": "CKS 2.1: RBAC Deep Dive",
+  "description": "Configure fine-grained RBAC with least-privilege roles, audit permissions, and prevent privilege escalation",
+  "difficulty": "Advanced",
+  "time": "40 minutes",
+  "details": {
+    "intro": { "text": "intro.md" },
+    "steps": [
+      {
+        "title": "Create least-privilege Roles and ClusterRoles",
+        "text": "step1/text.md",
+        "verify": "step1/verify.sh",
+        "solution": "step1/solution.sh"
+      },
+      {
+        "title": "Bind roles to users and service accounts",
+        "text": "step2/text.md",
+        "verify": "step2/verify.sh",
+        "solution": "step2/solution.sh"
+      },
+      {
+        "title": "Audit RBAC permissions and detect over-privilege",
+        "text": "step3/text.md",
+        "verify": "step3/verify.sh",
+        "solution": "step3/solution.sh"
+      },
+      {
+        "title": "Prevent privilege escalation through RBAC",
+        "text": "step4/text.md",
+        "verify": "step4/verify.sh",
+        "solution": "step4/solution.sh"
+      }
+    ],
+    "finish": { "text": "finish.md" }
+  },
+  "backend": { "imageid": "kubernetes-kubeadm-1node" }
+}

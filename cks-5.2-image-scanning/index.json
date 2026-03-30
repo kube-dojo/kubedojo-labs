@@ -1,0 +1,31 @@
+{
+  "title": "CKS 5.2: Image Vulnerability Scanning",
+  "description": "Scan container images for vulnerabilities using trivy and integrate scanning into CI/CD workflows",
+  "difficulty": "Intermediate",
+  "time": "35 minutes",
+  "details": {
+    "intro": { "text": "intro.md" },
+    "steps": [
+      {
+        "title": "Scan images for CVEs with trivy",
+        "text": "step1/text.md",
+        "verify": "step1/verify.sh",
+        "solution": "step1/solution.sh"
+      },
+      {
+        "title": "Filter and prioritize vulnerabilities",
+        "text": "step2/text.md",
+        "verify": "step2/verify.sh",
+        "solution": "step2/solution.sh"
+      },
+      {
+        "title": "Scan all running images in the cluster",
+        "text": "step3/text.md",
+        "verify": "step3/verify.sh",
+        "solution": "step3/solution.sh"
+      }
+    ],
+    "finish": { "text": "finish.md" }
+  },
+  "backend": { "imageid": "kubernetes-kubeadm-1node" }
+}

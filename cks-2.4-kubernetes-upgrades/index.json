@@ -1,0 +1,31 @@
+{
+  "title": "CKS 2.4: Kubernetes Version Upgrades",
+  "description": "Perform secure Kubernetes cluster upgrades to patch security vulnerabilities",
+  "difficulty": "Advanced",
+  "time": "40 minutes",
+  "details": {
+    "intro": { "text": "intro.md" },
+    "steps": [
+      {
+        "title": "Plan and verify the upgrade path",
+        "text": "step1/text.md",
+        "verify": "step1/verify.sh",
+        "solution": "step1/solution.sh"
+      },
+      {
+        "title": "Upgrade the control plane",
+        "text": "step2/text.md",
+        "verify": "step2/verify.sh",
+        "solution": "step2/solution.sh"
+      },
+      {
+        "title": "Verify cluster health post-upgrade",
+        "text": "step3/text.md",
+        "verify": "step3/verify.sh",
+        "solution": "step3/solution.sh"
+      }
+    ],
+    "finish": { "text": "finish.md" }
+  },
+  "backend": { "imageid": "kubernetes-kubeadm-1node" }
+}

@@ -1,0 +1,37 @@
+{
+  "title": "CKS 4.1: Security Contexts",
+  "description": "Configure pod and container security contexts for runAsNonRoot, readOnlyRootFilesystem, and privilege controls",
+  "difficulty": "Intermediate",
+  "time": "35 minutes",
+  "details": {
+    "intro": { "text": "intro.md" },
+    "steps": [
+      {
+        "title": "Configure runAsNonRoot and runAsUser",
+        "text": "step1/text.md",
+        "verify": "step1/verify.sh",
+        "solution": "step1/solution.sh"
+      },
+      {
+        "title": "Enable readOnlyRootFilesystem",
+        "text": "step2/text.md",
+        "verify": "step2/verify.sh",
+        "solution": "step2/solution.sh"
+      },
+      {
+        "title": "Control privilege escalation and capabilities",
+        "text": "step3/text.md",
+        "verify": "step3/verify.sh",
+        "solution": "step3/solution.sh"
+      },
+      {
+        "title": "Apply security contexts to a multi-container pod",
+        "text": "step4/text.md",
+        "verify": "step4/verify.sh",
+        "solution": "step4/solution.sh"
+      }
+    ],
+    "finish": { "text": "finish.md" }
+  },
+  "backend": { "imageid": "kubernetes-kubeadm-1node" }
+}

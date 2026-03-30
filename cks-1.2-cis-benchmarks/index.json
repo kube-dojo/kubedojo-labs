@@ -1,0 +1,31 @@
+{
+  "title": "CKS 1.2: CIS Benchmarks with kube-bench",
+  "description": "Run CIS Kubernetes Benchmark checks and remediate common failures",
+  "difficulty": "Advanced",
+  "time": "40 minutes",
+  "details": {
+    "intro": { "text": "intro.md" },
+    "steps": [
+      {
+        "title": "Run kube-bench and analyze results",
+        "text": "step1/text.md",
+        "verify": "step1/verify.sh",
+        "solution": "step1/solution.sh"
+      },
+      {
+        "title": "Fix API server benchmark failures",
+        "text": "step2/text.md",
+        "verify": "step2/verify.sh",
+        "solution": "step2/solution.sh"
+      },
+      {
+        "title": "Fix kubelet benchmark failures",
+        "text": "step3/text.md",
+        "verify": "step3/verify.sh",
+        "solution": "step3/solution.sh"
+      }
+    ],
+    "finish": { "text": "finish.md" }
+  },
+  "backend": { "imageid": "kubernetes-kubeadm-1node" }
+}
