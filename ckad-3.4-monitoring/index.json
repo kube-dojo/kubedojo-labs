@@ -1,0 +1,31 @@
+{
+  "title": "CKAD 3.4: Monitoring Applications",
+  "description": "Monitor application resource usage with kubectl top, resource metrics, and events",
+  "difficulty": "Intermediate",
+  "time": "25 minutes",
+  "details": {
+    "intro": { "text": "intro.md" },
+    "steps": [
+      {
+        "title": "Monitor resource usage with kubectl top",
+        "text": "step1/text.md",
+        "verify": "step1/verify.sh",
+        "solution": "step1/solution.sh"
+      },
+      {
+        "title": "Use events for monitoring",
+        "text": "step2/text.md",
+        "verify": "step2/verify.sh",
+        "solution": "step2/solution.sh"
+      },
+      {
+        "title": "Identify resource-hungry pods",
+        "text": "step3/text.md",
+        "verify": "step3/verify.sh",
+        "solution": "step3/solution.sh"
+      }
+    ],
+    "finish": { "text": "finish.md" }
+  },
+  "backend": { "imageid": "kubernetes-kubeadm-1node" }
+}

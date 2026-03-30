@@ -1,0 +1,31 @@
+{
+  "title": "CKAD 1.1: Container Images",
+  "description": "Work with container images — pull policies, private registries, image tags, and multi-stage concepts",
+  "difficulty": "Intermediate",
+  "time": "25 minutes",
+  "details": {
+    "intro": { "text": "intro.md" },
+    "steps": [
+      {
+        "title": "Control image pull policies",
+        "text": "step1/text.md",
+        "verify": "step1/verify.sh",
+        "solution": "step1/solution.sh"
+      },
+      {
+        "title": "Work with image tags and digests",
+        "text": "step2/text.md",
+        "verify": "step2/verify.sh",
+        "solution": "step2/solution.sh"
+      },
+      {
+        "title": "Troubleshoot ImagePullBackOff errors",
+        "text": "step3/text.md",
+        "verify": "step3/verify.sh",
+        "solution": "step3/solution.sh"
+      }
+    ],
+    "finish": { "text": "finish.md" }
+  },
+  "backend": { "imageid": "kubernetes-kubeadm-1node" }
+}

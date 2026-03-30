@@ -1,0 +1,31 @@
+{
+  "title": "CKAD 3.2: Container Logging",
+  "description": "View and manage container logs — single container, multi-container, and previous container logs",
+  "difficulty": "Intermediate",
+  "time": "25 minutes",
+  "details": {
+    "intro": { "text": "intro.md" },
+    "steps": [
+      {
+        "title": "View and filter container logs",
+        "text": "step1/text.md",
+        "verify": "step1/verify.sh",
+        "solution": "step1/solution.sh"
+      },
+      {
+        "title": "Multi-container pod logs",
+        "text": "step2/text.md",
+        "verify": "step2/verify.sh",
+        "solution": "step2/solution.sh"
+      },
+      {
+        "title": "Stream and search logs",
+        "text": "step3/text.md",
+        "verify": "step3/verify.sh",
+        "solution": "step3/solution.sh"
+      }
+    ],
+    "finish": { "text": "finish.md" }
+  },
+  "backend": { "imageid": "kubernetes-kubeadm-1node" }
+}

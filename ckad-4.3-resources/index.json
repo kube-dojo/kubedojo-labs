@@ -1,0 +1,31 @@
+{
+  "title": "CKAD 4.3: Resource Requirements and Limits",
+  "description": "Configure CPU and memory requests, limits, and LimitRanges for resource management",
+  "difficulty": "Intermediate",
+  "time": "30 minutes",
+  "details": {
+    "intro": { "text": "intro.md" },
+    "steps": [
+      {
+        "title": "Set resource requests and limits",
+        "text": "step1/text.md",
+        "verify": "step1/verify.sh",
+        "solution": "step1/solution.sh"
+      },
+      {
+        "title": "Create LimitRanges",
+        "text": "step2/text.md",
+        "verify": "step2/verify.sh",
+        "solution": "step2/solution.sh"
+      },
+      {
+        "title": "Create ResourceQuotas",
+        "text": "step3/text.md",
+        "verify": "step3/verify.sh",
+        "solution": "step3/solution.sh"
+      }
+    ],
+    "finish": { "text": "finish.md" }
+  },
+  "backend": { "imageid": "kubernetes-kubeadm-1node" }
+}

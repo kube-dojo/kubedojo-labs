@@ -1,0 +1,31 @@
+{
+  "title": "CKAD 5.2: Ingress",
+  "description": "Create and configure Ingress resources for HTTP routing with path-based and host-based rules",
+  "difficulty": "Advanced",
+  "time": "35 minutes",
+  "details": {
+    "intro": { "text": "intro.md" },
+    "steps": [
+      {
+        "title": "Install an Ingress controller and create basic Ingress",
+        "text": "step1/text.md",
+        "verify": "step1/verify.sh",
+        "solution": "step1/solution.sh"
+      },
+      {
+        "title": "Configure path-based routing",
+        "text": "step2/text.md",
+        "verify": "step2/verify.sh",
+        "solution": "step2/solution.sh"
+      },
+      {
+        "title": "Configure host-based routing",
+        "text": "step3/text.md",
+        "verify": "step3/verify.sh",
+        "solution": "step3/solution.sh"
+      }
+    ],
+    "finish": { "text": "finish.md" }
+  },
+  "backend": { "imageid": "kubernetes-kubeadm-1node" }
+}

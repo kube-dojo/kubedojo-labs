@@ -1,0 +1,31 @@
+{
+  "title": "CKAD 1.3: Multi-Container Pods",
+  "description": "Implement sidecar, ambassador, and adapter patterns with init containers and shared volumes",
+  "difficulty": "Intermediate",
+  "time": "35 minutes",
+  "details": {
+    "intro": { "text": "intro.md" },
+    "steps": [
+      {
+        "title": "Create a pod with an init container",
+        "text": "step1/text.md",
+        "verify": "step1/verify.sh",
+        "solution": "step1/solution.sh"
+      },
+      {
+        "title": "Implement a sidecar logging pattern",
+        "text": "step2/text.md",
+        "verify": "step2/verify.sh",
+        "solution": "step2/solution.sh"
+      },
+      {
+        "title": "Build an adapter container pattern",
+        "text": "step3/text.md",
+        "verify": "step3/verify.sh",
+        "solution": "step3/solution.sh"
+      }
+    ],
+    "finish": { "text": "finish.md" }
+  },
+  "backend": { "imageid": "kubernetes-kubeadm-1node" }
+}

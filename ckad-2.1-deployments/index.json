@@ -1,0 +1,37 @@
+{
+  "title": "CKAD 2.1: Deployments Deep Dive",
+  "description": "Master deployments — create, scale, update, rollback, and manage rollout history",
+  "difficulty": "Intermediate",
+  "time": "35 minutes",
+  "details": {
+    "intro": { "text": "intro.md" },
+    "steps": [
+      {
+        "title": "Create and scale deployments",
+        "text": "step1/text.md",
+        "verify": "step1/verify.sh",
+        "solution": "step1/solution.sh"
+      },
+      {
+        "title": "Rolling updates and image changes",
+        "text": "step2/text.md",
+        "verify": "step2/verify.sh",
+        "solution": "step2/solution.sh"
+      },
+      {
+        "title": "Rollbacks and revision history",
+        "text": "step3/text.md",
+        "verify": "step3/verify.sh",
+        "solution": "step3/solution.sh"
+      },
+      {
+        "title": "Troubleshoot a broken deployment",
+        "text": "step4/text.md",
+        "verify": "step4/verify.sh",
+        "solution": "step4/solution.sh"
+      }
+    ],
+    "finish": { "text": "finish.md" }
+  },
+  "backend": { "imageid": "kubernetes-kubeadm-1node" }
+}

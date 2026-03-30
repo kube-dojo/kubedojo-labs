@@ -1,0 +1,37 @@
+{
+  "title": "CKAD 1.2: Jobs and CronJobs",
+  "description": "Create and manage batch workloads with Jobs and CronJobs — completions, parallelism, schedules, and failure handling",
+  "difficulty": "Intermediate",
+  "time": "30 minutes",
+  "details": {
+    "intro": { "text": "intro.md" },
+    "steps": [
+      {
+        "title": "Create and configure Jobs",
+        "text": "step1/text.md",
+        "verify": "step1/verify.sh",
+        "solution": "step1/solution.sh"
+      },
+      {
+        "title": "Use parallelism and completions",
+        "text": "step2/text.md",
+        "verify": "step2/verify.sh",
+        "solution": "step2/solution.sh"
+      },
+      {
+        "title": "Create and manage CronJobs",
+        "text": "step3/text.md",
+        "verify": "step3/verify.sh",
+        "solution": "step3/solution.sh"
+      },
+      {
+        "title": "Troubleshoot a failing Job",
+        "text": "step4/text.md",
+        "verify": "step4/verify.sh",
+        "solution": "step4/solution.sh"
+      }
+    ],
+    "finish": { "text": "finish.md" }
+  },
+  "backend": { "imageid": "kubernetes-kubeadm-1node" }
+}

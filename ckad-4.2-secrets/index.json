@@ -1,0 +1,31 @@
+{
+  "title": "CKAD 4.2: Secrets",
+  "description": "Create and consume Kubernetes Secrets — generic, docker-registry, and TLS secrets",
+  "difficulty": "Intermediate",
+  "time": "30 minutes",
+  "details": {
+    "intro": { "text": "intro.md" },
+    "steps": [
+      {
+        "title": "Create different types of Secrets",
+        "text": "step1/text.md",
+        "verify": "step1/verify.sh",
+        "solution": "step1/solution.sh"
+      },
+      {
+        "title": "Use Secrets as environment variables",
+        "text": "step2/text.md",
+        "verify": "step2/verify.sh",
+        "solution": "step2/solution.sh"
+      },
+      {
+        "title": "Mount Secrets as volumes",
+        "text": "step3/text.md",
+        "verify": "step3/verify.sh",
+        "solution": "step3/solution.sh"
+      }
+    ],
+    "finish": { "text": "finish.md" }
+  },
+  "backend": { "imageid": "kubernetes-kubeadm-1node" }
+}

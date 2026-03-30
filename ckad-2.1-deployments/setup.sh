@@ -1,0 +1,14 @@
+#!/bin/bash
+echo "Waiting for Kubernetes cluster to be ready..."
+until kubectl get nodes 2>/dev/null | grep -q "Ready"; do
+  sleep 2
+done
+echo 'alias k=kubectl' >> /root/.bashrc
+echo 'complete -o default -F __start_kubectl k' >> /root/.bashrc
+source /root/.bashrc
+kubectl create namespace deploy-lab
+
+# Broken deployment for step 4
+kubectl create deployment broken-deploy --image=nginx:99.99.99 --replicas=3 -n deploy-lab
+
+echo "Cluster is ready!"

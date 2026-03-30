@@ -1,0 +1,37 @@
+{
+  "title": "CKAD 5.3: NetworkPolicies",
+  "description": "Create and test NetworkPolicies for ingress and egress traffic control between pods",
+  "difficulty": "Advanced",
+  "time": "40 minutes",
+  "details": {
+    "intro": { "text": "intro.md" },
+    "steps": [
+      {
+        "title": "Create a default-deny NetworkPolicy",
+        "text": "step1/text.md",
+        "verify": "step1/verify.sh",
+        "solution": "step1/solution.sh"
+      },
+      {
+        "title": "Allow specific ingress traffic",
+        "text": "step2/text.md",
+        "verify": "step2/verify.sh",
+        "solution": "step2/solution.sh"
+      },
+      {
+        "title": "Configure egress policies",
+        "text": "step3/text.md",
+        "verify": "step3/verify.sh",
+        "solution": "step3/solution.sh"
+      },
+      {
+        "title": "Combined ingress and egress policy",
+        "text": "step4/text.md",
+        "verify": "step4/verify.sh",
+        "solution": "step4/solution.sh"
+      }
+    ],
+    "finish": { "text": "finish.md" }
+  },
+  "backend": { "imageid": "kubernetes-kubeadm-1node" }
+}
