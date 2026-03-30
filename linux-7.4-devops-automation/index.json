@@ -1,0 +1,37 @@
+{
+  "title": "DevOps Automation Scripts",
+  "description": "Build DevOps automation scripts: configuration templating with envsubst, REST API interaction with curl/jq, and CI/CD pipeline simulation.",
+  "difficulty": "Advanced",
+  "time": "35 minutes",
+  "details": {
+    "intro": {
+      "text": "intro.md"
+    },
+    "steps": [
+      {
+        "title": "Configuration Management with envsubst",
+        "text": "step1/text.md",
+        "verify": "step1/verify.sh",
+        "solution": "step1/solution.sh"
+      },
+      {
+        "title": "API Interaction with curl and jq",
+        "text": "step2/text.md",
+        "verify": "step2/verify.sh",
+        "solution": "step2/solution.sh"
+      },
+      {
+        "title": "CI/CD Pipeline Simulation",
+        "text": "step3/text.md",
+        "verify": "step3/verify.sh",
+        "solution": "step3/solution.sh"
+      }
+    ],
+    "finish": {
+      "text": "finish.md"
+    }
+  },
+  "backend": {
+    "imageid": "ubuntu"
+  }
+}

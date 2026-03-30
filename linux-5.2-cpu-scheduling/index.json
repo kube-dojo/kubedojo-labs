@@ -1,0 +1,37 @@
+{
+  "title": "CPU Scheduling and Process Priorities",
+  "description": "Understand Linux CPU scheduling policies (SCHED_OTHER, SCHED_FIFO), CPU affinity with taskset, and process priorities with nice and ionice.",
+  "difficulty": "Advanced",
+  "time": "35 minutes",
+  "details": {
+    "intro": {
+      "text": "intro.md"
+    },
+    "steps": [
+      {
+        "title": "Scheduling Policies",
+        "text": "step1/text.md",
+        "verify": "step1/verify.sh",
+        "solution": "step1/solution.sh"
+      },
+      {
+        "title": "CPU Affinity with taskset",
+        "text": "step2/text.md",
+        "verify": "step2/verify.sh",
+        "solution": "step2/solution.sh"
+      },
+      {
+        "title": "Nice and ionice Priority Adjustment",
+        "text": "step3/text.md",
+        "verify": "step3/verify.sh",
+        "solution": "step3/solution.sh"
+      }
+    ],
+    "finish": {
+      "text": "finish.md"
+    }
+  },
+  "backend": {
+    "imageid": "ubuntu"
+  }
+}

@@ -1,0 +1,37 @@
+{
+  "title": "USE Method for Performance Analysis",
+  "description": "Apply the USE (Utilization, Saturation, Errors) method to systematically identify performance bottlenecks across CPU, memory, disk, and network resources.",
+  "difficulty": "Advanced",
+  "time": "30 minutes",
+  "details": {
+    "intro": {
+      "text": "intro.md"
+    },
+    "steps": [
+      {
+        "title": "Identify Bottlenecks with the USE Method",
+        "text": "step1/text.md",
+        "verify": "step1/verify.sh",
+        "solution": "step1/solution.sh"
+      },
+      {
+        "title": "CPU Analysis with mpstat and pidstat",
+        "text": "step2/text.md",
+        "verify": "step2/verify.sh",
+        "solution": "step2/solution.sh"
+      },
+      {
+        "title": "Create a USE Checklist",
+        "text": "step3/text.md",
+        "verify": "step3/verify.sh",
+        "solution": "step3/solution.sh"
+      }
+    ],
+    "finish": {
+      "text": "finish.md"
+    }
+  },
+  "backend": {
+    "imageid": "ubuntu"
+  }
+}
