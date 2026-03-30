@@ -1,0 +1,10 @@
+#!/bin/bash
+cat <<'EOF' | kubectl apply -f -
+apiVersion: scheduling.k8s.io/v1
+kind: PriorityClass
+metadata:
+  name: high-priority
+value: 1000000
+globalDefault: false
+description: "High priority for critical workloads"
+EOF

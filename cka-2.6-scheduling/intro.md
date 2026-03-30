@@ -1,0 +1,24 @@
+## Scheduling — Node Selection, Affinity & Taints
+
+Welcome to this hands-on lab from [KubeDojo](https://kube-dojo.github.io/) — free, open-source cloud native education.
+
+You have a real Kubernetes cluster with one control plane node ready to use.
+
+### Objectives
+
+In this lab you will:
+
+- Use node labels and nodeSelector for basic pod placement
+- Apply taints and tolerations to control scheduling
+- Configure node affinity rules for advanced placement
+- Set up pod topology spread constraints
+
+### Before You Start
+
+- Read the [module page](https://kube-dojo.github.io/k8s/cka/part2-workloads-scheduling/module-2.6-scheduling/) for theory
+- This lab takes approximately **45 minutes**
+- `kubectl` is already configured and ready
+- Alias `k=kubectl` is set up for speed
+- Refer to the [Kubernetes scheduling docs](https://kubernetes.io/docs/concepts/scheduling-eviction/) during the lab
+
+Let's begin!
