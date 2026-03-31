@@ -40,7 +40,7 @@ test_scenario() {
 
   # Detect if scenario needs privileged mode (network namespaces, iptables)
   local docker_flags="--rm -i"
-  if echo "$name" | grep -qE "(network-namespaces|iptables)"; then
+  if echo "$name" | grep -qE "(network-namespaces|iptables|storage-management|network-administration|kernel-hardening)"; then
     docker_flags="--rm -i --privileged"
   fi
 

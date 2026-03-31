@@ -1,4 +1,10 @@
 #!/bin/bash
+# Ensure API server is running (may have died in Docker)
+if ! curl -s http://localhost:8080/ > /dev/null 2>&1; then
+  python3 /root/api-server/api.py &
+  sleep 2
+fi
+
 # Solution: Create API check script
 cat > /root/api-check.sh << 'SCRIPT'
 #!/bin/bash
