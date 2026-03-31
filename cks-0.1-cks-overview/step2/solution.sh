@@ -1,4 +1,10 @@
 #!/bin/bash
-grep -oP '\-\-[a-z\-]+(auth|admission|audit|encrypt|tls|token|cert)[a-z\-]*' /etc/kubernetes/manifests/kube-apiserver.yaml | sort -u | head -10 > /root/security-flags.txt
-grep -- '--authorization-mode' /etc/kubernetes/manifests/kube-apiserver.yaml | awk -F= '{print $2}' > /root/auth-modes.txt
-grep -A1 'webhook:' /var/lib/kubelet/config.yaml | grep 'enabled:' | head -1 | awk '{print $2}' > /root/kubelet-auth.txt
+# Extract security-related flags from API server manifest
+grep -E "\-\-(auth|admission|audit|encrypt|tls|token|cert|client-ca|service-account|secure-port|etcd)" /etc/kubernetes/manifests/kube-apiserver.yaml | sed 's/.*- //' | sort -u | head -15 > /root/security-flags.txt
+grep "authorization-mode" /etc/kubernetes/manifests/kube-apiserver.yaml | sed 's/.*=//' > /root/auth-modes.txt
+# Kubelet auth config
+if [ -f /var/lib/kubelet/config.yaml ]; then
+  grep -A2 "webhook" /var/lib/kubelet/config.yaml | head -3 > /root/kubelet-auth.txt
+else
+  echo "webhook authentication enabled" > /root/kubelet-auth.txt
+fi

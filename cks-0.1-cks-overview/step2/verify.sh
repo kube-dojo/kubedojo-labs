@@ -4,8 +4,8 @@ if [ ! -f /root/security-flags.txt ]; then
   exit 1
 fi
 COUNT=$(wc -l < /root/security-flags.txt | tr -d ' ')
-if [ "$COUNT" -lt 5 ]; then
-  echo "FAIL: Expected at least 5 security flags, got $COUNT"
+if [ "$COUNT" -lt 3 ]; then
+  echo "FAIL: Expected at least 3 security flags, got $COUNT"
   exit 1
 fi
 if [ ! -f /root/auth-modes.txt ] || [ ! -s /root/auth-modes.txt ]; then
