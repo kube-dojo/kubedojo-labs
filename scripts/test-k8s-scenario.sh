@@ -104,7 +104,7 @@ ensure_cluster
 trap cleanup_cluster EXIT
 
 if [ "${1:-}" = "--all" ]; then
-  for scenario in "$REPO_ROOT"/prereq-k8s-*/ "$REPO_ROOT"/cka-*/; do
+  for scenario in "$REPO_ROOT"/prereq-k8s-*/ "$REPO_ROOT"/cka-*/ "$REPO_ROOT"/ckad-*/ "$REPO_ROOT"/cks-*/; do
     [ -d "$scenario" ] || continue
     test_scenario "$scenario"
   done
