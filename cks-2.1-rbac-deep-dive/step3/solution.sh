@@ -1,14 +1,8 @@
 #!/bin/bash
-kubectl get clusterrolebindings -o wide | grep cluster-admin > /root/cluster-admin-bindings.txt
-kubectl get clusterrolebindings -o json | python3 -c "
-import json, sys
-data = json.load(sys.stdin)
-for item in data['items']:
-  if item.get('roleRef',{}).get('name') == 'cluster-admin':
-    for sub in item.get('subjects',[]):
-      if sub.get('kind') == 'ServiceAccount':
-        print(f\"{sub.get('namespace','')}/{sub.get('name','')}\")
-" > /root/overprivileged-sa.txt 2>/dev/null || echo "None found" > /root/overprivileged-sa.txt
+kubectl get clusterrolebindings -o wide 2>/dev/null | grep cluster-admin > /root/cluster-admin-bindings.txt || echo "No cluster-admin bindings" > /root/cluster-admin-bindings.txt
+
+kubectl get clusterrolebindings -o jsonpath='{range .items[?(@.roleRef.name=="cluster-admin")]}{range .subjects[?(@.kind=="ServiceAccount")]}{.namespace}/{.name}{"\n"}{end}{end}' > /root/overprivileged-sa.txt 2>/dev/null || echo "None found" > /root/overprivileged-sa.txt
+[ -s /root/overprivileged-sa.txt ] || echo "None found" > /root/overprivileged-sa.txt
 
 kubectl get rolebindings,clusterrolebindings -A -o wide 2>/dev/null | grep secret-admin > /root/secret-admin-audit.txt || echo "No bindings found for secret-admin" > /root/secret-admin-audit.txt
 
