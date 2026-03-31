@@ -25,4 +25,6 @@ spec:
     imagePullPolicy: IfNotPresent
 YAML
 
+kubectl wait --for=condition=Ready pod/always-pull -n images-lab --timeout=120s 2>/dev/null || true
+kubectl wait --for=condition=Ready pod/ifnotpresent-pull -n images-lab --timeout=120s 2>/dev/null || true
 kubectl get pod always-pull -n images-lab -o jsonpath='{.spec.containers[0].imagePullPolicy}' > /root/pull-policy.txt

@@ -40,5 +40,7 @@ spec:
       periodSeconds: 3
       failureThreshold: 3
 YAML
+kubectl wait --for=condition=Ready pod/slow-start -n probes-lab --timeout=120s 2>/dev/null || true
+# Wait for failing-probe to restart a few times
 sleep 15
 kubectl get pod failing-probe -n probes-lab -o jsonpath='{.status.containerStatuses[0].restartCount}' > /root/restart-count.txt

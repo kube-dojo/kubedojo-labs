@@ -30,6 +30,7 @@ spec:
       capabilities:
         drop: ["ALL"]
 YAML
+kubectl wait --for=condition=Ready pod/compliant-pod -n immutable-enforced --timeout=120s 2>/dev/null || true
 
 cat > /root/immutability-patterns.txt << 'PATTERNS'
 What makes a container immutable:

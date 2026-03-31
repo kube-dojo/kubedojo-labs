@@ -19,5 +19,6 @@ spec:
       requests:
         memory: "256Mi"
 EOF
-sleep 10
+# Wait for pod to be running
+kubectl wait --for=condition=Ready pod/oom-pod -n practice --timeout=120s 2>/dev/null || true
 kubectl get pod oom-pod -n practice

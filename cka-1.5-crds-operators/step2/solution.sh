@@ -33,6 +33,7 @@ spec:
 EOF
 
 kubectl apply -f /root/backup-crd.yaml
+kubectl wait --for=condition=Established crd/backups.kubedojo.io --timeout=60s 2>/dev/null || true
 echo ""
 echo "CRD created:"
 kubectl get crd backups.kubedojo.io

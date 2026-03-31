@@ -8,6 +8,7 @@ kubectl label namespace psa-test-ns pod-security.kubernetes.io/enforce=restricte
   echo "Attempting compliant pod:"
   kubectl run test-ok --image=busybox -n psa-test-ns --overrides='{"spec":{"securityContext":{"runAsNonRoot":true,"runAsUser":1000,"seccompProfile":{"type":"RuntimeDefault"}},"containers":[{"name":"busybox","image":"busybox","command":["sleep","60"],"securityContext":{"allowPrivilegeEscalation":false,"capabilities":{"drop":["ALL"]}}}]}}' 2>&1
 } > /root/psa-test.txt
+kubectl wait --for=condition=Ready pod/test-ok -n psa-test-ns --timeout=60s 2>/dev/null || true
 
 {
   echo "NodeRestriction limits kubelet to:"

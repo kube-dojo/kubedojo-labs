@@ -27,5 +27,10 @@ spec:
       storage: 500Mi
   storageClassName: manual
 YAML
-sleep 3
+# Wait for PVC to bind
+for i in $(seq 1 30); do
+  STATUS=$(kubectl get pvc pvc-data -n volumes-lab -o jsonpath='{.status.phase}' 2>/dev/null)
+  [ "$STATUS" = "Bound" ] && break
+  sleep 2
+done
 kubectl get pvc pvc-data -n volumes-lab -o jsonpath='{.status.phase}' > /root/pvc-status.txt

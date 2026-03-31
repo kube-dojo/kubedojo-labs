@@ -1,6 +1,10 @@
 #!/bin/bash
-BLUE=$(kubectl get deployment blue-app -n strategy-lab -o jsonpath='{.status.readyReplicas}' 2>/dev/null)
-GREEN=$(kubectl get deployment green-app -n strategy-lab -o jsonpath='{.status.readyReplicas}' 2>/dev/null)
+for i in $(seq 1 30); do
+  BLUE=$(kubectl get deployment blue-app -n strategy-lab -o jsonpath='{.status.readyReplicas}' 2>/dev/null)
+  GREEN=$(kubectl get deployment green-app -n strategy-lab -o jsonpath='{.status.readyReplicas}' 2>/dev/null)
+  [ "$BLUE" = "3" ] && [ "$GREEN" = "3" ] && break
+  sleep 2
+done
 if [ "$BLUE" != "3" ] || [ "$GREEN" != "3" ]; then
   echo "FAIL: Both blue and green should have 3 ready replicas"
   exit 1

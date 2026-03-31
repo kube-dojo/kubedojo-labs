@@ -1,6 +1,9 @@
 #!/bin/bash
 kubectl apply -f https://github.com/kubernetes-sigs/gateway-api/releases/download/v1.2.1/standard-install.yaml
-sleep 5
+# Wait for Gateway API CRDs to be established
+for crd in gatewayclasses.gateway.networking.k8s.io gateways.gateway.networking.k8s.io httproutes.gateway.networking.k8s.io; do
+  kubectl wait --for=condition=Established crd/$crd --timeout=60s 2>/dev/null || true
+done
 cat <<'EOF' | kubectl apply -f -
 apiVersion: gateway.networking.k8s.io/v1
 kind: GatewayClass

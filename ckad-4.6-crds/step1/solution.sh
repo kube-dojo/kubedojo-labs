@@ -31,4 +31,5 @@ spec:
     shortNames:
     - bj
 YAML
+kubectl wait --for=condition=Established crd/backupjobs.stable.example.com --timeout=60s 2>/dev/null || true
 echo "backupjobs.stable.example.com" > /root/crd-name.txt

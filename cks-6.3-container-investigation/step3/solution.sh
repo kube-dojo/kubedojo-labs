@@ -58,6 +58,7 @@ spec:
         emptyDir: {}
 YAML
 kubectl apply -f /root/remediated-deployment.yaml
+kubectl rollout status deployment/secure-app -n investigation --timeout=120s 2>/dev/null || true
 
 cat > /root/incident-report.txt << 'REPORT'
 === SECURITY INCIDENT REPORT ===

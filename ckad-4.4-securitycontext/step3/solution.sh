@@ -15,5 +15,7 @@ spec:
     securityContext:
       allowPrivilegeEscalation: false
 YAML
+# Wait for pod to be created (may not reach Ready if nginx needs root)
+sleep 5
 kubectl get pod nonroot-pod -n security-lab -o jsonpath='{.spec.securityContext.runAsNonRoot}' > /root/nonroot-value.txt
 kubectl get pod nonroot-pod -n security-lab -o jsonpath='{.spec.containers[0].securityContext.allowPrivilegeEscalation}' > /root/priv-escalation.txt

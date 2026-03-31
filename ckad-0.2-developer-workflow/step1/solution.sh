@@ -19,3 +19,4 @@ spec:
 YAML
 
 kubectl apply -f /root/frontend.yaml -n dev-workflow
+kubectl wait --for=condition=Ready pod/frontend -n dev-workflow --timeout=120s 2>/dev/null || true

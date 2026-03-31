@@ -36,3 +36,5 @@ spec:
       initialDelaySeconds: 5
       periodSeconds: 5
 YAML
+kubectl wait --for=condition=Ready pod/liveness-http -n probes-lab --timeout=120s 2>/dev/null || true
+kubectl wait --for=condition=Ready pod/liveness-exec -n probes-lab --timeout=120s 2>/dev/null || true

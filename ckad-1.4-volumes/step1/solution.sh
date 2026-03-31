@@ -36,4 +36,6 @@ spec:
       path: /data/hostpath-demo
       type: DirectoryOrCreate
 YAML
+kubectl wait --for=condition=Ready pod/temp-storage -n volumes-lab --timeout=120s 2>/dev/null || true
+kubectl wait --for=condition=Ready pod/host-storage -n volumes-lab --timeout=120s 2>/dev/null || true
 echo "hostpath-works" > /data/hostpath-demo/test.txt
