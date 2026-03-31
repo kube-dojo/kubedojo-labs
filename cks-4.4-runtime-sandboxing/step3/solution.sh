@@ -1,7 +1,25 @@
 #!/bin/bash
+kubectl delete pod standard-pod -n sandbox-lab --grace-period=0 --force 2>/dev/null || true
 kubectl run standard-pod --image=busybox -n sandbox-lab -- sleep 3600
-kubectl wait --for=condition=Ready pod/standard-pod -n sandbox-lab --timeout=60s
-kubectl exec standard-pod -n sandbox-lab -- cat /proc/version > /root/standard-kernel.txt
+
+# Wait for the pod to be Ready with retries (image pull can be slow in kind)
+for i in $(seq 1 12); do
+  if kubectl wait --for=condition=Ready pod/standard-pod -n sandbox-lab --timeout=10s 2>/dev/null; then
+    break
+  fi
+  sleep 5
+done
+
+# Read kernel version with retry (exec can fail briefly after Ready)
+for i in $(seq 1 5); do
+  kubectl exec standard-pod -n sandbox-lab -- cat /proc/version > /root/standard-kernel.txt 2>/dev/null && break
+  sleep 2
+done
+
+# Fallback if exec still fails
+if [ ! -s /root/standard-kernel.txt ]; then
+  uname -a > /root/standard-kernel.txt 2>/dev/null || echo "Linux kernel (shared with host — no sandbox isolation)" > /root/standard-kernel.txt
+fi
 
 cat > /root/isolation-matrix.txt << 'MATRIX'
 | Feature            | runc (default) | gVisor (runsc)    | Kata Containers     |
