@@ -5,7 +5,7 @@ if [ ! -f /root/troubleshooting-report.txt ]; then
 fi
 
 SECTIONS=0
-for keyword in "Problem" "Investigation" "Root Cause\|Cause" "Fix\|Resolution"; do
+for keyword in "Problem" "Investigation" "Root Cause|Cause" "Fix|Resolution"; do
   if grep -qiE "$keyword" /root/troubleshooting-report.txt; then
     SECTIONS=$((SECTIONS + 1))
   fi

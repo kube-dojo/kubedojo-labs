@@ -30,3 +30,23 @@ Create `/root/troubleshooting-report.txt` with the following sections based on y
 ```
 
 Fill in each section with specific details from your investigation.
+
+<details>
+<summary>Hint</summary>
+
+```bash
+cat > /root/troubleshooting-report.txt << 'EOF'
+=== Problem ===
+The broken-app.service is in a failed state with ERROR entries in logs.
+
+=== Investigation Steps ===
+1. Gathered system info 2. Checked failed services 3. Searched logs for errors
+
+=== Root Cause ===
+The service binary /usr/local/bin/broken-app does not exist.
+
+=== Fix ===
+Install the binary or fix the ExecStart path in the service unit file.
+EOF
+```
+</details>
