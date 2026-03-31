@@ -1,15 +1,29 @@
 #!/bin/bash
-# Try to install Falco
-{
-  curl -fsSL https://falco.org/repo/falcosecurity-packages.asc | gpg --dearmor -o /usr/share/keyrings/falco-archive-keyring.gpg 2>/dev/null
-  echo "deb [signed-by=/usr/share/keyrings/falco-archive-keyring.gpg] https://download.falco.org/packages/deb stable main" | tee /etc/apt/sources.list.d/falcosecurity.list
-  apt-get update -qq && apt-get install -y falco
-} 2>/dev/null || {
-  echo "Falco installation failed — creating config manually"
-  mkdir -p /etc/falco
-}
+FALCO_INSTALLED=false
 
-systemctl status falco > /root/falco-status.txt 2>&1 || echo "Falco not running (installation may have failed)" > /root/falco-status.txt
+# Try to install Falco
+if command -v apt-get &>/dev/null; then
+  {
+    curl -fsSL https://falco.org/repo/falcosecurity-packages.asc 2>/dev/null | gpg --dearmor -o /usr/share/keyrings/falco-archive-keyring.gpg 2>/dev/null
+    echo "deb [signed-by=/usr/share/keyrings/falco-archive-keyring.gpg] https://download.falco.org/packages/deb stable main" | tee /etc/apt/sources.list.d/falcosecurity.list
+    apt-get update -qq && apt-get install -y falco
+    FALCO_INSTALLED=true
+  } 2>/dev/null || true
+fi
+
+mkdir -p /etc/falco
+
+if [ "$FALCO_INSTALLED" = true ]; then
+  systemctl status falco > /root/falco-status.txt 2>&1
+else
+  cat > /root/falco-status.txt << 'STATUS'
+Falco not installed (kind cluster — no kernel module support).
+In production, Falco would run as:
+  - A DaemonSet with kernel module or eBPF probe
+  - systemctl status falco would show: active (running)
+  - Falco monitors syscalls and container events in real-time
+STATUS
+fi
 
 cat > /root/falco-rules-paths.txt << 'PATHS'
 /etc/falco/falco_rules.yaml — Default rules (do not edit)
@@ -22,7 +36,7 @@ if [ -f /etc/falco/falco_rules.yaml ]; then
   head -50 /etc/falco/falco_rules.yaml > /root/default-rules-sample.txt
 else
   cat > /root/default-rules-sample.txt << 'SAMPLE'
-# Falco Default Rules (sample — installation may have failed)
+# Falco Default Rules (sample — Falco not installed in kind)
 # These detect common security threats:
 - rule: Terminal shell in container
   desc: Detect shell spawned in container

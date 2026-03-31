@@ -63,7 +63,6 @@ kubectl rollout status deployment/secure-app -n investigation --timeout=120s 2>/
 cat > /root/incident-report.txt << 'REPORT'
 === SECURITY INCIDENT REPORT ===
 
-Date: $(date)
 Severity: HIGH
 Status: CONTAINED AND REMEDIATED
 

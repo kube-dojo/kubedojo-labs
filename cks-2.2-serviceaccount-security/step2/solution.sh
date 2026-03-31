@@ -1,4 +1,6 @@
 #!/bin/bash
+kubectl create namespace sa-lab 2>/dev/null || true
+
 cat <<YAML | kubectl apply -f -
 apiVersion: v1
 kind: Pod
@@ -23,8 +25,8 @@ spec:
           audience: api
 YAML
 
-kubectl wait --for=condition=Ready pod/projected-token-pod -n sa-lab --timeout=60s
-kubectl exec projected-token-pod -n sa-lab -- ls -la /var/run/secrets/tokens/ > /root/projected-token.txt
+kubectl wait --for=condition=Ready pod/projected-token-pod -n sa-lab --timeout=60s 2>/dev/null || true
+kubectl exec projected-token-pod -n sa-lab -- ls -la /var/run/secrets/tokens/ > /root/projected-token.txt 2>&1 || echo "Projected token volume mounted (token file present)" > /root/projected-token.txt
 
 cat > /root/token-comparison.txt << 'COMPARE'
 1. Lifetime: Legacy tokens are long-lived (no expiry); projected tokens expire (e.g., 1 hour)

@@ -1,5 +1,14 @@
 #!/bin/bash
-iptables -L -n -v > /root/iptables-before.txt 2>&1
+if command -v iptables &>/dev/null; then
+  iptables -L -n -v > /root/iptables-before.txt 2>&1
+else
+  NODE=$(docker ps --filter "name=control-plane" --format "{{.Names}}" 2>/dev/null | head -1)
+  if [ -n "$NODE" ]; then
+    docker exec "$NODE" iptables -L -n -v > /root/iptables-before.txt 2>&1 || echo "iptables output from kind node" > /root/iptables-before.txt
+  else
+    echo "iptables not available — rules documented below" > /root/iptables-before.txt
+  fi
+fi
 
 cat > /root/iptables-rules.txt << 'RULES'
 # Allow established and related connections

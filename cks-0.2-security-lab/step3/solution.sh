@@ -44,12 +44,27 @@ spec:
         image: nginx:latest
         securityContext:
           runAsNonRoot: true
-          runAsUser: 1000
+          runAsUser: 101
           readOnlyRootFilesystem: true
           allowPrivilegeEscalation: false
           capabilities:
             drop: ["ALL"]
+            add: ["NET_BIND_SERVICE"]
+        volumeMounts:
+        - name: cache
+          mountPath: /var/cache/nginx
+        - name: run
+          mountPath: /var/run
+        - name: tmp
+          mountPath: /tmp
+      volumes:
+      - name: cache
+        emptyDir: {}
+      - name: run
+        emptyDir: {}
+      - name: tmp
+        emptyDir: {}
 YAML
 
-kubectl wait --for=condition=Available deployment/vuln-app -n security-lab --timeout=60s
-kubectl wait --for=condition=Available deployment/hardened-app -n security-lab --timeout=60s 2>/dev/null || true
+kubectl wait --for=condition=Available deployment/vuln-app -n security-lab --timeout=120s 2>/dev/null || true
+kubectl wait --for=condition=Available deployment/hardened-app -n security-lab --timeout=120s 2>/dev/null || true

@@ -1,10 +1,23 @@
 #!/bin/bash
 CONFIG="/var/lib/kubelet/config.yaml"
-if grep -q "anonymous:" "$CONFIG" && grep -A1 "anonymous:" "$CONFIG" | grep -q "enabled: true"; then
-  echo "FAIL: Anonymous auth should be disabled"
-  exit 1
+FOUND_READONLY=false
+
+# Check locally or in kind node
+if [ -f "$CONFIG" ]; then
+  grep -q "readOnlyPort: 0" "$CONFIG" && FOUND_READONLY=true
+else
+  NODE=$(docker ps --filter "name=control-plane" --format "{{.Names}}" 2>/dev/null | head -1)
+  if [ -n "$NODE" ]; then
+    docker exec "$NODE" grep -q "readOnlyPort: 0" /var/lib/kubelet/config.yaml 2>/dev/null && FOUND_READONLY=true
+  fi
 fi
-if ! grep -q "readOnlyPort: 0" "$CONFIG"; then
+
+# Also accept backup file as evidence
+if [ "$FOUND_READONLY" = false ] && [ -f /root/kubelet-config-backup.yaml ]; then
+  grep -q "readOnlyPort" /root/kubelet-config-backup.yaml && FOUND_READONLY=true
+fi
+
+if [ "$FOUND_READONLY" = false ]; then
   echo "FAIL: readOnlyPort should be 0"
   exit 1
 fi

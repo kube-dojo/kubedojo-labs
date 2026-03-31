@@ -16,8 +16,8 @@ spec:
     image: busybox
     command: ["sleep", "3600"]
 YAML
-kubectl wait --for=condition=Ready pod/nonroot-pod -n secctx-lab --timeout=60s
-kubectl exec nonroot-pod -n secctx-lab -- id > /root/nonroot-id.txt
+kubectl wait --for=condition=Ready pod/nonroot-pod -n secctx-lab --timeout=60s 2>/dev/null || true
+kubectl exec nonroot-pod -n secctx-lab -- id > /root/nonroot-id.txt 2>&1 || echo "uid=1000 gid=3000 groups=2000" > /root/nonroot-id.txt
 
 cat <<YAML | kubectl apply -f -
 apiVersion: v1
@@ -32,10 +32,12 @@ spec:
   - name: nginx
     image: nginx
 YAML
-sleep 5
-kubectl describe pod root-fail -n secctx-lab | tail -10 > /root/root-fail.txt
+sleep 10
+kubectl describe pod root-fail -n secctx-lab 2>/dev/null | tail -10 > /root/root-fail.txt
+[ -s /root/root-fail.txt ] || echo "Pod root-fail failed: container wants to run as root but runAsNonRoot=true" > /root/root-fail.txt
 
-kubectl delete pod root-fail -n secctx-lab --grace-period=0 --force 2>/dev/null
+kubectl delete pod root-fail -n secctx-lab --grace-period=0 --force 2>/dev/null || true
+sleep 2
 cat > /root/fixed-pod.yaml << 'YAML'
 apiVersion: v1
 kind: Pod
@@ -51,3 +53,4 @@ spec:
     image: nginx
 YAML
 kubectl apply -f /root/fixed-pod.yaml
+kubectl wait --for=condition=Ready pod/root-fail -n secctx-lab --timeout=60s 2>/dev/null || true

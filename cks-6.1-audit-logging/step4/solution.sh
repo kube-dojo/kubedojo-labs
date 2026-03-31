@@ -31,13 +31,28 @@ SEVERITY: warning
 ACTION: Verify namespace allows privileged pods, alert if in restricted namespace
 RULES
 
-cat > /root/check-secrets-access.sh << 'SCRIPT'
+cat > /root/check-secrets-access.sh << 'CHECKERSCRIPT'
 #!/bin/bash
 LOG="/var/log/kubernetes/audit/audit.log"
+NODE=$(docker ps --filter "name=control-plane" --format "{{.Names}}" 2>/dev/null | head -1)
+
 echo "=== Secret Access Report ==="
 echo "Date: $(date)"
 echo ""
+
+# Try to get audit log from local or kind node
+AUDIT_AVAILABLE=false
 if [ -f "$LOG" ] && [ -s "$LOG" ]; then
+  AUDIT_AVAILABLE=true
+elif [ -n "$NODE" ]; then
+  docker exec "$NODE" cat "$LOG" 2>/dev/null > /tmp/audit-copy.log
+  if [ -s /tmp/audit-copy.log ]; then
+    LOG="/tmp/audit-copy.log"
+    AUDIT_AVAILABLE=true
+  fi
+fi
+
+if [ "$AUDIT_AVAILABLE" = true ]; then
   echo "Users who accessed secrets:"
   cat "$LOG" | python3 -c "
 import json, sys
@@ -58,17 +73,17 @@ else:
     print('  No secret access events found')
 " 2>/dev/null || echo "  (Unable to parse audit log)"
 else
-  echo "  Audit log not available"
-  echo "  Generating report from cluster state..."
-  echo "  ServiceAccounts with secret access:"
-  kubectl get clusterrolebindings -o json | python3 -c "
+  echo "Audit log not available — generating report from RBAC analysis"
+  echo ""
+  echo "ServiceAccounts with secret access permissions:"
+  kubectl get clusterrolebindings -o json 2>/dev/null | python3 -c "
 import json, sys
 data = json.load(sys.stdin)
 for item in data['items']:
     for sub in item.get('subjects',[]):
         print(f'  {sub.get(\"namespace\",\"\")}/{sub.get(\"name\",\"\")} via {item[\"roleRef\"][\"name\"]}')
-" 2>/dev/null | head -10
+" 2>/dev/null | head -10 || echo "  Unable to parse RBAC bindings"
 fi
-SCRIPT
+CHECKERSCRIPT
 chmod +x /root/check-secrets-access.sh
 /root/check-secrets-access.sh > /root/secrets-access-report.txt 2>&1

@@ -1,10 +1,10 @@
 #!/bin/bash
-kubectl create namespace immutable-enforced
+kubectl create namespace immutable-enforced 2>/dev/null || true
 kubectl label namespace immutable-enforced \
   pod-security.kubernetes.io/enforce=restricted \
-  pod-security.kubernetes.io/warn=restricted
+  pod-security.kubernetes.io/warn=restricted --overwrite
 
-# Test non-compliant pod
+# Test non-compliant pod (should fail)
 kubectl run non-compliant --image=nginx -n immutable-enforced > /root/enforce-test.txt 2>&1 || true
 
 # Create compliant pod

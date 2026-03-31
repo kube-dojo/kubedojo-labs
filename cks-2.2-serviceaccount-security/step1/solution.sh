@@ -1,4 +1,6 @@
 #!/bin/bash
+kubectl create namespace sa-lab 2>/dev/null || true
+
 cat <<YAML | kubectl apply -f -
 apiVersion: v1
 kind: ServiceAccount
@@ -34,5 +36,7 @@ spec:
     image: nginx
 YAML
 
-kubectl wait --for=condition=Ready pod/secure-app -n sa-lab --timeout=60s
+kubectl wait --for=condition=Ready pod/secure-app -n sa-lab --timeout=60s 2>/dev/null || true
+kubectl wait --for=condition=Ready pod/needs-api -n sa-lab --timeout=60s 2>/dev/null || true
+
 kubectl exec secure-app -n sa-lab -- ls /var/run/secrets/kubernetes.io/serviceaccount/token > /root/token-check.txt 2>&1 || echo "No token mounted (expected)" > /root/token-check.txt

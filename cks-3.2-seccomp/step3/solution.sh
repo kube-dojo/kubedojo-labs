@@ -1,9 +1,16 @@
 #!/bin/bash
-cat > /var/lib/kubelet/seccomp/profiles/audit.json << 'JSON'
-{
-  "defaultAction": "SCMP_ACT_LOG"
-}
-JSON
+PROFILE_DIR="/var/lib/kubelet/seccomp/profiles"
+NODE=$(docker ps --filter "name=control-plane" --format "{{.Names}}" 2>/dev/null | head -1)
+
+AUDIT_JSON='{"defaultAction": "SCMP_ACT_LOG"}'
+
+mkdir -p "$PROFILE_DIR"
+echo "$AUDIT_JSON" > "$PROFILE_DIR/audit.json"
+
+if [ -n "$NODE" ]; then
+  docker exec "$NODE" mkdir -p "$PROFILE_DIR" 2>/dev/null
+  docker exec -i "$NODE" sh -c "cat > $PROFILE_DIR/audit.json" <<< "$AUDIT_JSON" 2>/dev/null
+fi
 
 cat <<YAML | kubectl apply -f -
 apiVersion: v1
@@ -20,7 +27,12 @@ spec:
   - name: nginx
     image: nginx
 YAML
-kubectl wait --for=condition=Ready pod/audit-pod -n seccomp-lab --timeout=60s 2>&1 || true
+
+for i in $(seq 1 30); do
+  STATUS=$(kubectl get pod audit-pod -n seccomp-lab -o jsonpath='{.status.phase}' 2>/dev/null)
+  [ "$STATUS" = "Running" ] && break
+  sleep 2
+done
 
 cat > /root/seccomp-best-practices.txt << 'BEST'
 1. Use RuntimeDefault as the minimum baseline for all pods

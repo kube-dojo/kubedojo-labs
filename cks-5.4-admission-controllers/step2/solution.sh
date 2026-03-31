@@ -1,5 +1,5 @@
 #!/bin/bash
-mkdir -p /etc/kubernetes/admission
+mkdir -p /etc/kubernetes/admission 2>/dev/null || true
 cat > /etc/kubernetes/admission/image-policy.yaml << 'YAML'
 apiVersion: apiserver.config.k8s.io/v1
 kind: AdmissionConfiguration

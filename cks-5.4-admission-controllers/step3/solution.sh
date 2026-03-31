@@ -1,6 +1,6 @@
 #!/bin/bash
-kubectl create namespace psa-test-ns
-kubectl label namespace psa-test-ns pod-security.kubernetes.io/enforce=restricted
+kubectl create namespace psa-test-ns 2>/dev/null || true
+kubectl label namespace psa-test-ns pod-security.kubernetes.io/enforce=restricted --overwrite
 {
   echo "Attempting privileged pod in restricted namespace:"
   kubectl run test-priv --image=nginx -n psa-test-ns --overrides='{"spec":{"containers":[{"name":"nginx","image":"nginx","securityContext":{"privileged":true}}]}}' 2>&1
@@ -15,8 +15,8 @@ kubectl wait --for=condition=Ready pod/test-ok -n psa-test-ns --timeout=60s 2>/d
   echo "- Only modify its own Node object labels (with restrictions)"
   echo "- Only modify pods scheduled to this node"
   echo "- Cannot modify other nodes or their pods"
-  NODE=$(kubectl get nodes -o name | head -1)
-  echo "Current node: $NODE"
+  NODE_NAME=$(kubectl get nodes -o name | head -1)
+  echo "Current node: $NODE_NAME"
 } > /root/node-restriction-test.txt
 
 cat > /root/admission-best-practices.txt << 'BEST'

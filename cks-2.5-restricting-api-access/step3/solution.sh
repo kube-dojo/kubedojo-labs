@@ -1,5 +1,15 @@
 #!/bin/bash
-grep -E '(max-requests|max-mutating)' /etc/kubernetes/manifests/kube-apiserver.yaml > /root/rate-limits.txt || echo "Using defaults: max-requests-inflight=400, max-mutating-requests-inflight=200" > /root/rate-limits.txt
+MANIFEST="/etc/kubernetes/manifests/kube-apiserver.yaml"
+if [ -f "$MANIFEST" ]; then
+  grep -E '(max-requests|max-mutating)' "$MANIFEST" > /root/rate-limits.txt || echo "Using defaults: max-requests-inflight=400, max-mutating-requests-inflight=200" > /root/rate-limits.txt
+else
+  NODE=$(docker ps --filter "name=control-plane" --format "{{.Names}}" 2>/dev/null | head -1)
+  if [ -n "$NODE" ]; then
+    docker exec "$NODE" grep -E '(max-requests|max-mutating)' /etc/kubernetes/manifests/kube-apiserver.yaml > /root/rate-limits.txt 2>/dev/null || echo "Using defaults: max-requests-inflight=400, max-mutating-requests-inflight=200" > /root/rate-limits.txt
+  else
+    echo "Using defaults: max-requests-inflight=400, max-mutating-requests-inflight=200" > /root/rate-limits.txt
+  fi
+fi
 
 cat > /root/rate-limit-docs.txt << 'DOCS'
 --max-requests-inflight (default 400): Maximum non-mutating requests in flight at a given time

@@ -1,11 +1,11 @@
 #!/bin/bash
-kubectl create namespace psa-privileged
-kubectl create namespace psa-baseline
-kubectl create namespace psa-restricted
+kubectl create namespace psa-privileged 2>/dev/null || true
+kubectl create namespace psa-baseline 2>/dev/null || true
+kubectl create namespace psa-restricted 2>/dev/null || true
 
-kubectl label namespace psa-privileged pod-security.kubernetes.io/enforce=privileged
-kubectl label namespace psa-baseline pod-security.kubernetes.io/enforce=baseline
-kubectl label namespace psa-restricted pod-security.kubernetes.io/enforce=restricted
+kubectl label namespace psa-privileged pod-security.kubernetes.io/enforce=privileged --overwrite
+kubectl label namespace psa-baseline pod-security.kubernetes.io/enforce=baseline --overwrite
+kubectl label namespace psa-restricted pod-security.kubernetes.io/enforce=restricted --overwrite
 
 {
   echo "=== psa-privileged ==="

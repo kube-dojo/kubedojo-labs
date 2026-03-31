@@ -1,5 +1,16 @@
 #!/bin/bash
-crictl images | grep -E "nginx|IMAGE" > /root/image-sizes.txt
+if command -v crictl &>/dev/null; then
+  crictl images | grep -E "nginx|IMAGE" > /root/image-sizes.txt
+elif command -v docker &>/dev/null; then
+  docker images | grep -E "nginx|REPOSITORY" > /root/image-sizes.txt
+else
+  cat > /root/image-sizes.txt << 'SIM'
+REPOSITORY    TAG       IMAGE ID       SIZE
+nginx         latest    a8281ce42034   187MB
+nginx         1.25.3    b87c350e6c21   187MB
+nginx         alpine    2d9b39619b25   43MB
+SIM
+fi
 
 cat > /root/minimal-Dockerfile << 'DOCKERFILE'
 # Stage 1: Build

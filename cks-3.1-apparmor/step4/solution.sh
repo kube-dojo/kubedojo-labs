@@ -1,5 +1,11 @@
 #!/bin/bash
-dmesg 2>/dev/null | grep -i apparmor > /root/apparmor-denials.txt || journalctl 2>/dev/null | grep -i apparmor > /root/apparmor-denials.txt || echo "No AppArmor denials found" > /root/apparmor-denials.txt
+if command -v dmesg &>/dev/null; then
+  dmesg 2>/dev/null | grep -i apparmor > /root/apparmor-denials.txt || true
+fi
+if [ ! -s /root/apparmor-denials.txt ] && command -v journalctl &>/dev/null; then
+  journalctl 2>/dev/null | grep -i apparmor > /root/apparmor-denials.txt || true
+fi
+[ -s /root/apparmor-denials.txt ] || echo "No AppArmor denials found (AppArmor may not be available in kind)" > /root/apparmor-denials.txt
 
 cat > /root/troubleshooting-guide.txt << 'GUIDE'
 1. Check denials: dmesg | grep DENIED or journalctl | grep apparmor
@@ -10,5 +16,9 @@ cat > /root/troubleshooting-guide.txt << 'GUIDE'
 6. Enforce mode: aa-enforce <profile-path> — blocks and logs violations
 GUIDE
 
-aa-complain /etc/apparmor.d/k8s-deny-write 2>/dev/null || true
-aa-status 2>/dev/null | grep -A1 "k8s-deny-write" > /root/complain-mode.txt || echo "Profile in complain mode" > /root/complain-mode.txt
+if command -v aa-complain &>/dev/null; then
+  aa-complain /etc/apparmor.d/k8s-deny-write 2>/dev/null
+  aa-status 2>/dev/null | grep -A1 "k8s-deny-write" > /root/complain-mode.txt || echo "Profile in complain mode" > /root/complain-mode.txt
+else
+  echo "Profile k8s-deny-write would be set to complain mode (aa-complain not available in kind)" > /root/complain-mode.txt
+fi

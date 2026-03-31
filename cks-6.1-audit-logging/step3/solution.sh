@@ -1,13 +1,15 @@
 #!/bin/bash
-cat > /root/audit-analyzer.sh << 'SCRIPT'
+cat > /root/audit-analyzer.sh << 'ANALYZERSCRIPT'
 #!/bin/bash
 LOG="/var/log/kubernetes/audit/audit.log"
+NODE=$(docker ps --filter "name=control-plane" --format "{{.Names}}" 2>/dev/null | head -1)
+
+# Try local log first, then kind node
 if [ ! -f "$LOG" ] || [ ! -s "$LOG" ]; then
-  echo "No audit log found at $LOG"
-  echo "Creating sample analysis based on cluster activity..."
-  kubectl get pods -A > /dev/null 2>&1
-  kubectl get secrets -A > /dev/null 2>&1
-  sleep 2
+  if [ -n "$NODE" ]; then
+    docker exec "$NODE" cat "$LOG" 2>/dev/null > /tmp/audit-copy.log
+    LOG="/tmp/audit-copy.log"
+  fi
 fi
 
 echo "=== Audit Log Analysis ==="
@@ -39,10 +41,13 @@ print(f'\nEvents involving secrets: {secrets}')
 print(f'Events from non-system users: {non_system}')
 " 2>/dev/null || echo "  (Python parse failed, log may not be JSON)"
 else
-  echo "Audit log not available yet"
-  echo "Total events: 0"
+  echo "Audit log not available yet — generating report from cluster activity"
+  echo "Total events: 0 (audit log not yet populated)"
+  echo ""
+  echo "Cluster activity summary:"
+  kubectl get events -A --sort-by=.lastTimestamp 2>/dev/null | tail -10 || echo "  No events found"
 fi
-SCRIPT
+ANALYZERSCRIPT
 chmod +x /root/audit-analyzer.sh
 /root/audit-analyzer.sh > /root/audit-analysis.txt 2>&1
 

@@ -1,7 +1,23 @@
 #!/bin/bash
 kubectl version > /root/current-version.txt 2>&1
-kubeadm upgrade plan > /root/upgrade-plan.txt 2>&1
-apt list -a kubeadm > /root/available-versions.txt 2>/dev/null || echo "apt not available" > /root/available-versions.txt
+
+if command -v kubeadm &>/dev/null; then
+  kubeadm upgrade plan > /root/upgrade-plan.txt 2>&1
+else
+  cat > /root/upgrade-plan.txt << 'PLAN'
+kubeadm not directly available (kind cluster).
+In a kubeadm-managed cluster, 'kubeadm upgrade plan' would show:
+  Components that need upgrading
+  Available upgrade versions
+  Required manual steps
+PLAN
+fi
+
+if command -v apt &>/dev/null; then
+  apt list -a kubeadm > /root/available-versions.txt 2>/dev/null
+else
+  echo "apt not available (kind cluster) — versions managed by kind" > /root/available-versions.txt
+fi
 
 cat > /root/upgrade-checklist.txt << 'CHECKLIST'
 1. Backup etcd data before starting the upgrade

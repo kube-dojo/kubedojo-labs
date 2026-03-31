@@ -1,11 +1,12 @@
 #!/bin/bash
-kubectl create namespace psa-transition
+kubectl create namespace psa-transition 2>/dev/null || true
 kubectl label namespace psa-transition \
   pod-security.kubernetes.io/enforce=baseline \
   pod-security.kubernetes.io/warn=restricted \
-  pod-security.kubernetes.io/audit=restricted
+  pod-security.kubernetes.io/audit=restricted --overwrite
 
 kubectl run warn-test --image=nginx -n psa-transition > /root/psa-warnings.txt 2>&1 || true
+kubectl wait --for=condition=Ready pod/warn-test -n psa-transition --timeout=60s 2>/dev/null || true
 
 cat > /root/psa-migration-plan.txt << 'PLAN'
 Migration from Baseline to Restricted:

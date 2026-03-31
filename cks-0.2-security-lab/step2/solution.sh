@@ -1,5 +1,5 @@
 #!/bin/bash
-mkdir -p /etc/kubernetes/audit
+mkdir -p /etc/kubernetes/audit 2>/dev/null || true
 cat > /etc/kubernetes/audit/audit-policy.yaml << 'POLICY'
 apiVersion: audit.k8s.io/v1
 kind: Policy

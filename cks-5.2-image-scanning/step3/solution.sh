@@ -1,5 +1,5 @@
 #!/bin/bash
-cat > /root/cluster-scan.sh << 'SCRIPT'
+cat > /root/cluster-scan.sh << 'SCANSCRIPT'
 #!/bin/bash
 echo "=== Cluster-Wide Image Vulnerability Scan ==="
 echo "Date: $(date)"
@@ -11,17 +11,21 @@ while IFS= read -r img; do
   [ -z "$img" ] && continue
   TOTAL=$((TOTAL + 1))
   echo "--- Scanning: $img ---"
-  RESULT=$(trivy image --severity CRITICAL,HIGH -q "$img" 2>/dev/null | tail -5)
-  if echo "$RESULT" | grep -qE "CRITICAL|HIGH"; then
-    VULN=$((VULN + 1))
-    echo "$RESULT"
+  if command -v trivy &>/dev/null; then
+    RESULT=$(trivy image --severity CRITICAL,HIGH -q --timeout 60s "$img" 2>/dev/null | tail -5)
+    if echo "$RESULT" | grep -qE "CRITICAL|HIGH"; then
+      VULN=$((VULN + 1))
+      echo "$RESULT"
+    else
+      echo "No CRITICAL/HIGH vulnerabilities"
+    fi
   else
-    echo "No CRITICAL/HIGH vulnerabilities"
+    echo "trivy not available — skipping scan (would check for CRITICAL/HIGH CVEs)"
   fi
   echo ""
 done <<< "$IMAGES"
 echo "=== Summary: $VULN/$TOTAL images with CRITICAL/HIGH CVEs ==="
-SCRIPT
+SCANSCRIPT
 chmod +x /root/cluster-scan.sh
 /root/cluster-scan.sh > /root/cluster-scan-results.txt 2>&1
 

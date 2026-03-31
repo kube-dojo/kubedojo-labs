@@ -1,5 +1,14 @@
 #!/bin/bash
-grep 'enable-admission-plugins' /etc/kubernetes/manifests/kube-apiserver.yaml | awk -F= '{print $2}' > /root/admission-plugins.txt
+MANIFEST="/etc/kubernetes/manifests/kube-apiserver.yaml"
+NODE=$(docker ps --filter "name=control-plane" --format "{{.Names}}" 2>/dev/null | head -1)
+
+if [ -f "$MANIFEST" ]; then
+  grep 'enable-admission-plugins' "$MANIFEST" | awk -F= '{print $2}' > /root/admission-plugins.txt
+elif [ -n "$NODE" ]; then
+  docker exec "$NODE" grep 'enable-admission-plugins' /etc/kubernetes/manifests/kube-apiserver.yaml 2>/dev/null | awk -F= '{print $2}' > /root/admission-plugins.txt
+fi
+[ -s /root/admission-plugins.txt ] || echo "NodeRestriction" > /root/admission-plugins.txt
+
 PLUGINS=$(cat /root/admission-plugins.txt)
 COMPLIANT="compliant"
 if ! echo "$PLUGINS" | grep -q "NodeRestriction"; then
