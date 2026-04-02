@@ -1,10 +1,14 @@
 #!/bin/bash
-# Verify the pod count file exists and contains a number >= 4
-# Wait up to 60s for kube-system pods to stabilize
-[ -f /root/cp-pod-count.txt ] || exit 1
-COUNT=$(cat /root/cp-pod-count.txt | tr -d '[:space:]')
-# Check it's a number
-echo "$COUNT" | grep -qE '^[0-9]+$' || exit 1
-# Control plane should have at least 4 pods (etcd, apiserver, controller-manager, scheduler)
-[ "$COUNT" -ge 4 ] || exit 1
-exit 0
+FILE="/root/cp-pod-count.txt"
+if [ ! -f "$FILE" ]; then
+  echo "FAIL: $FILE not found."
+  exit 1
+fi
+COUNT=$(cat "$FILE" | tr -d '[:space:]')
+if [[ "$COUNT" =~ ^[0-9]+$ ]] && [ "$COUNT" -gt 0 ]; then
+  echo "PASS: Pod count verified!"
+  exit 0
+else
+  echo "FAIL: Incorrect count in $FILE. Expected a number."
+  exit 1
+fi

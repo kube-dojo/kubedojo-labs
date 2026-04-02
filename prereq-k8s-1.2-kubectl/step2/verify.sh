@@ -1,8 +1,13 @@
 #!/bin/bash
-# Verify kubelet version file exists and contains a version string
-[ -f /root/kubelet-version.txt ] || exit 1
-VERSION=$(cat /root/kubelet-version.txt | tr -d '[:space:]')
-[ -z "$VERSION" ] && exit 1
-# Should match a pattern like v1.XX.X
-echo "$VERSION" | grep -qE '^v1\.' || exit 1
-exit 0
+FILE="/root/pod-spec.yaml"
+if [ ! -f "$FILE" ]; then
+  echo "FAIL: $FILE not found."
+  exit 1
+fi
+if grep -q "kind: Pod" "$FILE" && grep -q "containers:" "$FILE"; then
+  echo "PASS: Pod spec generated!"
+  exit 0
+else
+  echo "FAIL: $FILE does not appear to be a valid Pod spec. Use 'kubectl explain pod --recursive'."
+  exit 1
+fi

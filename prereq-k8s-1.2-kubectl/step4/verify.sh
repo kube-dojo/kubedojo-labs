@@ -1,6 +1,13 @@
 #!/bin/bash
-# Verify the nginx pod manifest exists and has correct content
-[ -f /root/nginx-pod.yaml ] || exit 1
-grep -q "kind: Pod" /root/nginx-pod.yaml 2>/dev/null || exit 1
-grep -q "nginx" /root/nginx-pod.yaml 2>/dev/null || exit 1
-exit 0
+FILE="/root/nginx-pod.yaml"
+if [ ! -f "$FILE" ]; then
+  echo "FAIL: $FILE not found."
+  exit 1
+fi
+if grep -q "kind: Pod" "$FILE" && grep -q "name: nginx" "$FILE" && grep -q "image: nginx:1.25" "$FILE"; then
+  echo "PASS: nginx-pod.yaml generated correctly!"
+  exit 0
+else
+  echo "FAIL: $FILE is missing required Pod details (nginx name or image)."
+  exit 1
+fi

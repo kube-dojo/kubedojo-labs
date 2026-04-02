@@ -1,63 +1,24 @@
-## Step 2: Describe Resources
+## Step 2: Get API Documentation
 
-`kubectl describe` gives you detailed information about a specific resource — much more than `get`.
+Kubernetes is built on a massive REST API. `kubectl explain` is your best friend for understanding YAML fields.
 
-### Describe the node
-
-First, find your node's name:
-
+### Explain a resource
 ```bash
-NODE=$(kubectl get nodes -o jsonpath='{.items[0].metadata.name}')
-echo $NODE
+kubectl explain pod
 ```
 
-Then describe it:
-
+### Get deep details
 ```bash
-kubectl describe node $NODE
-```
-
-This outputs a wall of text. Here's what to look for:
-
-| Section | What it tells you |
-|---------|-------------------|
-| **Labels** | Metadata tags on the node |
-| **Conditions** | Is the node Ready, under pressure, etc. |
-| **Capacity** | Total CPU, memory, pods the node can handle |
-| **Allocatable** | Resources available after system reservations |
-| **System Info** | OS, kernel, kubelet version, container runtime |
-| **Non-terminated Pods** | What's running on this node right now |
-
-### Find a specific detail
-
-You can pipe through `grep` to find exactly what you need:
-
-```bash
-kubectl describe node $NODE | grep "Kubelet Version"
+kubectl explain pod.spec.containers --recursive
 ```
 
 ### Your task
-
-Find the kubelet version running on your node and save it to:
-
-```
-/root/kubelet-version.txt
-```
-
-The file should contain just the version string (e.g., `v1.31.0`).
+Generate a YAML manifest for a simple pod using `nginx:1.25` and save it to `/root/pod-spec.yaml`.
 
 <details>
 <summary>Hint</summary>
 
 ```bash
-NODE=$(kubectl get nodes -o jsonpath='{.items[0].metadata.name}')
-kubectl get node $NODE -o jsonpath='{.status.nodeInfo.kubeletVersion}' > /root/kubelet-version.txt
-```
-
-Or using describe and grep:
-
-```bash
-NODE=$(kubectl get nodes -o jsonpath='{.items[0].metadata.name}')
-kubectl describe node $NODE | grep "Kubelet Version" | awk '{print $NF}' > /root/kubelet-version.txt
+kubectl run nginx-pod --image=nginx:1.25 --dry-run=client -o yaml > /root/pod-spec.yaml
 ```
 </details>

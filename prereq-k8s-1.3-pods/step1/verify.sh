@@ -1,10 +1,6 @@
 #!/bin/bash
-# Verify pod "web" exists and is Running
-# Wait up to 60s for the pod to reach Running state (image pull may take time)
-for i in $(seq 1 30); do
-  if kubectl get pod web -o jsonpath='{.status.phase}' 2>/dev/null | grep -q "Running"; then
-    exit 0
-  fi
-  sleep 2
-done
+if ! kubectl get pod web >/dev/null 2>&1; then echo "FAIL: Pod 'web' not found."; exit 1; fi
+STATUS=$(kubectl get pod web -o jsonpath='{.status.phase}')
+if [ "$STATUS" = "Running" ]; then echo "PASS: Pod 'web' is running!"; exit 0; fi
+echo "FAIL: Pod 'web' is in state $STATUS. Wait for it to become Running."
 exit 1
