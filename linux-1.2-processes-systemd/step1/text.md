@@ -24,7 +24,7 @@ The STAT column often has modifiers:
 
 ### Your task
 
-List all unique process states currently in use on the system and save them to `/root/process-states.txt` (one state code per line, e.g., `S`, `R`, `I`).
+List all unique process states currently in use on the system and save them to `~/process-states.txt` (one state code per line, e.g., `S`, `R`, `I`).
 
 <details>
 <summary>Hint</summary>
@@ -32,6 +32,6 @@ List all unique process states currently in use on the system and save them to `
 Extract the first character of the STAT column:
 
 ```bash
-ps -eo stat --no-headers | cut -c1 | sort -u > /root/process-states.txt
+ps -eo stat --no-headers | cut -c1 | sort -u > ~/process-states.txt
 ```
 </details>

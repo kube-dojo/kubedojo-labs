@@ -1,4 +1,6 @@
 #!/bin/bash
+if id 'ubuntu' &>/dev/null; then USER_HOME='/home/ubuntu'; else USER_HOME='/root'; fi
+#!/bin/bash
 POLICY="/etc/kubernetes/audit/exam-policy.yaml"
 if [ ! -f "$POLICY" ]; then
   echo "FAIL: $POLICY not found"
@@ -12,11 +14,11 @@ if ! grep -q "kube-system" "$POLICY"; then
   echo "FAIL: Missing kube-system namespace rule"
   exit 1
 fi
-if [ ! -f /root/exam-notes.txt ]; then
-  echo "FAIL: /root/exam-notes.txt not found"
+if [ ! -f $USER_HOME/exam-notes.txt ]; then
+  echo "FAIL: $USER_HOME/exam-notes.txt not found"
   exit 1
 fi
-LINES=$(wc -l < /root/exam-notes.txt | tr -d ' ')
+LINES=$(wc -l < $USER_HOME/exam-notes.txt | tr -d ' ')
 if [ "$LINES" -lt 9 ]; then
   echo "FAIL: Expected at least 9 lines in exam-notes.txt, got $LINES"
   exit 1

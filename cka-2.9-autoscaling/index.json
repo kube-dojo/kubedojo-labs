@@ -1,12 +1,13 @@
 {
-  "title": "Autoscaling — HPA, Manual Scaling & VPA Concepts",
+  "title": "Autoscaling \u2014 HPA, Manual Scaling & VPA Concepts",
   "description": "Configure Horizontal Pod Autoscalers, scale deployments manually, and explore Vertical Pod Autoscaler concepts.",
   "backend": {
     "imageid": "kubernetes-kubeadm-1node"
   },
   "details": {
     "intro": {
-      "text": "intro.md"
+      "text": "intro.md",
+      "background": "setup.sh"
     },
     "steps": [
       {

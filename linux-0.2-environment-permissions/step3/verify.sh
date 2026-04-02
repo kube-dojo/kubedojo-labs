@@ -1,12 +1,14 @@
 #!/bin/bash
-# Verify /root/suid-bins.txt exists and contains known SUID binaries
-if [ ! -f /root/suid-bins.txt ]; then
-  echo "/root/suid-bins.txt does not exist"
+if id 'ubuntu' &>/dev/null; then USER_HOME='/home/ubuntu'; else USER_HOME='/root'; fi
+#!/bin/bash
+# Verify $USER_HOME/suid-bins.txt exists and contains known SUID binaries
+if [ ! -f $USER_HOME/suid-bins.txt ]; then
+  echo "$USER_HOME/suid-bins.txt does not exist"
   exit 1
 fi
 
-if grep -q "passwd" /root/suid-bins.txt; then
-  lines=$(wc -l < /root/suid-bins.txt | tr -d '[:space:]')
+if grep -q "passwd" $USER_HOME/suid-bins.txt; then
+  lines=$(wc -l < $USER_HOME/suid-bins.txt | tr -d '[:space:]')
   echo "Found $lines SUID binaries including passwd. Good security audit!"
   exit 0
 else

@@ -1,4 +1,6 @@
 #!/bin/bash
+if id 'ubuntu' &>/dev/null; then USER_HOME='/home/ubuntu'; else USER_HOME='/root'; fi
+#!/bin/bash
 for i in $(seq 1 30); do
   PVC_STATUS=$(kubectl get pvc pvc-data -n volumes-lab -o jsonpath='{.status.phase}' 2>/dev/null)
   [ "$PVC_STATUS" = "Bound" ] && break
@@ -15,11 +17,11 @@ if [ "$PV_CAP" != "1Gi" ]; then
   exit 1
 fi
 
-if [ ! -f /root/pvc-status.txt ]; then
-  echo "FAIL: /root/pvc-status.txt not found"
+if [ ! -f $USER_HOME/pvc-status.txt ]; then
+  echo "FAIL: $USER_HOME/pvc-status.txt not found"
   exit 1
 fi
-FILE_STATUS=$(cat /root/pvc-status.txt | tr -d '[:space:]')
+FILE_STATUS=$(cat $USER_HOME/pvc-status.txt | tr -d '[:space:]')
 if [ "$FILE_STATUS" != "Bound" ]; then
   echo "FAIL: pvc-status.txt should contain Bound"
   exit 1

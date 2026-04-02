@@ -34,18 +34,18 @@ sysctl -p   # reload
 
 ### Your task
 
-Read the current value of `net.ipv4.ip_forward` and save it to `/root/ip-forward.txt`.
+Read the current value of `net.ipv4.ip_forward` and save it to `~/ip-forward.txt`.
 
 <details>
 <summary>Hint</summary>
 
 ```bash
-sysctl -n net.ipv4.ip_forward > /root/ip-forward.txt
+sysctl -n net.ipv4.ip_forward > ~/ip-forward.txt
 ```
 
 Or:
 
 ```bash
-cat /proc/sys/net/ipv4/ip_forward > /root/ip-forward.txt
+cat /proc/sys/net/ipv4/ip_forward > ~/ip-forward.txt
 ```
 </details>

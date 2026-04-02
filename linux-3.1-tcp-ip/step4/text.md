@@ -24,7 +24,7 @@ grep ssh /etc/services         # Find SSH entries
 
 ## Task
 
-Find the service that runs on port 22 by looking it up in `/etc/services`. Save the service name to `/root/port22-service.txt`.
+Find the service that runs on port 22 by looking it up in `/etc/services`. Save the service name to `~/port22-service.txt`.
 
 <details>
 <summary>Hint 1</summary>
@@ -33,5 +33,5 @@ Use <code>grep</code> to search for port 22 in <code>/etc/services</code>.
 
 <details>
 <summary>Hint 2</summary>
-<code>grep -w "22/tcp" /etc/services | awk '{print $1}' > /root/port22-service.txt</code>
+<code>grep -w "22/tcp" /etc/services | awk '{print $1}' > ~/port22-service.txt</code>
 </details>

@@ -26,7 +26,7 @@ The `aa-status` output shows:
 1. Verify AppArmor is enabled on the system
 2. Run `aa-status` to list all loaded profiles
 3. Count the number of profiles in **enforce** mode
-4. Save that count (just the number) to `/root/enforce-count.txt`
+4. Save that count (just the number) to `~/enforce-count.txt`
 
 <details>
 <summary>Refer to: aa-status(8)</summary>

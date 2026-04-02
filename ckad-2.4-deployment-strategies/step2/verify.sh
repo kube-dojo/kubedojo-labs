@@ -1,4 +1,6 @@
 #!/bin/bash
+if id 'ubuntu' &>/dev/null; then USER_HOME='/home/ubuntu'; else USER_HOME='/root'; fi
+#!/bin/bash
 TYPE=$(kubectl get deployment recreate-app -n strategy-lab -o jsonpath='{.spec.strategy.type}' 2>/dev/null)
 if [ "$TYPE" != "Recreate" ]; then
   echo "FAIL: Strategy should be Recreate, got: $TYPE"
@@ -9,8 +11,8 @@ if [ "$IMG" != "httpd:2.4.59" ]; then
   echo "FAIL: Image should be httpd:2.4.59"
   exit 1
 fi
-if [ ! -f /root/recreate-strategy.txt ]; then
-  echo "FAIL: /root/recreate-strategy.txt not found"
+if [ ! -f $USER_HOME/recreate-strategy.txt ]; then
+  echo "FAIL: $USER_HOME/recreate-strategy.txt not found"
   exit 1
 fi
 echo "PASS"

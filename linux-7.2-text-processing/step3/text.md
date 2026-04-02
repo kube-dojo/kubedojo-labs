@@ -23,7 +23,7 @@ cat file.txt | tr -s ' ' '\n' | tr '[:upper:]' '[:lower:]' | sort | uniq -c | so
 
 ## Your Task
 
-Process `/root/sample.log` to find the **top 10 most frequent words** (case-insensitive, excluding timestamps). Save to `/root/word-freq.txt`.
+Process `~/sample.log` to find the **top 10 most frequent words** (case-insensitive, excluding timestamps). Save to `~/word-freq.txt`.
 
 Each line should have the count and word:
 ```
@@ -34,5 +34,5 @@ Each line should have the count and word:
 
 **Hint:**
 ```bash
-awk '{for(i=3;i<=NF;i++) print tolower($i)}' /root/sample.log | sort | uniq -c | sort -rn | head -10 > /root/word-freq.txt
+awk '{for(i=3;i<=NF;i++) print tolower($i)}' ~/sample.log | sort | uniq -c | sort -rn | head -10 > ~/word-freq.txt
 ```

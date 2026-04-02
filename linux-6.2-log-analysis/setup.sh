@@ -38,3 +38,9 @@ cat > /root/app.log << 'EOF'
 EOF
 
 echo "Setup complete. Log files created at /root/access.log and /root/app.log"
+
+# Seed /home/ubuntu if it exists
+if [ -d /home/ubuntu ]; then
+  cp -r /root/* /home/ubuntu/ 2>/dev/null || true
+  chown -R ubuntu:ubuntu /home/ubuntu/ 2>/dev/null || true
+fi

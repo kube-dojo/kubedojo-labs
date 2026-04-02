@@ -1,12 +1,14 @@
 #!/bin/bash
-if [ ! -f /root/system-report.html ]; then
-  echo "FAIL: /root/system-report.html not found"
+if id 'ubuntu' &>/dev/null; then USER_HOME='/home/ubuntu'; else USER_HOME='/root'; fi
+#!/bin/bash
+if [ ! -f $USER_HOME/system-report.html ]; then
+  echo "FAIL: $USER_HOME/system-report.html not found"
   exit 1
 fi
 
 ERRORS=0
 for tag in "<html" "<h1" "<h2" "<pre" "$(hostname)"; do
-  if ! grep -qi "$tag" /root/system-report.html; then
+  if ! grep -qi "$tag" $USER_HOME/system-report.html; then
     echo "WARN: Missing expected content: $tag"
     ERRORS=$((ERRORS + 1))
   fi

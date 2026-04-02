@@ -25,8 +25,8 @@ Key columns:
 
 ## Your Task
 
-1. Run `iostat -xz 1 1` and save the full output to `/root/iostat.txt`
+1. Run `iostat -xz 1 1` and save the full output to `~/iostat.txt`
 
 ```bash
-iostat -xz 1 1 > /root/iostat.txt
+iostat -xz 1 1 > ~/iostat.txt
 ```

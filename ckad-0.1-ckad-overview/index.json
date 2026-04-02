@@ -5,7 +5,8 @@
   "time": "25 minutes",
   "details": {
     "intro": {
-      "text": "intro.md"
+      "text": "intro.md",
+      "background": "setup.sh"
     },
     "steps": [
       {
@@ -21,7 +22,7 @@
         "solution": "step2/solution.sh"
       },
       {
-        "title": "Timed challenge — create resources under pressure",
+        "title": "Timed challenge \u2014 create resources under pressure",
         "text": "step3/text.md",
         "verify": "step3/verify.sh",
         "solution": "step3/solution.sh"

@@ -29,10 +29,10 @@ strace -p <PID> -c    # Summary of syscalls
 ## Your Task
 
 1. Run `strace` on `ls /tmp` and capture the output
-2. Save it to `/root/strace-output.txt`
+2. Save it to `~/strace-output.txt`
 
 ```bash
-strace ls /tmp 2>&1 > /root/strace-output.txt
+strace ls /tmp 2>&1 > ~/strace-output.txt
 ```
 
 Note: `strace` outputs to stderr, so we redirect with `2>&1`.

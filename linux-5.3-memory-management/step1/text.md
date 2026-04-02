@@ -30,7 +30,7 @@ Memory columns: `swpd` (swap used), `free`, `buff` (buffers), `cache`.
 
 ## Your Task
 
-1. Extract the following three values (in MB) and save them to `/root/mem-stats.txt`:
+1. Extract the following three values (in MB) and save them to `~/mem-stats.txt`:
    - Total memory
    - Used memory
    - Available memory

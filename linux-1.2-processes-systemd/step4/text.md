@@ -33,18 +33,18 @@ When you set `resources.limits.cpu: "500m"` on a pod, Kubernetes tells the conta
 
 ### Your task
 
-List the available cgroup controllers and save to `/root/cgroup-controllers.txt`.
+List the available cgroup controllers and save to `~/cgroup-controllers.txt`.
 
 <details>
 <summary>Hint</summary>
 
 ```bash
-cat /sys/fs/cgroup/cgroup.controllers > /root/cgroup-controllers.txt
+cat /sys/fs/cgroup/cgroup.controllers > ~/cgroup-controllers.txt
 ```
 
 If that file doesn't exist (cgroups v1), try:
 
 ```bash
-ls /sys/fs/cgroup/ > /root/cgroup-controllers.txt
+ls /sys/fs/cgroup/ > ~/cgroup-controllers.txt
 ```
 </details>

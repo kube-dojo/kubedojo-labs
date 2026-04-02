@@ -1,12 +1,13 @@
 {
-  "title": "Logging & Monitoring — Container Logs, Events & Resource Usage",
+  "title": "Logging & Monitoring \u2014 Container Logs, Events & Resource Usage",
   "description": "Master container log inspection, cluster event analysis, and resource usage monitoring for effective Kubernetes troubleshooting.",
   "backend": {
     "imageid": "kubernetes-kubeadm-1node"
   },
   "details": {
     "intro": {
-      "text": "intro.md"
+      "text": "intro.md",
+      "background": "setup.sh"
     },
     "steps": [
       {

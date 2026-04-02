@@ -8,3 +8,9 @@ kubectl run fix-me-1 --image=nginx -n exam-practice --overrides='{"spec":{"conta
 kubectl run fix-me-2 --image=nginx -n exam-practice --overrides='{"spec":{"containers":[{"name":"fix-me-2","image":"nginx","securityContext":{"runAsUser":0}}]}}'
 kubectl create serviceaccount exam-sa -n exam-practice
 echo "Setup complete."
+
+# Seed /home/ubuntu if it exists
+if [ -d /home/ubuntu ]; then
+  cp -r /root/* /home/ubuntu/ 2>/dev/null || true
+  chown -R ubuntu:ubuntu /home/ubuntu/ 2>/dev/null || true
+fi

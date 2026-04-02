@@ -19,7 +19,7 @@ Each stage should:
 
 ## Your Task
 
-Write `/root/pipeline.sh` that:
+Write `~/pipeline.sh` that:
 
 1. Defines three functions: `build()`, `test()`, and `deploy()`
 2. Each function prints a banner, simulates work, and reports success

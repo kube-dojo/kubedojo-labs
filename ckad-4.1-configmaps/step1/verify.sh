@@ -1,4 +1,6 @@
 #!/bin/bash
+if id 'ubuntu' &>/dev/null; then USER_HOME='/home/ubuntu'; else USER_HOME='/root'; fi
+#!/bin/bash
 VAL=$(kubectl get configmap app-config -n cm-lab -o jsonpath='{.data.APP_ENV}' 2>/dev/null)
 if [ "$VAL" != "production" ]; then
   echo "FAIL: app-config should have APP_ENV=production"
@@ -9,8 +11,8 @@ if [ $? -ne 0 ]; then
   echo "FAIL: file-config ConfigMap not found"
   exit 1
 fi
-if [ ! -f /root/cm-data.txt ]; then
-  echo "FAIL: /root/cm-data.txt not found"
+if [ ! -f $USER_HOME/cm-data.txt ]; then
+  echo "FAIL: $USER_HOME/cm-data.txt not found"
   exit 1
 fi
 echo "PASS"

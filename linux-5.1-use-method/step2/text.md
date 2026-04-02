@@ -29,10 +29,10 @@ A CPU-intensive process has been started in the background.
 ## Your Task
 
 1. Use `pidstat` or `ps` to identify the process consuming the most CPU
-2. Save its PID to `/root/cpu-hog.txt`
+2. Save its PID to `~/cpu-hog.txt`
 
 **Hint:**
 ```bash
 # Find the top CPU consumer (excluding pidstat itself)
-ps aux --sort=-%cpu | awk 'NR==2 {print $2}' > /root/cpu-hog.txt
+ps aux --sort=-%cpu | awk 'NR==2 {print $2}' > ~/cpu-hog.txt
 ```

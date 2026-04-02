@@ -28,7 +28,7 @@ ip link show
 
 ### Your task
 
-Find your primary (non-loopback) IP address and save it to `/root/my-ip.txt`.
+Find your primary (non-loopback) IP address and save it to `~/my-ip.txt`.
 
 The file should contain just the IP address (e.g., `172.17.0.2`).
 
@@ -38,12 +38,12 @@ The file should contain just the IP address (e.g., `172.17.0.2`).
 Extract the IP from `ip addr`:
 
 ```bash
-ip -4 addr show scope global | grep inet | awk '{print $2}' | cut -d/ -f1 | head -1 > /root/my-ip.txt
+ip -4 addr show scope global | grep inet | awk '{print $2}' | cut -d/ -f1 | head -1 > ~/my-ip.txt
 ```
 
 Or use `hostname -I`:
 
 ```bash
-hostname -I | awk '{print $1}' > /root/my-ip.txt
+hostname -I | awk '{print $1}' > ~/my-ip.txt
 ```
 </details>

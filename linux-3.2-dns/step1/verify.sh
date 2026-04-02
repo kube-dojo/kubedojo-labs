@@ -1,4 +1,6 @@
 #!/bin/bash
+if id 'ubuntu' &>/dev/null; then USER_HOME='/home/ubuntu'; else USER_HOME='/root'; fi
+#!/bin/bash
 # Verify that myapp.local resolves via /etc/hosts (ping will resolve even if host is unreachable)
 if ping -c1 -W2 myapp.local > /dev/null 2>&1; then
   echo "PASS: myapp.local resolves and is reachable"

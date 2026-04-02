@@ -1,4 +1,6 @@
 #!/bin/bash
+if id 'ubuntu' &>/dev/null; then USER_HOME='/home/ubuntu'; else USER_HOME='/root'; fi
+#!/bin/bash
 if ! kubectl get clusterrole dashboard-viewer &>/dev/null; then
   echo "FAIL: ClusterRole dashboard-viewer not found"
   exit 1
@@ -12,8 +14,8 @@ if [ "$RESULT" == "yes" ]; then
   echo "FAIL: dashboard-readonly should NOT be able to get secrets"
   exit 1
 fi
-if [ ! -f /root/readonly-secrets-check.txt ]; then
-  echo "FAIL: /root/readonly-secrets-check.txt not found"
+if [ ! -f $USER_HOME/readonly-secrets-check.txt ]; then
+  echo "FAIL: $USER_HOME/readonly-secrets-check.txt not found"
   exit 1
 fi
 echo "PASS"

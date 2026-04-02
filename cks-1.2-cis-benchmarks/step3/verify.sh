@@ -1,4 +1,6 @@
 #!/bin/bash
+if id 'ubuntu' &>/dev/null; then USER_HOME='/home/ubuntu'; else USER_HOME='/root'; fi
+#!/bin/bash
 CONFIG="/var/lib/kubelet/config.yaml"
 FOUND_READONLY=false
 
@@ -13,16 +15,16 @@ else
 fi
 
 # Also accept backup file as evidence
-if [ "$FOUND_READONLY" = false ] && [ -f /root/kubelet-config-backup.yaml ]; then
-  grep -q "readOnlyPort" /root/kubelet-config-backup.yaml && FOUND_READONLY=true
+if [ "$FOUND_READONLY" = false ] && [ -f $USER_HOME/kubelet-config-backup.yaml ]; then
+  grep -q "readOnlyPort" $USER_HOME/kubelet-config-backup.yaml && FOUND_READONLY=true
 fi
 
 if [ "$FOUND_READONLY" = false ]; then
   echo "FAIL: readOnlyPort should be 0"
   exit 1
 fi
-if [ ! -f /root/kubelet-status.txt ] || [ ! -s /root/kubelet-status.txt ]; then
-  echo "FAIL: /root/kubelet-status.txt missing or empty"
+if [ ! -f $USER_HOME/kubelet-status.txt ] || [ ! -s $USER_HOME/kubelet-status.txt ]; then
+  echo "FAIL: $USER_HOME/kubelet-status.txt missing or empty"
   exit 1
 fi
 echo "PASS"

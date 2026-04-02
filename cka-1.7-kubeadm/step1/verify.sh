@@ -1,5 +1,7 @@
 #!/bin/bash
-FILE="/root/cluster-name.txt"
+if id 'ubuntu' &>/dev/null; then USER_HOME='/home/ubuntu'; else USER_HOME='/root'; fi
+#!/bin/bash
+FILE="$USER_HOME/cluster-name.txt"
 if [ ! -f "$FILE" ]; then
   echo "FAIL: $FILE does not exist"
   exit 1

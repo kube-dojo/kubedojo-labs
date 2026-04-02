@@ -1,5 +1,7 @@
 #!/bin/bash
-FILE="/root/web-pod-ip.txt"
+if id 'ubuntu' &>/dev/null; then USER_HOME='/home/ubuntu'; else USER_HOME='/root'; fi
+#!/bin/bash
+FILE="$USER_HOME/web-pod-ip.txt"
 if [ ! -f "$FILE" ]; then
   echo "FAIL: $FILE not found."
   exit 1

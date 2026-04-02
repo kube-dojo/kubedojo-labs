@@ -26,3 +26,9 @@ kubectl wait --for=condition=Available deployment/webapp -n practice --timeout=6
 kubectl set image deployment/webapp nginx=nginx:nonexistent-tag -n practice 2>/dev/null
 
 echo "Kubernetes cluster ready. Broken resources created for troubleshooting."
+
+# Seed /home/ubuntu if it exists
+if [ -d /home/ubuntu ]; then
+  cp -r /root/* /home/ubuntu/ 2>/dev/null || true
+  chown -R ubuntu:ubuntu /home/ubuntu/ 2>/dev/null || true
+fi

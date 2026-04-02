@@ -34,7 +34,7 @@ ps -p 1 -o comm=
 
 ### Your task
 
-Find the name of the PID 1 process and save it to `/root/init-name.txt`.
+Find the name of the PID 1 process and save it to `~/init-name.txt`.
 
 <details>
 <summary>Hint</summary>
@@ -42,12 +42,12 @@ Find the name of the PID 1 process and save it to `/root/init-name.txt`.
 Use `ps` to query PID 1:
 
 ```bash
-ps -p 1 -o comm= > /root/init-name.txt
+ps -p 1 -o comm= > ~/init-name.txt
 ```
 
 Or read it from `/proc`:
 
 ```bash
-cat /proc/1/comm > /root/init-name.txt
+cat /proc/1/comm > ~/init-name.txt
 ```
 </details>

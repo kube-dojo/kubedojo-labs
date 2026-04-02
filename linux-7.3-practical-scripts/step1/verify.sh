@@ -1,6 +1,8 @@
 #!/bin/bash
+if id 'ubuntu' &>/dev/null; then USER_HOME='/home/ubuntu'; else USER_HOME='/root'; fi
+#!/bin/bash
 DATE=$(date +%Y%m%d)
-BACKUP="/root/backups/etc-${DATE}.tar.gz"
+BACKUP="$USER_HOME/backups/etc-${DATE}.tar.gz"
 
 if [ -f "$BACKUP" ]; then
   SIZE=$(ls -lh "$BACKUP" | awk '{print $5}')
@@ -8,8 +10,8 @@ if [ -f "$BACKUP" ]; then
   exit 0
 else
   # Check for any backup file
-  if ls /root/backups/etc-*.tar.gz > /dev/null 2>&1; then
-    echo "PASS: Backup file found in /root/backups/"
+  if ls $USER_HOME/backups/etc-*.tar.gz > /dev/null 2>&1; then
+    echo "PASS: Backup file found in $USER_HOME/backups/"
     exit 0
   fi
   echo "FAIL: No backup file found at $BACKUP"

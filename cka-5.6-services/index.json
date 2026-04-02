@@ -1,12 +1,13 @@
 {
-  "title": "Service Troubleshooting — Missing Endpoints, Selector Mismatch & Port Issues",
+  "title": "Service Troubleshooting \u2014 Missing Endpoints, Selector Mismatch & Port Issues",
   "description": "Diagnose and fix service-level issues: missing endpoints, selector mismatches, wrong port configurations, and service type problems.",
   "backend": {
     "imageid": "kubernetes-kubeadm-1node"
   },
   "details": {
     "intro": {
-      "text": "intro.md"
+      "text": "intro.md",
+      "background": "setup.sh"
     },
     "steps": [
       {

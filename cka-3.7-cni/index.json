@@ -1,12 +1,13 @@
 {
-  "title": "CNI — Plugin Inspection, Configuration & Troubleshooting",
+  "title": "CNI \u2014 Plugin Inspection, Configuration & Troubleshooting",
   "description": "Inspect the active CNI plugin, understand its configuration files, and troubleshoot common CNI issues that prevent pod networking.",
   "backend": {
     "imageid": "kubernetes-kubeadm-1node"
   },
   "details": {
     "intro": {
-      "text": "intro.md"
+      "text": "intro.md",
+      "background": "setup.sh"
     },
     "steps": [
       {

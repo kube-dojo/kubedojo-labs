@@ -1,4 +1,6 @@
 #!/bin/bash
+if id 'ubuntu' &>/dev/null; then USER_HOME='/home/ubuntu'; else USER_HOME='/root'; fi
+#!/bin/bash
 if ! kubectl get pod projected-token-pod -n sa-lab &>/dev/null; then
   echo "FAIL: Pod projected-token-pod not found"
   exit 1
@@ -9,8 +11,8 @@ if [ -z "$VOL" ]; then
   exit 1
 fi
 for f in projected-token.txt token-comparison.txt; do
-  if [ ! -f "/root/$f" ] || [ ! -s "/root/$f" ]; then
-    echo "FAIL: /root/$f missing or empty"
+  if [ ! -f "$USER_HOME/$f" ] || [ ! -s "$USER_HOME/$f" ]; then
+    echo "FAIL: $USER_HOME/$f missing or empty"
     exit 1
   fi
 done

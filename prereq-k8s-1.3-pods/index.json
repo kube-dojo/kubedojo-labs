@@ -1,12 +1,13 @@
 {
-  "title": "Pods — The Atomic Unit",
+  "title": "Pods \u2014 The Atomic Unit",
   "description": "Create pods imperatively and from YAML, inspect running pods, and manage their lifecycle.",
   "backend": {
     "imageid": "kubernetes-kubeadm-1node"
   },
   "details": {
     "intro": {
-      "text": "intro.md"
+      "text": "intro.md",
+      "background": "setup.sh"
     },
     "steps": [
       {

@@ -1,4 +1,6 @@
 #!/bin/bash
+if id 'ubuntu' &>/dev/null; then USER_HOME='/home/ubuntu'; else USER_HOME='/root'; fi
+#!/bin/bash
 for i in $(seq 1 30); do
   S=$(kubectl get pod resource-pod -n resources-lab -o jsonpath='{.status.phase}' 2>/dev/null)
   [ "$S" = "Running" ] && break
@@ -19,8 +21,8 @@ if [ "$MEM_LIM" != "128Mi" ]; then
   echo "FAIL: Memory limit should be 128Mi"
   exit 1
 fi
-if [ ! -f /root/cpu-limit.txt ]; then
-  echo "FAIL: /root/cpu-limit.txt not found"
+if [ ! -f $USER_HOME/cpu-limit.txt ]; then
+  echo "FAIL: $USER_HOME/cpu-limit.txt not found"
   exit 1
 fi
 echo "PASS"

@@ -1,5 +1,7 @@
 #!/bin/bash
-OUTPUT=$(kubectl kustomize /root/overlays/prod/ 2>/dev/null)
+if id 'ubuntu' &>/dev/null; then USER_HOME='/home/ubuntu'; else USER_HOME='/root'; fi
+#!/bin/bash
+OUTPUT=$(kubectl kustomize $USER_HOME/overlays/prod/ 2>/dev/null)
 if echo "$OUTPUT" | grep -q "name: prod-myapp" && echo "$OUTPUT" | grep -q "replicas: 3"; then
   echo "PASS: Overlay output verified with prefix and patch"
   exit 0

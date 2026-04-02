@@ -32,7 +32,7 @@ setsebool -P httpd_can_network_connect on
 1. Try to list all SELinux booleans with `getsebool -a`
 2. If SELinux is active, count the total number of booleans
 3. If SELinux is not active, document at least 5 important booleans and their purposes
-4. Save the result to `/root/sebooleans.txt`
+4. Save the result to `~/sebooleans.txt`
 
 <details>
 <summary>Refer to: getsebool(8), setsebool(8), semanage-boolean(8)</summary>

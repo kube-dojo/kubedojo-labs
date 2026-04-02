@@ -28,15 +28,15 @@ Each line shows: timestamp, protocol, source, destination, and packet info.
 ## Your Task
 
 1. Capture 10 packets on any interface
-2. Save a summary to `/root/tcpdump-output.txt`
+2. Save a summary to `~/tcpdump-output.txt`
 
 ```bash
-tcpdump -c 10 -n 2>&1 | head -15 > /root/tcpdump-output.txt
+tcpdump -c 10 -n 2>&1 | head -15 > ~/tcpdump-output.txt
 ```
 
 If no traffic is flowing, generate some first:
 ```bash
 # In background, generate traffic
 curl -s http://localhost/ > /dev/null 2>&1 &
-tcpdump -c 10 -n 2>&1 | head -15 > /root/tcpdump-output.txt
+tcpdump -c 10 -n 2>&1 | head -15 > ~/tcpdump-output.txt
 ```

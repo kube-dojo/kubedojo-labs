@@ -1,4 +1,6 @@
 #!/bin/bash
+if id 'ubuntu' &>/dev/null; then USER_HOME='/home/ubuntu'; else USER_HOME='/root'; fi
+#!/bin/bash
 # Check pod web
 for i in $(seq 1 30); do
   STATUS=$(kubectl get pod web -n ckad-practice -o jsonpath='{.status.phase}' 2>/dev/null)
@@ -20,8 +22,8 @@ if [ "$REPLICAS" != "3" ]; then
 fi
 
 # Check generator pod
-if [ ! -f /root/generator.yaml ]; then
-  echo "FAIL: /root/generator.yaml does not exist"
+if [ ! -f $USER_HOME/generator.yaml ]; then
+  echo "FAIL: $USER_HOME/generator.yaml does not exist"
   exit 1
 fi
 GEN_STATUS=$(kubectl get pod generator -n ckad-practice -o jsonpath='{.status.phase}' 2>/dev/null)

@@ -1,4 +1,6 @@
 #!/bin/bash
+if id 'ubuntu' &>/dev/null; then USER_HOME='/home/ubuntu'; else USER_HOME='/root'; fi
+#!/bin/bash
 # Verify: readiness-pod is Ready and service has endpoints
 for i in $(seq 1 30); do
   READY=$(kubectl get pod readiness-pod -n practice -o jsonpath='{.status.conditions[?(@.type=="Ready")].status}' 2>/dev/null)

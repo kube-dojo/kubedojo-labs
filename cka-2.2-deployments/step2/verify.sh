@@ -1,4 +1,6 @@
 #!/bin/bash
+if id 'ubuntu' &>/dev/null; then USER_HOME='/home/ubuntu'; else USER_HOME='/root'; fi
+#!/bin/bash
 HISTORY=$(kubectl rollout history deployment/web-deploy -n practice 2>/dev/null)
 COUNT=$(echo "$HISTORY" | tail -n +2 | wc -l | tr -d ' ')
 

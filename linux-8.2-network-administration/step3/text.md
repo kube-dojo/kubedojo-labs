@@ -39,10 +39,10 @@ iptables -P INPUT DROP
    - Allow established/related connections
    - Allow SSH (port 22)
    - Allow HTTP (port 80)
-2. Save the rules to `/root/firewall-rules.txt`
+2. Save the rules to `~/firewall-rules.txt`
 
 **Important:** Do NOT set the default policy to DROP in this lab, as it may lock you out.
 
 ```bash
-iptables -L -n > /root/firewall-rules.txt
+iptables -L -n > ~/firewall-rules.txt
 ```

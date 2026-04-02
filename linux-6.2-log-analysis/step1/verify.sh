@@ -1,10 +1,12 @@
 #!/bin/bash
-if [ ! -f /root/top-ips.txt ]; then
-  echo "FAIL: /root/top-ips.txt not found"
+if id 'ubuntu' &>/dev/null; then USER_HOME='/home/ubuntu'; else USER_HOME='/root'; fi
+#!/bin/bash
+if [ ! -f $USER_HOME/top-ips.txt ]; then
+  echo "FAIL: $USER_HOME/top-ips.txt not found"
   exit 1
 fi
 
-LINES=$(wc -l < /root/top-ips.txt)
+LINES=$(wc -l < $USER_HOME/top-ips.txt)
 if [ "$LINES" -eq 5 ]; then
   echo "PASS: top-ips.txt has exactly 5 lines"
   exit 0

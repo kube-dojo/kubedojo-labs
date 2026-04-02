@@ -27,12 +27,12 @@ Kubernetes containers inherit limits from the host (unless overridden). A common
 
 ### Your task
 
-Check the current open files limit (`ulimit -n`) and save it to `/root/nofile-limit.txt`.
+Check the current open files limit (`ulimit -n`) and save it to `~/nofile-limit.txt`.
 
 <details>
 <summary>Hint</summary>
 
 ```bash
-ulimit -n > /root/nofile-limit.txt
+ulimit -n > ~/nofile-limit.txt
 ```
 </details>

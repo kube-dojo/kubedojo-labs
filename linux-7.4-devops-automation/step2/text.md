@@ -33,7 +33,7 @@ echo '{"server":{"host":"localhost"}}' | jq '.server.host'
 
 A simple API server is running at `http://localhost:8080/`.
 
-Write `/root/api-check.sh` that:
+Write `~/api-check.sh` that:
 
 1. Makes a GET request to `http://localhost:8080/`
 2. Parses the JSON response with `jq`

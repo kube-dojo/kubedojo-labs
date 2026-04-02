@@ -1,4 +1,6 @@
 #!/bin/bash
+if id 'ubuntu' &>/dev/null; then USER_HOME='/home/ubuntu'; else USER_HOME='/root'; fi
+#!/bin/bash
 # Verify that veth1 exists inside lab-ns
 if ip netns exec lab-ns ip link show veth1 > /dev/null 2>&1; then
   echo "PASS: veth1 exists inside lab-ns"

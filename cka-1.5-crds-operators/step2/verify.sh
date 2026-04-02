@@ -1,4 +1,6 @@
 #!/bin/bash
+if id 'ubuntu' &>/dev/null; then USER_HOME='/home/ubuntu'; else USER_HOME='/root'; fi
+#!/bin/bash
 if ! kubectl get crd backups.kubedojo.io >/dev/null 2>&1; then
   echo "FAIL: CRD backups.kubedojo.io not found"
   exit 1

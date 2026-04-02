@@ -1,14 +1,16 @@
 #!/bin/bash
-# Verify that /root/gateway.txt exists and contains an IP address
-if [ ! -f /root/gateway.txt ]; then
-  echo "FAIL: /root/gateway.txt does not exist"
+if id 'ubuntu' &>/dev/null; then USER_HOME='/home/ubuntu'; else USER_HOME='/root'; fi
+#!/bin/bash
+# Verify that $USER_HOME/gateway.txt exists and contains an IP address
+if [ ! -f $USER_HOME/gateway.txt ]; then
+  echo "FAIL: $USER_HOME/gateway.txt does not exist"
   exit 1
 fi
 
-if grep -qE '[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+' /root/gateway.txt; then
+if grep -qE '[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+' $USER_HOME/gateway.txt; then
   echo "PASS: File contains a gateway IP"
   exit 0
 else
-  echo "FAIL: /root/gateway.txt does not contain an IP address"
+  echo "FAIL: $USER_HOME/gateway.txt does not contain an IP address"
   exit 1
 fi

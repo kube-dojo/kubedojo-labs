@@ -30,7 +30,7 @@ name="/some/path" pid=1234 comm="curl" requested_mask="r" denied_mask="r"
 1. Switch the curl profile to **complain** mode: `aa-complain /etc/apparmor.d/usr.bin.curl`
 2. Run `curl --version` (or `curl http://localhost` if a server is running)
 3. Check for AppArmor log entries: `dmesg | grep -i apparmor` or `grep -i apparmor /var/log/syslog`
-4. Save any AppArmor-related log entries to `/root/apparmor-logs.txt`
+4. Save any AppArmor-related log entries to `~/apparmor-logs.txt`
    - If no denial entries are found (common in complain mode with permissive profile), save the output of `aa-status` and note that no denials occurred
 
 <details>

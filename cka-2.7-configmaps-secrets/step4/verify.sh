@@ -1,4 +1,6 @@
 #!/bin/bash
+if id 'ubuntu' &>/dev/null; then USER_HOME='/home/ubuntu'; else USER_HOME='/root'; fi
+#!/bin/bash
 # Verify: pod has environment variables from ConfigMap
 for i in $(seq 1 30); do
   STATUS=$(kubectl get pod env-pod -n practice -o jsonpath='{.status.phase}' 2>/dev/null)

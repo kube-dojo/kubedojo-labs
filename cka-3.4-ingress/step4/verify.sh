@@ -1,4 +1,6 @@
 #!/bin/bash
+if id 'ubuntu' &>/dev/null; then USER_HOME='/home/ubuntu'; else USER_HOME='/root'; fi
+#!/bin/bash
 # Verify: TLS secret and TLS ingress exist
 SECRET=$(kubectl get secret tls-secret -n practice -o jsonpath='{.type}' 2>/dev/null)
 TLS_HOST=$(kubectl get ingress tls-ingress -n practice -o jsonpath='{.spec.tls[0].hosts[0]}' 2>/dev/null)

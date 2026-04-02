@@ -1,4 +1,6 @@
 #!/bin/bash
+if id 'ubuntu' &>/dev/null; then USER_HOME='/home/ubuntu'; else USER_HOME='/root'; fi
+#!/bin/bash
 # Verify: Secret exists and pod can read it
 SECRET=$(kubectl get secret db-creds -n practice -o jsonpath='{.metadata.name}' 2>/dev/null)
 [ "$SECRET" != "db-creds" ] && exit 1

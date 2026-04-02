@@ -72,3 +72,9 @@ kubectl wait --for=condition=Ready pod --all -n practice --timeout=60s 2>/dev/nu
 kubectl wait --for=condition=Ready pod --all -n isolated --timeout=60s 2>/dev/null
 
 echo "Kubernetes cluster ready. Broken networking resources created."
+
+# Seed /home/ubuntu if it exists
+if [ -d /home/ubuntu ]; then
+  cp -r /root/* /home/ubuntu/ 2>/dev/null || true
+  chown -R ubuntu:ubuntu /home/ubuntu/ 2>/dev/null || true
+fi

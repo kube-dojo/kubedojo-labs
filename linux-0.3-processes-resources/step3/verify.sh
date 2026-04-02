@@ -1,22 +1,24 @@
 #!/bin/bash
+if id 'ubuntu' &>/dev/null; then USER_HOME='/home/ubuntu'; else USER_HOME='/root'; fi
+#!/bin/bash
 # Verify both files exist with content
-if [ ! -f /root/memory.txt ]; then
-  echo "/root/memory.txt does not exist"
+if [ ! -f $USER_HOME/memory.txt ]; then
+  echo "$USER_HOME/memory.txt does not exist"
   exit 1
 fi
 
-if [ ! -s /root/memory.txt ]; then
-  echo "/root/memory.txt is empty"
+if [ ! -s $USER_HOME/memory.txt ]; then
+  echo "$USER_HOME/memory.txt is empty"
   exit 1
 fi
 
-if [ ! -f /root/disk.txt ]; then
-  echo "/root/disk.txt does not exist"
+if [ ! -f $USER_HOME/disk.txt ]; then
+  echo "$USER_HOME/disk.txt does not exist"
   exit 1
 fi
 
-if [ ! -s /root/disk.txt ]; then
-  echo "/root/disk.txt is empty"
+if [ ! -s $USER_HOME/disk.txt ]; then
+  echo "$USER_HOME/disk.txt is empty"
   exit 1
 fi
 

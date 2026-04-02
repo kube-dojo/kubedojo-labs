@@ -16,3 +16,9 @@ kubectl create namespace practice --dry-run=client -o yaml | kubectl apply -f -
 cp /etc/kubernetes/manifests/kube-scheduler.yaml /root/kube-scheduler-backup.yaml
 
 echo "Kubernetes cluster ready."
+
+# Seed /home/ubuntu if it exists
+if [ -d /home/ubuntu ]; then
+  cp -r /root/* /home/ubuntu/ 2>/dev/null || true
+  chown -R ubuntu:ubuntu /home/ubuntu/ 2>/dev/null || true
+fi

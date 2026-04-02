@@ -1,4 +1,6 @@
 #!/bin/bash
+if id 'ubuntu' &>/dev/null; then USER_HOME='/home/ubuntu'; else USER_HOME='/root'; fi
+#!/bin/bash
 # Verify: ResourceQuota exists with correct limits
 PODS=$(kubectl get quota ns-quota -n quota-test -o jsonpath='{.spec.hard.pods}' 2>/dev/null)
 CPU=$(kubectl get quota ns-quota -n quota-test -o jsonpath='{.spec.hard.requests\.cpu}' 2>/dev/null)

@@ -16,7 +16,7 @@ During the CKA exam, you can access `https://kubernetes.io/docs/` and its subdom
 
 ## Task
 
-Create `/root/bookmarks.txt` with at least 4 URLs from `kubernetes.io` covering: pod spec, deployment spec, services, and RBAC.
+Create `~/bookmarks.txt` with at least 4 URLs from `kubernetes.io` covering: pod spec, deployment spec, services, and RBAC.
 
 One URL per line.
 
@@ -24,7 +24,7 @@ One URL per line.
 <summary>Hint</summary>
 
 ```bash
-cat <<'EOF' > /root/bookmarks.txt
+cat <<'EOF' > ~/bookmarks.txt
 https://kubernetes.io/docs/reference/kubernetes-api/workload-resources/pod-v1/
 https://kubernetes.io/docs/reference/kubernetes-api/workload-resources/deployment-v1/
 https://kubernetes.io/docs/concepts/services-networking/service/

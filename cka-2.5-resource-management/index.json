@@ -1,12 +1,13 @@
 {
-  "title": "Resource Management — Quotas, Limits & Priorities",
+  "title": "Resource Management \u2014 Quotas, Limits & Priorities",
   "description": "Enforce resource quotas, limit ranges, and pod priority classes to manage cluster capacity.",
   "backend": {
     "imageid": "kubernetes-kubeadm-1node"
   },
   "details": {
     "intro": {
-      "text": "intro.md"
+      "text": "intro.md",
+      "background": "setup.sh"
     },
     "steps": [
       {

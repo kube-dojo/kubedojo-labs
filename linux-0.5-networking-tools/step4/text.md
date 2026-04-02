@@ -34,18 +34,18 @@ tcpdump -i any port 80     # capture HTTP traffic
 
 ### Your task
 
-List all listening TCP ports and save the output to `/root/listening-ports.txt`.
+List all listening TCP ports and save the output to `~/listening-ports.txt`.
 
 <details>
 <summary>Hint</summary>
 
 ```bash
-ss -tlnp > /root/listening-ports.txt
+ss -tlnp > ~/listening-ports.txt
 ```
 
 Or with netstat:
 
 ```bash
-netstat -tlnp > /root/listening-ports.txt
+netstat -tlnp > ~/listening-ports.txt
 ```
 </details>

@@ -31,7 +31,7 @@ done
 
 ## Your Task
 
-Write `/root/create-users.sh` that:
+Write `~/create-users.sh` that:
 
 1. Uses a loop to create 5 users: `testuser1` through `testuser5`
 2. Uses `useradd` to create each user

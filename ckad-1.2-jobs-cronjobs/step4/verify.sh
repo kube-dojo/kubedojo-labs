@@ -1,4 +1,6 @@
 #!/bin/bash
+if id 'ubuntu' &>/dev/null; then USER_HOME='/home/ubuntu'; else USER_HOME='/root'; fi
+#!/bin/bash
 # broken-job should be deleted
 kubectl get job broken-job -n jobs-lab > /dev/null 2>&1
 if [ $? -eq 0 ]; then

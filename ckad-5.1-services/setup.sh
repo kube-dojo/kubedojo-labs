@@ -10,3 +10,9 @@ kubectl create namespace svc-lab
 kubectl create deployment web --image=nginx:1.25 --replicas=3 -n svc-lab
 kubectl rollout status deployment/web -n svc-lab --timeout=60s
 echo "Cluster is ready!"
+
+# Seed /home/ubuntu if it exists
+if [ -d /home/ubuntu ]; then
+  cp -r /root/* /home/ubuntu/ 2>/dev/null || true
+  chown -R ubuntu:ubuntu /home/ubuntu/ 2>/dev/null || true
+fi

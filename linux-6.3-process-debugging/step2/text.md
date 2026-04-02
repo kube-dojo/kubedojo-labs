@@ -21,11 +21,11 @@ lsof -i -P -n      # All network connections
 
 ## Your Task
 
-A background process was started during setup. Its PID is in `/root/target-pid.txt`.
+A background process was started during setup. Its PID is in `~/target-pid.txt`.
 
 1. Use `lsof` to list all files opened by that process
-2. Save the output to `/root/open-files.txt`
+2. Save the output to `~/open-files.txt`
 
 ```bash
-lsof -p $(cat /root/target-pid.txt) > /root/open-files.txt
+lsof -p $(cat ~/target-pid.txt) > ~/open-files.txt
 ```

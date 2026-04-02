@@ -1,4 +1,6 @@
 #!/bin/bash
+if id 'ubuntu' &>/dev/null; then USER_HOME='/home/ubuntu'; else USER_HOME='/root'; fi
+#!/bin/bash
 if ! kubectl get rolebinding deployer-binding -n rbac-lab &>/dev/null; then
   echo "FAIL: RoleBinding deployer-binding not found"
   exit 1
@@ -16,8 +18,8 @@ if [ "$CAN_DEPLOY" != "yes" ]; then
   echo "FAIL: app-deployer should be able to create deployments"
   exit 1
 fi
-if [ ! -f /root/permission-check.txt ] || [ ! -s /root/permission-check.txt ]; then
-  echo "FAIL: /root/permission-check.txt missing or empty"
+if [ ! -f $USER_HOME/permission-check.txt ] || [ ! -s $USER_HOME/permission-check.txt ]; then
+  echo "FAIL: $USER_HOME/permission-check.txt missing or empty"
   exit 1
 fi
 echo "PASS"

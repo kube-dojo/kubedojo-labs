@@ -1,4 +1,6 @@
 #!/bin/bash
+if id 'ubuntu' &>/dev/null; then USER_HOME='/home/ubuntu'; else USER_HOME='/root'; fi
+#!/bin/bash
 IMAGE=$(kubectl get deployment web-deploy -n practice -o jsonpath='{.spec.template.spec.containers[0].image}' 2>/dev/null)
 if [ "$IMAGE" = "nginx:1.24" ]; then
   echo "PASS: Rollback to revision 1 (nginx:1.24) verified"

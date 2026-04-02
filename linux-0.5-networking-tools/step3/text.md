@@ -27,7 +27,7 @@ wget -qO- http://localhost  # quiet, output to stdout
 
 ### Your task
 
-Nginx should be running from setup. Check if port 80 on localhost is open and save the result to `/root/port-check.txt`.
+Nginx should be running from setup. Check if port 80 on localhost is open and save the result to `~/port-check.txt`.
 
 The file should contain the word "open" or "succeeded".
 
@@ -37,12 +37,12 @@ The file should contain the word "open" or "succeeded".
 Use `nc` to check the port:
 
 ```bash
-nc -zv localhost 80 2>&1 | grep -oE "(open|succeeded)" > /root/port-check.txt
+nc -zv localhost 80 2>&1 | grep -oE "(open|succeeded)" > ~/port-check.txt
 ```
 
 Or a simpler approach:
 
 ```bash
-if nc -z localhost 80 2>/dev/null; then echo "open"; else echo "closed"; fi > /root/port-check.txt
+if nc -z localhost 80 2>/dev/null; then echo "open"; else echo "closed"; fi > ~/port-check.txt
 ```
 </details>

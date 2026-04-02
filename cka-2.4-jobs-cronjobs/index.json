@@ -6,11 +6,12 @@
   },
   "details": {
     "intro": {
-      "text": "intro.md"
+      "text": "intro.md",
+      "background": "setup.sh"
     },
     "steps": [
       {
-        "title": "Job — run to completion",
+        "title": "Job \u2014 run to completion",
         "text": "step1/text.md",
         "verify": "step1/verify.sh"
       },

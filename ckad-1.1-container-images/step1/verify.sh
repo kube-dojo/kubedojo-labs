@@ -1,4 +1,6 @@
 #!/bin/bash
+if id 'ubuntu' &>/dev/null; then USER_HOME='/home/ubuntu'; else USER_HOME='/root'; fi
+#!/bin/bash
 for i in $(seq 1 30); do
   S=$(kubectl get pod always-pull -n images-lab -o jsonpath='{.status.phase}' 2>/dev/null)
   [ "$S" = "Running" ] && break
@@ -17,11 +19,11 @@ if [ "$PP2" != "IfNotPresent" ]; then
   exit 1
 fi
 
-if [ ! -f /root/pull-policy.txt ]; then
-  echo "FAIL: /root/pull-policy.txt does not exist"
+if [ ! -f $USER_HOME/pull-policy.txt ]; then
+  echo "FAIL: $USER_HOME/pull-policy.txt does not exist"
   exit 1
 fi
-CONTENT=$(cat /root/pull-policy.txt | tr -d '[:space:]')
+CONTENT=$(cat $USER_HOME/pull-policy.txt | tr -d '[:space:]')
 if [ "$CONTENT" != "Always" ]; then
   echo "FAIL: pull-policy.txt should contain Always, got: $CONTENT"
   exit 1

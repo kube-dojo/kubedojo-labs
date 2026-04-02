@@ -17,3 +17,9 @@ kubectl create deployment monitor-app --image=nginx:1.25 --replicas=3 -n monitor
 kubectl run stress-pod --image=busybox:1.36 -n monitoring-lab -- sh -c "while true; do echo stress; done"
 
 echo "Cluster is ready!"
+
+# Seed /home/ubuntu if it exists
+if [ -d /home/ubuntu ]; then
+  cp -r /root/* /home/ubuntu/ 2>/dev/null || true
+  chown -R ubuntu:ubuntu /home/ubuntu/ 2>/dev/null || true
+fi

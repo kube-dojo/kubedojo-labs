@@ -23,7 +23,7 @@ cat /proc/cmdline
 
 1. Read the current kernel boot parameters from `/proc/cmdline`
 2. Identify any security-relevant parameters present (or note their absence)
-3. Save your analysis to `/root/boot-params.txt` — include:
+3. Save your analysis to `~/boot-params.txt` — include:
    - The full contents of `/proc/cmdline`
    - Which security parameters are present or missing
    - At least one recommendation for improving boot security

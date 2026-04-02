@@ -1,12 +1,14 @@
 #!/bin/bash
-if [ ! -f /root/troubleshooting-report.txt ]; then
-  echo "FAIL: /root/troubleshooting-report.txt not found"
+if id 'ubuntu' &>/dev/null; then USER_HOME='/home/ubuntu'; else USER_HOME='/root'; fi
+#!/bin/bash
+if [ ! -f $USER_HOME/troubleshooting-report.txt ]; then
+  echo "FAIL: $USER_HOME/troubleshooting-report.txt not found"
   exit 1
 fi
 
 SECTIONS=0
 for keyword in "Problem" "Investigation" "Root Cause|Cause" "Fix|Resolution"; do
-  if grep -qiE "$keyword" /root/troubleshooting-report.txt; then
+  if grep -qiE "$keyword" $USER_HOME/troubleshooting-report.txt; then
     SECTIONS=$((SECTIONS + 1))
   fi
 done

@@ -29,12 +29,12 @@ Targets group units. The key targets in boot order:
 
 ### Your task
 
-Show the dependencies of `multi-user.target` and save to `/root/multiuser-deps.txt`.
+Show the dependencies of `multi-user.target` and save to `~/multiuser-deps.txt`.
 
 <details>
 <summary>Hint</summary>
 
 ```bash
-systemctl list-dependencies multi-user.target --no-pager > /root/multiuser-deps.txt
+systemctl list-dependencies multi-user.target --no-pager > ~/multiuser-deps.txt
 ```
 </details>

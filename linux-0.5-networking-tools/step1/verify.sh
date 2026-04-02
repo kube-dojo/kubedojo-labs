@@ -1,11 +1,13 @@
 #!/bin/bash
-# Verify /root/my-ip.txt contains an IP address
-if [ ! -f /root/my-ip.txt ]; then
-  echo "/root/my-ip.txt does not exist"
+if id 'ubuntu' &>/dev/null; then USER_HOME='/home/ubuntu'; else USER_HOME='/root'; fi
+#!/bin/bash
+# Verify $USER_HOME/my-ip.txt contains an IP address
+if [ ! -f $USER_HOME/my-ip.txt ]; then
+  echo "$USER_HOME/my-ip.txt does not exist"
   exit 1
 fi
 
-ip=$(cat /root/my-ip.txt | tr -d '[:space:]')
+ip=$(cat $USER_HOME/my-ip.txt | tr -d '[:space:]')
 if [[ "$ip" =~ ^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
   echo "IP address: $ip"
   exit 0

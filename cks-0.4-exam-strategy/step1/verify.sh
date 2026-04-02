@@ -1,4 +1,6 @@
 #!/bin/bash
+if id 'ubuntu' &>/dev/null; then USER_HOME='/home/ubuntu'; else USER_HOME='/root'; fi
+#!/bin/bash
 PRIV=$(kubectl get pod fix-me-1 -n exam-practice -o jsonpath='{.spec.containers[0].securityContext.privileged}' 2>/dev/null)
 if [ "$PRIV" == "true" ]; then
   echo "FAIL: fix-me-1 is still privileged"
@@ -9,8 +11,8 @@ if [ "$USER" == "0" ] || [ -z "$USER" ]; then
   echo "FAIL: fix-me-2 still running as root"
   exit 1
 fi
-if [ ! -f /root/fix1-context.txt ] || [ ! -s /root/fix1-context.txt ]; then
-  echo "FAIL: /root/fix1-context.txt missing or empty"
+if [ ! -f $USER_HOME/fix1-context.txt ] || [ ! -s $USER_HOME/fix1-context.txt ]; then
+  echo "FAIL: $USER_HOME/fix1-context.txt missing or empty"
   exit 1
 fi
 echo "PASS"

@@ -1,11 +1,12 @@
 {
   "title": "CKAD 0.2: Developer Workflow",
-  "description": "Practice the inner development loop on Kubernetes — build, deploy, test, iterate using kubectl and YAML generation",
+  "description": "Practice the inner development loop on Kubernetes \u2014 build, deploy, test, iterate using kubectl and YAML generation",
   "difficulty": "Intermediate",
   "time": "30 minutes",
   "details": {
     "intro": {
-      "text": "intro.md"
+      "text": "intro.md",
+      "background": "setup.sh"
     },
     "steps": [
       {

@@ -1,4 +1,6 @@
 #!/bin/bash
+if id 'ubuntu' &>/dev/null; then USER_HOME='/home/ubuntu'; else USER_HOME='/root'; fi
+#!/bin/bash
 ERRORS=0
 for user in ops-alice ops-bob ops-charlie; do
   if ! id "$user" > /dev/null 2>&1; then

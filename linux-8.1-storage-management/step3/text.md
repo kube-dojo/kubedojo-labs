@@ -25,11 +25,11 @@ df -i
 
 ## Your Task
 
-Find the top 10 largest directories under `/` (one level deep) and save to `/root/disk-usage.txt`.
+Find the top 10 largest directories under `/` (one level deep) and save to `~/disk-usage.txt`.
 
 Each line should show size and directory name.
 
 **Hint:**
 ```bash
-du -sh /* 2>/dev/null | sort -rh | head -10 > /root/disk-usage.txt
+du -sh /* 2>/dev/null | sort -rh | head -10 > ~/disk-usage.txt
 ```

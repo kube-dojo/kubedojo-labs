@@ -29,12 +29,12 @@ systemctl list-timers                  # show all timers with next run time
 
 ### Your task
 
-List all active timers on the system and save the output to `/root/active-timers.txt`.
+List all active timers on the system and save the output to `~/active-timers.txt`.
 
 <details>
 <summary>Hint</summary>
 
 ```bash
-systemctl list-timers --no-pager > /root/active-timers.txt
+systemctl list-timers --no-pager > ~/active-timers.txt
 ```
 </details>

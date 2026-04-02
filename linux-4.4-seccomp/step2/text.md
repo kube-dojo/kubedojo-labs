@@ -39,12 +39,12 @@ seccomp profiles are JSON files that define which syscalls are allowed or blocke
 
 ## Task
 
-Create a seccomp profile at `/root/seccomp-profile.json` that:
+Create a seccomp profile at `~/seccomp-profile.json` that:
 
 1. Uses `SCMP_ACT_ALLOW` as the default action (denylist approach)
 2. Blocks the `chmod`, `fchmod`, and `fchmodat` syscalls with `SCMP_ACT_ERRNO`
 3. Blocks the `reboot` syscall with `SCMP_ACT_ERRNO`
-4. Verify the file is valid JSON with `jq . /root/seccomp-profile.json`
+4. Verify the file is valid JSON with `jq . ~/seccomp-profile.json`
 
 <details>
 <summary>Refer to: Docker seccomp documentation, OCI runtime spec</summary>

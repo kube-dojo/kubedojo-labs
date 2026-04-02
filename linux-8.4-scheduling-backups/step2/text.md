@@ -6,7 +6,7 @@ While cron handles recurring tasks, `at` runs a command once at a specific time.
 
 ```bash
 # Schedule for a specific time
-echo "echo 'Job done' >> /root/at-result.txt" | at now + 1 minute
+echo "echo 'Job done' >> ~/at-result.txt" | at now + 1 minute
 
 # Schedule for a specific date/time
 echo "echo 'hello'" | at 10:00 PM
@@ -32,12 +32,12 @@ atrm <job-number>
 
 1. Schedule a command to run in 1 minute using `at`:
    ```bash
-   echo "date >> /root/at-result.txt" | at now + 1 minute
+   echo "date >> ~/at-result.txt" | at now + 1 minute
    ```
-2. Save the job ID to `/root/at-job.txt`
+2. Save the job ID to `~/at-job.txt`
 
 **Hint:**
 ```bash
-JOB=$(echo "date >> /root/at-result.txt" | at now + 1 minute 2>&1 | grep -oP 'job \K\d+')
-echo "$JOB" > /root/at-job.txt
+JOB=$(echo "date >> ~/at-result.txt" | at now + 1 minute 2>&1 | grep -oP 'job \K\d+')
+echo "$JOB" > ~/at-job.txt
 ```

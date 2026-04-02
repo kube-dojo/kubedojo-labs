@@ -38,7 +38,7 @@ When SELinux denies access, the denial is logged in the audit log. Understanding
 1. Document the complete SELinux troubleshooting workflow
 2. Include the purpose of each tool: `ausearch`, `audit2why`, `audit2allow`, `sealert`
 3. Describe the three fix strategies: context fix, boolean toggle, custom policy
-4. Save your documentation to `/root/selinux-workflow.txt`
+4. Save your documentation to `~/selinux-workflow.txt`
 5. Include a note about how this applies to Kubernetes (container context denials)
 
 <details>

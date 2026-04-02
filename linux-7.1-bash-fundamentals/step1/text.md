@@ -40,7 +40,7 @@ fi
 
 ## Your Task
 
-Write `/root/check-disk.sh` that:
+Write `~/check-disk.sh` that:
 
 1. Gets the disk usage percentage of the root filesystem
 2. If usage > 80%, outputs `WARNING: Disk usage is above 80%`

@@ -1,20 +1,22 @@
 #!/bin/bash
+if id 'ubuntu' &>/dev/null; then USER_HOME='/home/ubuntu'; else USER_HOME='/root'; fi
+#!/bin/bash
 # Verify use-checklist.txt has entries for all 4 resources
-if [ ! -f /root/use-checklist.txt ]; then
-  echo "FAIL: /root/use-checklist.txt not found"
+if [ ! -f $USER_HOME/use-checklist.txt ]; then
+  echo "FAIL: $USER_HOME/use-checklist.txt not found"
   exit 1
 fi
 
 ERRORS=0
 for resource in CPU Memory Disk Network; do
-  if ! grep -qi "$resource" /root/use-checklist.txt; then
+  if ! grep -qi "$resource" $USER_HOME/use-checklist.txt; then
     echo "FAIL: Missing entry for $resource"
     ERRORS=$((ERRORS + 1))
   fi
 done
 
 for metric in Utilization Saturation Errors; do
-  if ! grep -qi "$metric" /root/use-checklist.txt; then
+  if ! grep -qi "$metric" $USER_HOME/use-checklist.txt; then
     echo "FAIL: Missing metric $metric"
     ERRORS=$((ERRORS + 1))
   fi

@@ -29,7 +29,7 @@ This runs 3 samples at 1-second intervals. Key columns:
 ## Your Task
 
 1. Run `uptime` and `vmstat 1 3`
-2. Save the load average values (the three numbers) to `/root/load-avg.txt`
+2. Save the load average values (the three numbers) to `~/load-avg.txt`
 
 For example, if uptime shows `load average: 0.15, 0.10, 0.05`, your file should contain:
 
@@ -39,5 +39,5 @@ For example, if uptime shows `load average: 0.15, 0.10, 0.05`, your file should 
 
 **Hint:** You can extract the load average with:
 ```bash
-uptime | awk -F'load average: ' '{print $2}' | tr ',' ' ' > /root/load-avg.txt
+uptime | awk -F'load average: ' '{print $2}' | tr ',' ' ' > ~/load-avg.txt
 ```

@@ -1,11 +1,13 @@
 #!/bin/bash
-# Verify /root/root-fstype.txt contains a known filesystem type
-if [ ! -f /root/root-fstype.txt ]; then
-  echo "/root/root-fstype.txt does not exist"
+if id 'ubuntu' &>/dev/null; then USER_HOME='/home/ubuntu'; else USER_HOME='/root'; fi
+#!/bin/bash
+# Verify $USER_HOME$USER_HOME-fstype.txt contains a known filesystem type
+if [ ! -f $USER_HOME$USER_HOME-fstype.txt ]; then
+  echo "$USER_HOME$USER_HOME-fstype.txt does not exist"
   exit 1
 fi
 
-fstype=$(cat /root/root-fstype.txt | tr -d '[:space:]')
+fstype=$(cat $USER_HOME$USER_HOME-fstype.txt | tr -d '[:space:]')
 if [[ "$fstype" =~ ^(ext[234]|xfs|btrfs|overlay|tmpfs|zfs)$ ]]; then
   echo "Root filesystem type: $fstype"
   exit 0

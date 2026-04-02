@@ -24,11 +24,11 @@ ip route add 10.20.30.0/24 dev eth0
 
 1. Find your default gateway: `ip route | grep default`
 2. Add a static route for `192.168.100.0/24` via your default gateway
-3. Save the full routing table to `/root/routes.txt`
+3. Save the full routing table to `~/routes.txt`
 
 **Hint:**
 ```bash
 GW=$(ip route | grep default | awk '{print $3}')
 ip route add 192.168.100.0/24 via $GW 2>/dev/null || true
-ip route show > /root/routes.txt
+ip route show > ~/routes.txt
 ```

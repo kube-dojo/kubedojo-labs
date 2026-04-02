@@ -24,20 +24,20 @@ ls /var/log/
 
 ### Your task
 
-Get the last 20 lines of nginx logs from the journal and save them to `/root/nginx-journal.txt`.
+Get the last 20 lines of nginx logs from the journal and save them to `~/nginx-journal.txt`.
 
 <details>
 <summary>Hint</summary>
 
 ```bash
-journalctl -u nginx -n 20 --no-pager > /root/nginx-journal.txt
+journalctl -u nginx -n 20 --no-pager > ~/nginx-journal.txt
 ```
 
 If the journal has no nginx entries yet, you might need to restart nginx first or use the log file directly:
 
 ```bash
-journalctl -u nginx -n 20 --no-pager > /root/nginx-journal.txt
+journalctl -u nginx -n 20 --no-pager > ~/nginx-journal.txt
 # If empty, try:
-# tail -20 /var/log/nginx/access.log /var/log/nginx/error.log > /root/nginx-journal.txt
+# tail -20 /var/log/nginx/access.log /var/log/nginx/error.log > ~/nginx-journal.txt
 ```
 </details>

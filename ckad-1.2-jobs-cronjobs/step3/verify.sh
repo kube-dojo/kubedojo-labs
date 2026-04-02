@@ -1,12 +1,14 @@
 #!/bin/bash
+if id 'ubuntu' &>/dev/null; then USER_HOME='/home/ubuntu'; else USER_HOME='/root'; fi
+#!/bin/bash
 SCHED=$(kubectl get cronjob reporter -n jobs-lab -o jsonpath='{.spec.schedule}' 2>/dev/null)
 if [ "$SCHED" != "*/1 * * * *" ]; then
   echo "FAIL: CronJob schedule should be '*/1 * * * *', got: $SCHED"
   exit 1
 fi
 
-if [ ! -f /root/cron-schedule.txt ]; then
-  echo "FAIL: /root/cron-schedule.txt does not exist"
+if [ ! -f $USER_HOME/cron-schedule.txt ]; then
+  echo "FAIL: $USER_HOME/cron-schedule.txt does not exist"
   exit 1
 fi
 

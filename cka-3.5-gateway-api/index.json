@@ -1,12 +1,13 @@
 {
-  "title": "Gateway API — Gateway, HTTPRoute & Traffic Splitting",
+  "title": "Gateway API \u2014 Gateway, HTTPRoute & Traffic Splitting",
   "description": "Install the Gateway API CRDs, configure Gateway and HTTPRoute resources, and implement traffic splitting for canary deployments.",
   "backend": {
     "imageid": "kubernetes-kubeadm-1node"
   },
   "details": {
     "intro": {
-      "text": "intro.md"
+      "text": "intro.md",
+      "background": "setup.sh"
     },
     "steps": [
       {

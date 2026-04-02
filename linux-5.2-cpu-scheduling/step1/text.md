@@ -27,8 +27,8 @@ cat /proc/<PID>/sched | head -5
 ## Your Task
 
 1. Check the scheduling policy of PID 1 (the init process)
-2. Save the output to `/root/sched-policy.txt`
+2. Save the output to `~/sched-policy.txt`
 
 ```bash
-chrt -p 1 > /root/sched-policy.txt
+chrt -p 1 > ~/sched-policy.txt
 ```

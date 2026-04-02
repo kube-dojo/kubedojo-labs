@@ -19,3 +19,9 @@ echo "This is a shared file for ACL testing." > /root/shared.txt
 id www-data > /dev/null 2>&1 || useradd -r -s /usr/sbin/nologin www-data
 
 echo "Setup complete."
+
+# Seed /home/ubuntu if it exists
+if [ -d /home/ubuntu ]; then
+  cp -r /root/* /home/ubuntu/ 2>/dev/null || true
+  chown -R ubuntu:ubuntu /home/ubuntu/ 2>/dev/null || true
+fi

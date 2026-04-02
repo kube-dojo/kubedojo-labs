@@ -15,17 +15,17 @@ Linux has a rich toolkit for slicing, filtering, and transforming text. These to
 
 ### Your setup
 
-The file `/root/access.log` contains sample Apache access log entries. Each line starts with an IP address.
+The file `~/access.log` contains sample Apache access log entries. Each line starts with an IP address.
 
 Take a look:
 
 ```bash
-cat /root/access.log
+cat ~/access.log
 ```
 
 ### Your task
 
-Extract all unique IP addresses from `/root/access.log`, sort them, and save to `/root/unique-ips.txt` (one IP per line).
+Extract all unique IP addresses from `~/access.log`, sort them, and save to `~/unique-ips.txt` (one IP per line).
 
 <details>
 <summary>Hint</summary>
@@ -33,7 +33,7 @@ Extract all unique IP addresses from `/root/access.log`, sort them, and save to 
 Use `awk` to extract the first column (IP address), then `sort` and `uniq` to deduplicate:
 
 ```bash
-awk '{print $1}' /root/access.log | sort | uniq > /root/unique-ips.txt
+awk '{print $1}' ~/access.log | sort | uniq > ~/unique-ips.txt
 ```
 
 Alternatively, `sort -u` combines sort and unique in one step.

@@ -12,11 +12,11 @@ echo 'Hello ${NAME}' | envsubst
 
 ## Template File
 
-A template at `/root/app.conf.template` has been created with placeholders like `${APP_HOST}`, `${APP_PORT}`, etc.
+A template at `~/app.conf.template` has been created with placeholders like `${APP_HOST}`, `${APP_PORT}`, etc.
 
 ## Your Task
 
-Write `/root/deploy-config.sh` that:
+Write `~/deploy-config.sh` that:
 
 1. Exports environment variables for a production deployment:
    - `APP_HOST=0.0.0.0`
@@ -26,7 +26,7 @@ Write `/root/deploy-config.sh` that:
    - `DB_PORT=5432`
    - `DB_NAME=myapp_prod`
    - `LOG_LEVEL=warn`
-2. Uses `envsubst` to generate `/root/app.conf` from the template
+2. Uses `envsubst` to generate `~/app.conf` from the template
 3. Make it executable and run it
 
-The resulting `/root/app.conf` should have no `${...}` placeholders remaining.
+The resulting `~/app.conf` should have no `${...}` placeholders remaining.

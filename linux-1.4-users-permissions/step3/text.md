@@ -27,7 +27,7 @@ chmod 440 /etc/sudoers.d/developer
 ### Your task
 
 1. Give the `developer` user sudo access for the `apt` command only
-2. Save the sudoers rule line to `/root/sudo-rule.txt`
+2. Save the sudoers rule line to `~/sudo-rule.txt`
 
 <details>
 <summary>Hint</summary>
@@ -37,6 +37,6 @@ Create a sudoers drop-in file:
 ```bash
 echo 'developer ALL=(ALL) /usr/bin/apt' > /etc/sudoers.d/developer
 chmod 440 /etc/sudoers.d/developer
-echo 'developer ALL=(ALL) /usr/bin/apt' > /root/sudo-rule.txt
+echo 'developer ALL=(ALL) /usr/bin/apt' > ~/sudo-rule.txt
 ```
 </details>

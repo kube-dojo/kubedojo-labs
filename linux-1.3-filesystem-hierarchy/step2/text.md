@@ -28,12 +28,12 @@ type ls                             # is it a builtin, alias, or file?
 
 ### Your task
 
-Find all files larger than 1MB in `/usr` and save the count to `/root/large-files-count.txt`.
+Find all files larger than 1MB in `/usr` and save the count to `~/large-files-count.txt`.
 
 <details>
 <summary>Hint</summary>
 
 ```bash
-find /usr -type f -size +1M 2>/dev/null | wc -l > /root/large-files-count.txt
+find /usr -type f -size +1M 2>/dev/null | wc -l > ~/large-files-count.txt
 ```
 </details>

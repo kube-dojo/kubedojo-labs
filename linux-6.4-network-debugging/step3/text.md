@@ -34,14 +34,14 @@ ss -tlnp
 
 ## Your Task
 
-Nginx was started during setup. Scan localhost for open ports and save to `/root/port-scan.txt`.
+Nginx was started during setup. Scan localhost for open ports and save to `~/port-scan.txt`.
 
 ```bash
-nmap localhost > /root/port-scan.txt
+nmap localhost > ~/port-scan.txt
 ```
 
 or
 
 ```bash
-ss -tlnp > /root/port-scan.txt
+ss -tlnp > ~/port-scan.txt
 ```

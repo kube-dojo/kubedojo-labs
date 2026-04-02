@@ -1,12 +1,13 @@
 {
-  "title": "StorageClasses — Dynamic Provisioning, Default SC & Parameters",
+  "title": "StorageClasses \u2014 Dynamic Provisioning, Default SC & Parameters",
   "description": "Configure StorageClasses for dynamic volume provisioning, set a default StorageClass, and customize provisioner parameters.",
   "backend": {
     "imageid": "kubernetes-kubeadm-1node"
   },
   "details": {
     "intro": {
-      "text": "intro.md"
+      "text": "intro.md",
+      "background": "setup.sh"
     },
     "steps": [
       {

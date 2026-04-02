@@ -1,4 +1,6 @@
 #!/bin/bash
+if id 'ubuntu' &>/dev/null; then USER_HOME='/home/ubuntu'; else USER_HOME='/root'; fi
+#!/bin/bash
 # Verify myservice is running
 if systemctl is-active --quiet myservice 2>/dev/null; then
   echo "myservice is running! Great job creating a systemd service."

@@ -1,4 +1,6 @@
 #!/bin/bash
+if id 'ubuntu' &>/dev/null; then USER_HOME='/home/ubuntu'; else USER_HOME='/root'; fi
+#!/bin/bash
 # High-integrity verification for Step 3
 # 1. Check if pod exists
 if ! kubectl get pod broken-mount-pod -n practice > /dev/null 2>&1; then

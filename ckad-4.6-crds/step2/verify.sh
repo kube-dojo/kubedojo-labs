@@ -1,4 +1,6 @@
 #!/bin/bash
+if id 'ubuntu' &>/dev/null; then USER_HOME='/home/ubuntu'; else USER_HOME='/root'; fi
+#!/bin/bash
 kubectl get backupjob daily-backup -n crd-lab > /dev/null 2>&1
 if [ $? -ne 0 ]; then
   echo "FAIL: BackupJob daily-backup not found"
@@ -9,8 +11,8 @@ if [ $? -ne 0 ]; then
   echo "FAIL: BackupJob weekly-backup not found"
   exit 1
 fi
-if [ ! -f /root/backupjobs-list.txt ]; then
-  echo "FAIL: /root/backupjobs-list.txt not found"
+if [ ! -f $USER_HOME/backupjobs-list.txt ]; then
+  echo "FAIL: $USER_HOME/backupjobs-list.txt not found"
   exit 1
 fi
 echo "PASS"

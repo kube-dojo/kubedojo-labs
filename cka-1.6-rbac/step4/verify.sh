@@ -1,4 +1,6 @@
 #!/bin/bash
+if id 'ubuntu' &>/dev/null; then USER_HOME='/home/ubuntu'; else USER_HOME='/root'; fi
+#!/bin/bash
 # 1. Check RoleBinding exists
 BINDING=$(kubectl get rolebinding -n rbac-test -o json | jq -r '.items[] | select(.roleRef.name=="pod-reader")')
 if [ -z "$BINDING" ]; then

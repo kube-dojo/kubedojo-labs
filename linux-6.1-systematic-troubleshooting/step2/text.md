@@ -25,6 +25,6 @@ ps aux | grep nginx
 A service has been set up that is failing. Find it!
 
 1. List failed services using `systemctl list-units --failed`
-2. Save the name of the failed service to `/root/failed-service.txt`
+2. Save the name of the failed service to `~/failed-service.txt`
 
 The file should contain just the service name (e.g., `broken-app.service`).

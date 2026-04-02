@@ -35,7 +35,7 @@ cat /proc/1/status | grep -E "^(Name|Pid|Seccomp|NoNewPrivs|CapEff)"
 
 1. Check the seccomp status of PID 1 (init/systemd)
 2. Check the seccomp status of the current shell (`/proc/self/status`)
-3. Save both results to `/root/seccomp-status.txt`, including:
+3. Save both results to `~/seccomp-status.txt`, including:
    - The Seccomp line from `/proc/1/status`
    - The Seccomp line from `/proc/self/status`
    - A brief explanation of what the values mean

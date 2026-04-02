@@ -1,14 +1,16 @@
 #!/bin/bash
-# Verify that /root/nameservers.txt exists and contains an IP
-if [ ! -f /root/nameservers.txt ]; then
-  echo "FAIL: /root/nameservers.txt does not exist"
+if id 'ubuntu' &>/dev/null; then USER_HOME='/home/ubuntu'; else USER_HOME='/root'; fi
+#!/bin/bash
+# Verify that $USER_HOME/nameservers.txt exists and contains an IP
+if [ ! -f $USER_HOME/nameservers.txt ]; then
+  echo "FAIL: $USER_HOME/nameservers.txt does not exist"
   exit 1
 fi
 
-if grep -qE '[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+' /root/nameservers.txt; then
+if grep -qE '[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+' $USER_HOME/nameservers.txt; then
   echo "PASS: File contains nameserver IP(s)"
   exit 0
 else
-  echo "FAIL: /root/nameservers.txt does not contain an IP address"
+  echo "FAIL: $USER_HOME/nameservers.txt does not contain an IP address"
   exit 1
 fi

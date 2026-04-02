@@ -5,17 +5,18 @@
   "time": "35 minutes",
   "details": {
     "intro": {
-      "text": "intro.md"
+      "text": "intro.md",
+      "background": "setup.sh"
     },
     "steps": [
       {
-        "title": "awk — Field Processing",
+        "title": "awk \u2014 Field Processing",
         "text": "step1/text.md",
         "verify": "step1/verify.sh",
         "solution": "step1/solution.sh"
       },
       {
-        "title": "sed — Stream Editing",
+        "title": "sed \u2014 Stream Editing",
         "text": "step2/text.md",
         "verify": "step2/verify.sh",
         "solution": "step2/solution.sh"

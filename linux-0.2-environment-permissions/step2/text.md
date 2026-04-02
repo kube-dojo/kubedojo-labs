@@ -31,11 +31,11 @@ For example, `umask 027` means:
 ### Your task
 
 1. Set the umask to `027`
-2. Create a new file `/root/umask-test.txt`
+2. Create a new file `~/umask-test.txt`
 3. Verify its permissions are `640` (-rw-r-----)
 
 ```bash
-stat -c '%a' /root/umask-test.txt
+stat -c '%a' ~/umask-test.txt
 ```
 
 <details>
@@ -45,8 +45,8 @@ Set the umask before creating the file:
 
 ```bash
 umask 027
-touch /root/umask-test.txt
-stat -c '%a' /root/umask-test.txt
+touch ~/umask-test.txt
+stat -c '%a' ~/umask-test.txt
 ```
 
 The output should show `640`.

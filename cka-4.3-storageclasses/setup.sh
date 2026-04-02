@@ -17,3 +17,9 @@ kubectl apply -f https://raw.githubusercontent.com/rancher/local-path-provisione
 kubectl wait --for=condition=Ready pod -l app=local-path-provisioner -n local-path-storage --timeout=120s 2>/dev/null || true
 
 echo "Kubernetes cluster ready."
+
+# Seed /home/ubuntu if it exists
+if [ -d /home/ubuntu ]; then
+  cp -r /root/* /home/ubuntu/ 2>/dev/null || true
+  chown -R ubuntu:ubuntu /home/ubuntu/ 2>/dev/null || true
+fi

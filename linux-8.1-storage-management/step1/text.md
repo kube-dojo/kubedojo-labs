@@ -30,8 +30,8 @@ fdisk -l
 
 ## Your Task
 
-List all block devices with their name, size, type, and mount point. Save to `/root/block-devices.txt`.
+List all block devices with their name, size, type, and mount point. Save to `~/block-devices.txt`.
 
 ```bash
-lsblk -o NAME,SIZE,TYPE,MOUNTPOINT > /root/block-devices.txt
+lsblk -o NAME,SIZE,TYPE,MOUNTPOINT > ~/block-devices.txt
 ```

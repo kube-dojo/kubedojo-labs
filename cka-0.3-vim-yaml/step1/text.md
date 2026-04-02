@@ -22,7 +22,7 @@ Vim has two main modes:
 
 ## Task
 
-Create the file `/root/practice.yaml` using vim (or any method) with the following content:
+Create the file `~/practice.yaml` using vim (or any method) with the following content:
 
 ```yaml
 apiVersion: v1
@@ -37,7 +37,7 @@ The file must contain all four lines with correct YAML indentation.
 <summary>Hint</summary>
 
 ```bash
-cat <<'YAML' > /root/practice.yaml
+cat <<'YAML' > ~/practice.yaml
 apiVersion: v1
 kind: Pod
 metadata:

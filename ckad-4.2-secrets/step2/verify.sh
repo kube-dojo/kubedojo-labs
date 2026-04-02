@@ -1,4 +1,6 @@
 #!/bin/bash
+if id 'ubuntu' &>/dev/null; then USER_HOME='/home/ubuntu'; else USER_HOME='/root'; fi
+#!/bin/bash
 for i in $(seq 1 30); do
   S=$(kubectl get pod secret-env-pod -n secrets-lab -o jsonpath='{.status.phase}' 2>/dev/null)
   [ "$S" = "Running" ] && break
@@ -14,8 +16,8 @@ if [ "$VAL2" != "s3cur3P@ss" ]; then
   echo "FAIL: DB_PASS should be s3cur3P@ss"
   exit 1
 fi
-if [ ! -f /root/db-user.txt ]; then
-  echo "FAIL: /root/db-user.txt not found"
+if [ ! -f $USER_HOME/db-user.txt ]; then
+  echo "FAIL: $USER_HOME/db-user.txt not found"
   exit 1
 fi
 echo "PASS"

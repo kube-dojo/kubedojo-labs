@@ -1,4 +1,6 @@
 #!/bin/bash
+if id 'ubuntu' &>/dev/null; then USER_HOME='/home/ubuntu'; else USER_HOME='/root'; fi
+#!/bin/bash
 # Verify: canary-route exists with two backends and correct weights
 ROUTE=$(kubectl get httproute canary-route -n practice -o jsonpath='{.metadata.name}' 2>/dev/null)
 BACKEND_COUNT=$(kubectl get httproute canary-route -n practice -o jsonpath='{.spec.rules[0].backendRefs[*].name}' 2>/dev/null | wc -w)

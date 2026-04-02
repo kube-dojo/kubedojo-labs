@@ -1,4 +1,6 @@
 #!/bin/bash
+if id 'ubuntu' &>/dev/null; then USER_HOME='/home/ubuntu'; else USER_HOME='/root'; fi
+#!/bin/bash
 # Verify: pod exists with PVC mounted
 POD=$(kubectl get pod pvc-pod -n practice -o jsonpath='{.metadata.name}' 2>/dev/null)
 CLAIM=$(kubectl get pod pvc-pod -n practice -o jsonpath='{.spec.volumes[0].persistentVolumeClaim.claimName}' 2>/dev/null)

@@ -12,7 +12,7 @@ To make vim comfortable for YAML editing, configure these settings in `~/.vimrc`
 
 ## Task
 
-Create `/root/.vimrc` with YAML-friendly settings. Include at minimum:
+Create `~/.vimrc` with YAML-friendly settings. Include at minimum:
 - `expandtab`
 - `tabstop=2`
 - `shiftwidth=2`
@@ -22,7 +22,7 @@ Create `/root/.vimrc` with YAML-friendly settings. Include at minimum:
 <summary>Hint</summary>
 
 ```bash
-cat <<'EOF' > /root/.vimrc
+cat <<'EOF' > ~/.vimrc
 set expandtab
 set tabstop=2
 set shiftwidth=2

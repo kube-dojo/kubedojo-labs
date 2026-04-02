@@ -1,5 +1,7 @@
 #!/bin/bash
-if [ ! -f /root/tls.crt ] || [ ! -f /root/tls.key ]; then
+if id 'ubuntu' &>/dev/null; then USER_HOME='/home/ubuntu'; else USER_HOME='/root'; fi
+#!/bin/bash
+if [ ! -f $USER_HOME/tls.crt ] || [ ! -f $USER_HOME/tls.key ]; then
   echo "FAIL: TLS certificate files not found"
   exit 1
 fi
@@ -12,8 +14,8 @@ if [ "$TYPE" != "kubernetes.io/tls" ]; then
   echo "FAIL: Secret type should be kubernetes.io/tls, got $TYPE"
   exit 1
 fi
-if [ ! -f /root/secret-type.txt ] || [ ! -s /root/secret-type.txt ]; then
-  echo "FAIL: /root/secret-type.txt missing or empty"
+if [ ! -f $USER_HOME/secret-type.txt ] || [ ! -s $USER_HOME/secret-type.txt ]; then
+  echo "FAIL: $USER_HOME/secret-type.txt missing or empty"
   exit 1
 fi
 echo "PASS"

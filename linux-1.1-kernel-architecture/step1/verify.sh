@@ -1,23 +1,25 @@
 #!/bin/bash
+if id 'ubuntu' &>/dev/null; then USER_HOME='/home/ubuntu'; else USER_HOME='/root'; fi
+#!/bin/bash
 # Verify both files exist with content
-if [ ! -f /root/kernel-version.txt ]; then
-  echo "/root/kernel-version.txt does not exist"
+if [ ! -f $USER_HOME/kernel-version.txt ]; then
+  echo "$USER_HOME/kernel-version.txt does not exist"
   exit 1
 fi
 
-if [ ! -s /root/kernel-version.txt ]; then
-  echo "/root/kernel-version.txt is empty"
+if [ ! -s $USER_HOME/kernel-version.txt ]; then
+  echo "$USER_HOME/kernel-version.txt is empty"
   exit 1
 fi
 
-if [ ! -f /root/module-count.txt ]; then
-  echo "/root/module-count.txt does not exist"
+if [ ! -f $USER_HOME/module-count.txt ]; then
+  echo "$USER_HOME/module-count.txt does not exist"
   exit 1
 fi
 
-count=$(cat /root/module-count.txt | tr -d '[:space:]')
+count=$(cat $USER_HOME/module-count.txt | tr -d '[:space:]')
 if [[ "$count" =~ ^[0-9]+$ ]]; then
-  echo "Kernel: $(cat /root/kernel-version.txt | tr -d '[:space:]'), Modules: $count"
+  echo "Kernel: $(cat $USER_HOME/kernel-version.txt | tr -d '[:space:]'), Modules: $count"
   exit 0
 else
   echo "module-count.txt should contain a number, got: '$count'"

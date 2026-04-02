@@ -1,4 +1,6 @@
 #!/bin/bash
+if id 'ubuntu' &>/dev/null; then USER_HOME='/home/ubuntu'; else USER_HOME='/root'; fi
+#!/bin/bash
 # Verify AppArmor profile for curl exists
 
 if [ ! -f /etc/apparmor.d/usr.bin.curl ]; then

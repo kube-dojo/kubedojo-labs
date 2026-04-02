@@ -33,7 +33,7 @@ auditctl -D
 2. Start the audit daemon: `service auditd start`
 3. Add an audit rule that watches `/etc/passwd` for write and attribute changes (`-p wa`)
 4. Tag the rule with key `passwd_monitor`
-5. List current audit rules and save the output to `/root/audit-rules.txt`
+5. List current audit rules and save the output to `~/audit-rules.txt`
 
 <details>
 <summary>Refer to: auditctl(8), auditd(8)</summary>

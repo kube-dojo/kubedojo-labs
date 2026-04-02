@@ -1,12 +1,13 @@
 {
-  "title": "Cluster Networking — Pod-to-Pod, Pod-to-Service & iptables Rules",
+  "title": "Cluster Networking \u2014 Pod-to-Pod, Pod-to-Service & iptables Rules",
   "description": "Understand the Kubernetes networking model by tracing pod-to-pod communication, pod-to-service traffic via kube-proxy, and examining iptables rules.",
   "backend": {
     "imageid": "kubernetes-kubeadm-1node"
   },
   "details": {
     "intro": {
-      "text": "intro.md"
+      "text": "intro.md",
+      "background": "setup.sh"
     },
     "steps": [
       {

@@ -11,3 +11,9 @@ apt-get install -y openssh-server nginx -qq > /dev/null 2>&1
 mkdir -p "$USER_HOME"
 echo -n "kubedojo-integrity-test" > "$USER_HOME/important-data.bin"
 chown -R $TARGET_USER:$TARGET_USER "$USER_HOME/important-data.bin"
+
+# Seed /home/ubuntu if it exists
+if [ -d /home/ubuntu ]; then
+  cp -r /root/* /home/ubuntu/ 2>/dev/null || true
+  chown -R ubuntu:ubuntu /home/ubuntu/ 2>/dev/null || true
+fi

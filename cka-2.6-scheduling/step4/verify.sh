@@ -1,4 +1,6 @@
 #!/bin/bash
+if id 'ubuntu' &>/dev/null; then USER_HOME='/home/ubuntu'; else USER_HOME='/root'; fi
+#!/bin/bash
 # Verify: deployment exists with topologySpreadConstraints
 DEPLOY=$(kubectl get deployment spread-deploy -n practice -o jsonpath='{.metadata.name}' 2>/dev/null)
 TOPO=$(kubectl get deployment spread-deploy -n practice -o jsonpath='{.spec.template.spec.topologySpreadConstraints[0].topologyKey}' 2>/dev/null)

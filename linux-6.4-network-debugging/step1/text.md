@@ -24,14 +24,14 @@ Shows each hop between you and the destination. Useful for finding where packets
 ## Your Task
 
 1. Test connectivity to `8.8.8.8` (Google DNS) using ping
-2. Save the ping results to `/root/connectivity.txt`
+2. Save the ping results to `~/connectivity.txt`
 
 ```bash
-ping -c 4 8.8.8.8 > /root/connectivity.txt 2>&1
+ping -c 4 8.8.8.8 > ~/connectivity.txt 2>&1
 ```
 
 If ping is blocked in the environment, use an alternative:
 ```bash
-(ping -c 4 8.8.8.8 || echo "Ping blocked - using alternative") > /root/connectivity.txt 2>&1
-ip route get 8.8.8.8 >> /root/connectivity.txt 2>&1
+(ping -c 4 8.8.8.8 || echo "Ping blocked - using alternative") > ~/connectivity.txt 2>&1
+ip route get 8.8.8.8 >> ~/connectivity.txt 2>&1
 ```

@@ -1,4 +1,6 @@
 #!/bin/bash
+if id 'ubuntu' &>/dev/null; then USER_HOME='/home/ubuntu'; else USER_HOME='/root'; fi
+#!/bin/bash
 POLICY="/etc/kubernetes/audit/audit-policy.yaml"
 if [ ! -f "$POLICY" ]; then
   echo "FAIL: $POLICY not found"
@@ -16,8 +18,8 @@ if ! grep -q "Metadata" "$POLICY"; then
   echo "FAIL: Missing Metadata level rule"
   exit 1
 fi
-if [ ! -f /root/audit-rule-count.txt ] || [ ! -s /root/audit-rule-count.txt ]; then
-  echo "FAIL: /root/audit-rule-count.txt missing or empty"
+if [ ! -f $USER_HOME/audit-rule-count.txt ] || [ ! -s $USER_HOME/audit-rule-count.txt ]; then
+  echo "FAIL: $USER_HOME/audit-rule-count.txt missing or empty"
   exit 1
 fi
 echo "PASS"

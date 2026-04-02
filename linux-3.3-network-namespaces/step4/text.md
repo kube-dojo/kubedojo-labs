@@ -20,7 +20,7 @@ ip netns exec lab-ns ping -c1 -W2 <host-main-ip>
 
 1. Find the host's main IP address (on `eth0` or similar — not `veth0` or `lo`)
 2. From inside `lab-ns`, attempt to ping that IP
-3. Save the result (showing the failure) to `/root/isolation-test.txt`
+3. Save the result (showing the failure) to `~/isolation-test.txt`
 
 This demonstrates that without explicit routing, namespaces are isolated from the broader network.
 

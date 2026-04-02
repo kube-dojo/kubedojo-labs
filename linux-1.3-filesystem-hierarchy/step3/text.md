@@ -28,7 +28,7 @@ findmnt -n -o FSTYPE /   # just the type for /
 
 ### Your task
 
-Find the filesystem type of `/` (the root filesystem) and save it to `/root/root-fstype.txt`.
+Find the filesystem type of `/` (the root filesystem) and save it to `~~-fstype.txt`.
 
 The file should contain just the type (e.g., `ext4`, `xfs`, or `overlay`).
 
@@ -36,12 +36,12 @@ The file should contain just the type (e.g., `ext4`, `xfs`, or `overlay`).
 <summary>Hint</summary>
 
 ```bash
-findmnt -n -o FSTYPE / > /root/root-fstype.txt
+findmnt -n -o FSTYPE / > ~~-fstype.txt
 ```
 
 Or:
 
 ```bash
-df -T / | tail -1 | awk '{print $2}' > /root/root-fstype.txt
+df -T / | tail -1 | awk '{print $2}' > ~~-fstype.txt
 ```
 </details>

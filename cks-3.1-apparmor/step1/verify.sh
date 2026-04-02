@@ -1,10 +1,12 @@
 #!/bin/bash
-if [ ! -f /root/apparmor-status.txt ] || [ ! -s /root/apparmor-status.txt ]; then
-  echo "FAIL: /root/apparmor-status.txt missing or empty"
+if id 'ubuntu' &>/dev/null; then USER_HOME='/home/ubuntu'; else USER_HOME='/root'; fi
+#!/bin/bash
+if [ ! -f $USER_HOME/apparmor-status.txt ] || [ ! -s $USER_HOME/apparmor-status.txt ]; then
+  echo "FAIL: $USER_HOME/apparmor-status.txt missing or empty"
   exit 1
 fi
-if [ ! -f /root/loaded-profiles.txt ] || [ ! -s /root/loaded-profiles.txt ]; then
-  echo "FAIL: /root/loaded-profiles.txt missing or empty"
+if [ ! -f $USER_HOME/loaded-profiles.txt ] || [ ! -s $USER_HOME/loaded-profiles.txt ]; then
+  echo "FAIL: $USER_HOME/loaded-profiles.txt missing or empty"
   exit 1
 fi
 if [ ! -f /etc/apparmor.d/k8s-deny-write ]; then
@@ -15,8 +17,8 @@ fi
 if command -v aa-status &>/dev/null; then
   aa-status 2>/dev/null | grep -q "k8s-deny-write" || true
 fi
-if [ ! -f /root/profile-loaded.txt ] || [ ! -s /root/profile-loaded.txt ]; then
-  echo "FAIL: /root/profile-loaded.txt missing or empty"
+if [ ! -f $USER_HOME/profile-loaded.txt ] || [ ! -s $USER_HOME/profile-loaded.txt ]; then
+  echo "FAIL: $USER_HOME/profile-loaded.txt missing or empty"
   exit 1
 fi
 echo "PASS"

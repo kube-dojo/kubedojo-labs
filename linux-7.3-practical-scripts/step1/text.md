@@ -12,7 +12,7 @@ A good backup script should:
 DATE=$(date +%Y%m%d)
 
 # Create compressed archive
-tar -czf /root/backups/etc-${DATE}.tar.gz /etc
+tar -czf ~/backups/etc-${DATE}.tar.gz /etc
 
 # Check if it worked
 if [ $? -eq 0 ]; then
@@ -22,11 +22,11 @@ fi
 
 ## Your Task
 
-Write `/root/backup.sh` that:
+Write `~/backup.sh` that:
 
-1. Creates a compressed backup of `/etc` into `/root/backups/`
+1. Creates a compressed backup of `/etc` into `~/backups/`
 2. Names it `etc-YYYYMMDD.tar.gz` using today's date
 3. Prints the filename and size after creation
 4. Make it executable and run it
 
-The backup file should exist at `/root/backups/etc-YYYYMMDD.tar.gz` after running.
+The backup file should exist at `~/backups/etc-YYYYMMDD.tar.gz` after running.

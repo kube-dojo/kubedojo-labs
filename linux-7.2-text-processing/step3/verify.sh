@@ -1,10 +1,12 @@
 #!/bin/bash
-if [ ! -f /root/word-freq.txt ]; then
-  echo "FAIL: /root/word-freq.txt not found"
+if id 'ubuntu' &>/dev/null; then USER_HOME='/home/ubuntu'; else USER_HOME='/root'; fi
+#!/bin/bash
+if [ ! -f $USER_HOME/word-freq.txt ]; then
+  echo "FAIL: $USER_HOME/word-freq.txt not found"
   exit 1
 fi
 
-LINES=$(wc -l < /root/word-freq.txt)
+LINES=$(wc -l < $USER_HOME/word-freq.txt)
 if [ "$LINES" -eq 10 ]; then
   echo "PASS: word-freq.txt has 10 lines"
   exit 0

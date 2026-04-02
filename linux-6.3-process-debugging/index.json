@@ -5,7 +5,8 @@
   "time": "35 minutes",
   "details": {
     "intro": {
-      "text": "intro.md"
+      "text": "intro.md",
+      "background": "setup.sh"
     },
     "steps": [
       {
@@ -15,13 +16,13 @@
         "solution": "step1/solution.sh"
       },
       {
-        "title": "lsof — List Open Files",
+        "title": "lsof \u2014 List Open Files",
         "text": "step2/text.md",
         "verify": "step2/verify.sh",
         "solution": "step2/solution.sh"
       },
       {
-        "title": "ltrace — Library Call Tracing",
+        "title": "ltrace \u2014 Library Call Tracing",
         "text": "step3/text.md",
         "verify": "step3/verify.sh",
         "solution": "step3/solution.sh"

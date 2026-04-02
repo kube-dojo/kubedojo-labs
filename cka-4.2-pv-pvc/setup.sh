@@ -18,3 +18,9 @@ mkdir -p /mnt/data/pv-medium
 mkdir -p /mnt/data/pv-large
 
 echo "Kubernetes cluster ready."
+
+# Seed /home/ubuntu if it exists
+if [ -d /home/ubuntu ]; then
+  cp -r /root/* /home/ubuntu/ 2>/dev/null || true
+  chown -R ubuntu:ubuntu /home/ubuntu/ 2>/dev/null || true
+fi

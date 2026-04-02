@@ -1,4 +1,6 @@
 #!/bin/bash
+if id 'ubuntu' &>/dev/null; then USER_HOME='/home/ubuntu'; else USER_HOME='/root'; fi
+#!/bin/bash
 for i in $(seq 1 30); do
   IMG=$(kubectl get deployment pinned-app -n images-lab -o jsonpath='{.spec.template.spec.containers[0].image}' 2>/dev/null)
   [ "$IMG" = "httpd:2.4.59" ] && break
@@ -9,13 +11,13 @@ if [ "$IMG" != "httpd:2.4.59" ]; then
   exit 1
 fi
 
-if [ ! -f /root/rollout-history.txt ]; then
-  echo "FAIL: /root/rollout-history.txt does not exist"
+if [ ! -f $USER_HOME/rollout-history.txt ]; then
+  echo "FAIL: $USER_HOME/rollout-history.txt does not exist"
   exit 1
 fi
-if ! grep -q "pinned-app" /root/rollout-history.txt 2>/dev/null; then
+if ! grep -q "pinned-app" $USER_HOME/rollout-history.txt 2>/dev/null; then
   # May just have revision numbers
-  if ! grep -q "REVISION" /root/rollout-history.txt 2>/dev/null; then
+  if ! grep -q "REVISION" $USER_HOME/rollout-history.txt 2>/dev/null; then
     echo "FAIL: rollout-history.txt doesn't look like rollout history output"
     exit 1
   fi

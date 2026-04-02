@@ -27,7 +27,7 @@ systemd-resolve --status   # Older syntax
 
 ## Task
 
-Extract the current nameserver IP(s) from your system and save them to `/root/nameservers.txt` (one IP per line).
+Extract the current nameserver IP(s) from your system and save them to `~/nameservers.txt` (one IP per line).
 
 <details>
 <summary>Hint 1</summary>
@@ -36,5 +36,5 @@ Look at <code>/etc/resolv.conf</code> for lines starting with <code>nameserver</
 
 <details>
 <summary>Hint 2</summary>
-<code>grep "^nameserver" /etc/resolv.conf | awk '{print $2}' > /root/nameservers.txt</code>
+<code>grep "^nameserver" /etc/resolv.conf | awk '{print $2}' > ~/nameservers.txt</code>
 </details>

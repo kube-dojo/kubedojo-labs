@@ -1,4 +1,6 @@
 #!/bin/bash
+if id 'ubuntu' &>/dev/null; then USER_HOME='/home/ubuntu'; else USER_HOME='/root'; fi
+#!/bin/bash
 PAUSED=$(kubectl get deployment web-deploy -n practice -o jsonpath='{.spec.paused}' 2>/dev/null)
 if [ "$PAUSED" = "true" ]; then
   echo "FAIL: Deployment is still paused"

@@ -1,10 +1,12 @@
 #!/bin/bash
-if [ ! -f /root/sched-policy.txt ]; then
-  echo "FAIL: /root/sched-policy.txt not found"
+if id 'ubuntu' &>/dev/null; then USER_HOME='/home/ubuntu'; else USER_HOME='/root'; fi
+#!/bin/bash
+if [ ! -f $USER_HOME/sched-policy.txt ]; then
+  echo "FAIL: $USER_HOME/sched-policy.txt not found"
   exit 1
 fi
 
-if [ -s /root/sched-policy.txt ]; then
+if [ -s $USER_HOME/sched-policy.txt ]; then
   echo "PASS: sched-policy.txt has content"
   exit 0
 else

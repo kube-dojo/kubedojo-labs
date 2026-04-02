@@ -14,7 +14,7 @@ free -m                     # Memory usage
 
 ## Your Task
 
-Create a system snapshot report at `/root/system-report.txt` containing:
+Create a system snapshot report at `~/system-report.txt` containing:
 
 1. **Hostname**
 2. **Kernel version** (from `uname -r`)

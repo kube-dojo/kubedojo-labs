@@ -25,10 +25,10 @@ ltrace -c ls /tmp 2>&1
 ## Your Task
 
 1. Run `ltrace` on a command (e.g., `ls /tmp`)
-2. Save the library call output to `/root/ltrace-output.txt`
+2. Save the library call output to `~/ltrace-output.txt`
 
 ```bash
-ltrace ls /tmp 2> /root/ltrace-output.txt
+ltrace ls /tmp 2> ~/ltrace-output.txt
 ```
 
 Note: Like strace, ltrace outputs to stderr.

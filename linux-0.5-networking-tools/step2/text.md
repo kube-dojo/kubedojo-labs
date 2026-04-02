@@ -28,7 +28,7 @@ dig google.com NS           # name servers
 
 ### Your task
 
-Resolve `google.com` to an IP address and save it to `/root/google-ip.txt`.
+Resolve `google.com` to an IP address and save it to `~/google-ip.txt`.
 
 The file should contain just one IP address.
 
@@ -38,12 +38,12 @@ The file should contain just one IP address.
 Use `dig` with `+short`:
 
 ```bash
-dig google.com +short | head -1 > /root/google-ip.txt
+dig google.com +short | head -1 > ~/google-ip.txt
 ```
 
 Or use `host`:
 
 ```bash
-host google.com | grep "has address" | head -1 | awk '{print $4}' > /root/google-ip.txt
+host google.com | grep "has address" | head -1 | awk '{print $4}' > ~/google-ip.txt
 ```
 </details>

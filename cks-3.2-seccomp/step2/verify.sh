@@ -1,4 +1,6 @@
 #!/bin/bash
+if id 'ubuntu' &>/dev/null; then USER_HOME='/home/ubuntu'; else USER_HOME='/root'; fi
+#!/bin/bash
 if [ ! -f /var/lib/kubelet/seccomp/profiles/nginx-strict.json ]; then
   echo "FAIL: Custom seccomp profile not found"
   exit 1
@@ -12,8 +14,8 @@ if [ "$PROFILE" != "Localhost" ]; then
   echo "FAIL: Should use Localhost seccomp profile"
   exit 1
 fi
-if [ ! -f /root/strict-pod-status.txt ] || [ ! -s /root/strict-pod-status.txt ]; then
-  echo "FAIL: /root/strict-pod-status.txt missing or empty"
+if [ ! -f $USER_HOME/strict-pod-status.txt ] || [ ! -s $USER_HOME/strict-pod-status.txt ]; then
+  echo "FAIL: $USER_HOME/strict-pod-status.txt missing or empty"
   exit 1
 fi
 echo "PASS"

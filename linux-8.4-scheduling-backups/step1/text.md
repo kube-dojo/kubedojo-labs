@@ -33,15 +33,15 @@ crontab -e
 crontab -l
 
 # Add a job without interactive editor
-(crontab -l 2>/dev/null; echo "*/5 * * * * date >> /root/cron-test.txt") | crontab -
+(crontab -l 2>/dev/null; echo "*/5 * * * * date >> ~/cron-test.txt") | crontab -
 ```
 
 ## Your Task
 
-Create a cron job that runs every 5 minutes, appending the current date to `/root/cron-test.txt`.
+Create a cron job that runs every 5 minutes, appending the current date to `~/cron-test.txt`.
 
 ```bash
-(crontab -l 2>/dev/null; echo "*/5 * * * * date >> /root/cron-test.txt") | crontab -
+(crontab -l 2>/dev/null; echo "*/5 * * * * date >> ~/cron-test.txt") | crontab -
 ```
 
 Verify with `crontab -l`.

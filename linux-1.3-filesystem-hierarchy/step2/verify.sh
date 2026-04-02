@@ -1,11 +1,13 @@
 #!/bin/bash
-# Verify /root/large-files-count.txt contains a number
-if [ ! -f /root/large-files-count.txt ]; then
-  echo "/root/large-files-count.txt does not exist"
+if id 'ubuntu' &>/dev/null; then USER_HOME='/home/ubuntu'; else USER_HOME='/root'; fi
+#!/bin/bash
+# Verify $USER_HOME/large-files-count.txt contains a number
+if [ ! -f $USER_HOME/large-files-count.txt ]; then
+  echo "$USER_HOME/large-files-count.txt does not exist"
   exit 1
 fi
 
-count=$(cat /root/large-files-count.txt | tr -d '[:space:]')
+count=$(cat $USER_HOME/large-files-count.txt | tr -d '[:space:]')
 if [[ "$count" =~ ^[0-9]+$ ]]; then
   echo "Found $count files larger than 1MB in /usr."
   exit 0

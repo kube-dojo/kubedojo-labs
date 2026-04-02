@@ -22,9 +22,9 @@ dd if=/tmp/benchmark of=/dev/null bs=1M 2>&1
 ## Your Task
 
 1. Run a write benchmark: write 100MB with `dd`
-2. Capture the throughput line and save to `/root/io-benchmark.txt`
+2. Capture the throughput line and save to `~/io-benchmark.txt`
 
 **Hint:**
 ```bash
-dd if=/dev/zero of=/tmp/benchmark bs=1M count=100 conv=fdatasync 2>&1 | tail -1 > /root/io-benchmark.txt
+dd if=/dev/zero of=/tmp/benchmark bs=1M count=100 conv=fdatasync 2>&1 | tail -1 > ~/io-benchmark.txt
 ```

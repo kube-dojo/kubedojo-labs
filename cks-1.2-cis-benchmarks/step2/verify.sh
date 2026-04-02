@@ -1,4 +1,6 @@
 #!/bin/bash
+if id 'ubuntu' &>/dev/null; then USER_HOME='/home/ubuntu'; else USER_HOME='/root'; fi
+#!/bin/bash
 MANIFEST="/etc/kubernetes/manifests/kube-apiserver.yaml"
 
 # Check directly or via kind node
@@ -16,7 +18,7 @@ else
     docker exec "$NODE" grep -q "audit-log-path" /etc/kubernetes/manifests/kube-apiserver.yaml 2>/dev/null && AUDIT_FOUND=true
   fi
   # Accept documentation fallback
-  if [ -f /root/apiserver-hardening.txt ] && grep -q "profiling=false" /root/apiserver-hardening.txt; then
+  if [ -f $USER_HOME/apiserver-hardening.txt ] && grep -q "profiling=false" $USER_HOME/apiserver-hardening.txt; then
     PROFILING_FOUND=true
     AUDIT_FOUND=true
   fi

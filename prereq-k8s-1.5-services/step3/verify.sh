@@ -1,4 +1,6 @@
 #!/bin/bash
+if id 'ubuntu' &>/dev/null; then USER_HOME='/home/ubuntu'; else USER_HOME='/root'; fi
+#!/bin/bash
 # Verify service web-nodeport exists and is NodePort type
 # Wait up to 60s for the service to be created
 for i in $(seq 1 30); do

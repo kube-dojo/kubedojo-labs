@@ -1,4 +1,6 @@
 #!/bin/bash
+if id 'ubuntu' &>/dev/null; then USER_HOME='/home/ubuntu'; else USER_HOME='/root'; fi
+#!/bin/bash
 # Verify that the lab-ns namespace exists
 if ip netns list | grep -q "lab-ns"; then
   echo "PASS: lab-ns namespace exists"

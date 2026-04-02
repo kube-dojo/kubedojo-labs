@@ -1,4 +1,6 @@
 #!/bin/bash
+if id 'ubuntu' &>/dev/null; then USER_HOME='/home/ubuntu'; else USER_HOME='/root'; fi
+#!/bin/bash
 # 1. Check if pod is running
 STATUS=$(kubectl get pod init-pod -n practice -o jsonpath='{.status.phase}' 2>/dev/null)
 if [ "$STATUS" != "Running" ]; then

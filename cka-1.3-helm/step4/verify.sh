@@ -1,4 +1,6 @@
 #!/bin/bash
+if id 'ubuntu' &>/dev/null; then USER_HOME='/home/ubuntu'; else USER_HOME='/root'; fi
+#!/bin/bash
 HISTORY=$(helm history web 2>/dev/null)
 COUNT=$(echo "$HISTORY" | tail -n +2 | wc -l | tr -d ' ')
 

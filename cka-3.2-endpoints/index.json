@@ -1,12 +1,13 @@
 {
-  "title": "Endpoints — EndpointSlices, Manual Endpoints & Headless Services",
+  "title": "Endpoints \u2014 EndpointSlices, Manual Endpoints & Headless Services",
   "description": "Understand EndpointSlices, create manual endpoints for external services, and configure headless services for StatefulSet DNS discovery.",
   "backend": {
     "imageid": "kubernetes-kubeadm-1node"
   },
   "details": {
     "intro": {
-      "text": "intro.md"
+      "text": "intro.md",
+      "background": "setup.sh"
     },
     "steps": [
       {

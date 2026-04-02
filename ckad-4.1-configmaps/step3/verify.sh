@@ -1,4 +1,6 @@
 #!/bin/bash
+if id 'ubuntu' &>/dev/null; then USER_HOME='/home/ubuntu'; else USER_HOME='/root'; fi
+#!/bin/bash
 for i in $(seq 1 30); do
   S=$(kubectl get pod vol-pod -n cm-lab -o jsonpath='{.status.phase}' 2>/dev/null)
   [ "$S" = "Running" ] && break
@@ -13,8 +15,8 @@ if [[ "$CONTENT" != *"database.host"* ]]; then
   echo "FAIL: Mounted config should contain database.host"
   exit 1
 fi
-if [ ! -f /root/mounted-config.txt ]; then
-  echo "FAIL: /root/mounted-config.txt not found"
+if [ ! -f $USER_HOME/mounted-config.txt ]; then
+  echo "FAIL: $USER_HOME/mounted-config.txt not found"
   exit 1
 fi
 echo "PASS"

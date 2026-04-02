@@ -1,4 +1,6 @@
 #!/bin/bash
+if id 'ubuntu' &>/dev/null; then USER_HOME='/home/ubuntu'; else USER_HOME='/root'; fi
+#!/bin/bash
 # Verify: both default deny policies exist
 DENY_IN=$(kubectl get networkpolicy default-deny-ingress -n backend -o jsonpath='{.metadata.name}' 2>/dev/null)
 DENY_EG=$(kubectl get networkpolicy default-deny-egress -n backend -o jsonpath='{.metadata.name}' 2>/dev/null)

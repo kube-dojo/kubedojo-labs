@@ -1,4 +1,6 @@
 #!/bin/bash
+if id 'ubuntu' &>/dev/null; then USER_HOME='/home/ubuntu'; else USER_HOME='/root'; fi
+#!/bin/bash
 # Check if 3 pods are ready in order
 if ! kubectl get pod web-sts-2 -n practice >/dev/null 2>&1; then
   echo "FAIL: Pod web-sts-2 not found. Is the StatefulSet scaled to 3?"

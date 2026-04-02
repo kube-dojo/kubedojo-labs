@@ -24,18 +24,18 @@ cat /proc/1/limits         # resource limits
 
 ### Your task
 
-Extract the CPU model name from `/proc/cpuinfo` and save it to `/root/cpu-model.txt`.
+Extract the CPU model name from `/proc/cpuinfo` and save it to `~/cpu-model.txt`.
 
 <details>
 <summary>Hint</summary>
 
 ```bash
-grep "model name" /proc/cpuinfo | head -1 | cut -d: -f2 | sed 's/^ //' > /root/cpu-model.txt
+grep "model name" /proc/cpuinfo | head -1 | cut -d: -f2 | sed 's/^ //' > ~/cpu-model.txt
 ```
 
 Or using awk:
 
 ```bash
-awk -F: '/model name/ {print $2; exit}' /proc/cpuinfo | sed 's/^ //' > /root/cpu-model.txt
+awk -F: '/model name/ {print $2; exit}' /proc/cpuinfo | sed 's/^ //' > ~/cpu-model.txt
 ```
 </details>

@@ -1,11 +1,13 @@
 #!/bin/bash
-# Verify /root/init-name.txt exists and contains a known init system
-if [ ! -f /root/init-name.txt ]; then
-  echo "/root/init-name.txt does not exist"
+if id 'ubuntu' &>/dev/null; then USER_HOME='/home/ubuntu'; else USER_HOME='/root'; fi
+#!/bin/bash
+# Verify $USER_HOME/init-name.txt exists and contains a known init system
+if [ ! -f $USER_HOME/init-name.txt ]; then
+  echo "$USER_HOME/init-name.txt does not exist"
   exit 1
 fi
 
-content=$(cat /root/init-name.txt | tr -d '[:space:]')
+content=$(cat $USER_HOME/init-name.txt | tr -d '[:space:]')
 if [ -n "$content" ]; then
   echo "Init process: $content. Correct!"
   exit 0

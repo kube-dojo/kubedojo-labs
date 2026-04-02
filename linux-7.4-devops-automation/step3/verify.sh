@@ -1,15 +1,17 @@
 #!/bin/bash
-if [ ! -f /root/pipeline.sh ]; then
-  echo "FAIL: /root/pipeline.sh not found"
+if id 'ubuntu' &>/dev/null; then USER_HOME='/home/ubuntu'; else USER_HOME='/root'; fi
+#!/bin/bash
+if [ ! -f $USER_HOME/pipeline.sh ]; then
+  echo "FAIL: $USER_HOME/pipeline.sh not found"
   exit 1
 fi
 
-if [ ! -x /root/pipeline.sh ]; then
-  echo "FAIL: /root/pipeline.sh is not executable"
+if [ ! -x $USER_HOME/pipeline.sh ]; then
+  echo "FAIL: $USER_HOME/pipeline.sh is not executable"
   exit 1
 fi
 
-OUTPUT=$(/root/pipeline.sh 2>&1)
+OUTPUT=$($USER_HOME/pipeline.sh 2>&1)
 STAGES=0
 for stage in "BUILD" "TEST" "DEPLOY"; do
   if echo "$OUTPUT" | grep -qi "$stage"; then

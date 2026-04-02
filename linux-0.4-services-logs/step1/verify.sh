@@ -1,4 +1,6 @@
 #!/bin/bash
+if id 'ubuntu' &>/dev/null; then USER_HOME='/home/ubuntu'; else USER_HOME='/root'; fi
+#!/bin/bash
 # Verify nginx is active
 if systemctl is-active --quiet nginx 2>/dev/null; then
   echo "nginx is running!"

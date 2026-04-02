@@ -27,7 +27,7 @@ Nginx has been started on port 80 for this step.
 
 ## Task
 
-Make an HTTP connection to `localhost:80` and capture the established TCP connections to `/root/tcp-connections.txt`.
+Make an HTTP connection to `localhost:80` and capture the established TCP connections to `~/tcp-connections.txt`.
 
 <details>
 <summary>Hint 1</summary>
@@ -37,5 +37,5 @@ Use <code>curl</code> to make a request: <code>curl -s http://localhost:80 > /de
 <details>
 <summary>Hint 2</summary>
 Capture connections while the request is active, or simply save the <code>ss</code> output:
-<code>curl -s http://localhost:80 > /dev/null & ss -tn > /root/tcp-connections.txt</code>
+<code>curl -s http://localhost:80 > /dev/null & ss -tn > ~/tcp-connections.txt</code>
 </details>

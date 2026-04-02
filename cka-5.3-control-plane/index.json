@@ -1,12 +1,13 @@
 {
-  "title": "Control Plane Troubleshooting — API Server, etcd & Scheduler",
+  "title": "Control Plane Troubleshooting \u2014 API Server, etcd & Scheduler",
   "description": "Diagnose and fix control plane failures: API server connectivity issues, etcd problems, and scheduler misconfigurations.",
   "backend": {
     "imageid": "kubernetes-kubeadm-1node"
   },
   "details": {
     "intro": {
-      "text": "intro.md"
+      "text": "intro.md",
+      "background": "setup.sh"
     },
     "steps": [
       {

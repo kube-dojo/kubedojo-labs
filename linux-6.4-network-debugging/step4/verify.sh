@@ -1,10 +1,12 @@
 #!/bin/bash
-if [ ! -f /root/tcpdump-output.txt ]; then
-  echo "FAIL: /root/tcpdump-output.txt not found"
+if id 'ubuntu' &>/dev/null; then USER_HOME='/home/ubuntu'; else USER_HOME='/root'; fi
+#!/bin/bash
+if [ ! -f $USER_HOME/tcpdump-output.txt ]; then
+  echo "FAIL: $USER_HOME/tcpdump-output.txt not found"
   exit 1
 fi
 
-if [ -s /root/tcpdump-output.txt ]; then
+if [ -s $USER_HOME/tcpdump-output.txt ]; then
   echo "PASS: tcpdump-output.txt has content"
   exit 0
 else

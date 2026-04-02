@@ -1,7 +1,9 @@
 #!/bin/bash
-OUTPUT=$(kubectl kustomize /root/base/ 2>/dev/null)
+if id 'ubuntu' &>/dev/null; then USER_HOME='/home/ubuntu'; else USER_HOME='/root'; fi
+#!/bin/bash
+OUTPUT=$(kubectl kustomize $USER_HOME/base/ 2>/dev/null)
 if [ $? -ne 0 ]; then
-  echo "FAIL: kubectl kustomize /root/base/ failed"
+  echo "FAIL: kubectl kustomize $USER_HOME/base/ failed"
   exit 1
 fi
 

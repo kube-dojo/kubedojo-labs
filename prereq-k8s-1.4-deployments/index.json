@@ -1,12 +1,13 @@
 {
-  "title": "Deployments — Managing Applications",
-  "description": "Create, scale, update, and roll back Deployments — the standard way to run applications on Kubernetes.",
+  "title": "Deployments \u2014 Managing Applications",
+  "description": "Create, scale, update, and roll back Deployments \u2014 the standard way to run applications on Kubernetes.",
   "backend": {
     "imageid": "kubernetes-kubeadm-1node"
   },
   "details": {
     "intro": {
-      "text": "intro.md"
+      "text": "intro.md",
+      "background": "setup.sh"
     },
     "steps": [
       {

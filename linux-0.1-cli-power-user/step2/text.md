@@ -22,7 +22,7 @@ echo "logged" | tee /tmp/tee.txt   # write to file AND screen
 
 ### Your task
 
-Find all `.conf` files in `/etc`, count how many there are, and save the count to `/root/conf-count.txt`.
+Find all `.conf` files in `/etc`, count how many there are, and save the count to `~/conf-count.txt`.
 
 The file should contain just the number (e.g., `42`).
 
@@ -32,7 +32,7 @@ The file should contain just the number (e.g., `42`).
 Use `find` to locate `.conf` files, pipe to `wc -l` to count, and redirect to the output file:
 
 ```bash
-find /etc -name "*.conf" 2>/dev/null | wc -l > /root/conf-count.txt
+find /etc -name "*.conf" 2>/dev/null | wc -l > ~/conf-count.txt
 ```
 
 The `2>/dev/null` suppresses permission errors you might hit on some directories.

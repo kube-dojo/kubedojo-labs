@@ -28,9 +28,9 @@ journalctl -p err --since "1 hour ago" --no-pager
 
 1. Search system logs for ERROR and CRITICAL entries
 2. Count the total number of such entries
-3. Save the count to `/root/error-count.txt`
+3. Save the count to `~/error-count.txt`
 
 **Hint:**
 ```bash
-grep -ci "ERROR\|CRITICAL" /var/log/syslog > /root/error-count.txt
+grep -ci "ERROR\|CRITICAL" /var/log/syslog > ~/error-count.txt
 ```

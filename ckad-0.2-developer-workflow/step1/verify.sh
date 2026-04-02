@@ -1,6 +1,8 @@
 #!/bin/bash
-if [ ! -f /root/frontend.yaml ]; then
-  echo "FAIL: /root/frontend.yaml does not exist"
+if id 'ubuntu' &>/dev/null; then USER_HOME='/home/ubuntu'; else USER_HOME='/root'; fi
+#!/bin/bash
+if [ ! -f $USER_HOME/frontend.yaml ]; then
+  echo "FAIL: $USER_HOME/frontend.yaml does not exist"
   exit 1
 fi
 

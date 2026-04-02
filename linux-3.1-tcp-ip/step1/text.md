@@ -28,7 +28,7 @@ ip addr show eth0     # Show specific interface
 
 ## Task
 
-List all IP addresses on the system and save the output to `/root/all-ips.txt`.
+List all IP addresses on the system and save the output to `~/all-ips.txt`.
 
 <details>
 <summary>Hint 1</summary>
@@ -37,5 +37,5 @@ Use <code>ip addr show</code> to display all addresses.
 
 <details>
 <summary>Hint 2</summary>
-Redirect the output: <code>ip addr show > /root/all-ips.txt</code>
+Redirect the output: <code>ip addr show > ~/all-ips.txt</code>
 </details>

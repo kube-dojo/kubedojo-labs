@@ -31,11 +31,11 @@ awk -F',' 'NR > 1 {sum += $3; n++} END {print sum/n}' data.csv
 
 ## Your Task
 
-Using `/root/data.csv`, calculate the **total salary** of all employees and save it to `/root/awk-sum.txt`.
+Using `~/data.csv`, calculate the **total salary** of all employees and save it to `~/awk-sum.txt`.
 
 The file should contain just the number (e.g., `845000`).
 
 **Hint:**
 ```bash
-awk -F',' 'NR > 1 {sum += $3} END {print sum}' /root/data.csv > /root/awk-sum.txt
+awk -F',' 'NR > 1 {sum += $3} END {print sum}' ~/data.csv > ~/awk-sum.txt
 ```

@@ -25,7 +25,7 @@ The active scheduler is shown in brackets, e.g., `[mq-deadline] kyber bfq none`.
 
 1. Find the root disk device name using `lsblk`
 2. Check its I/O scheduler
-3. Save the scheduler name to `/root/io-scheduler.txt`
+3. Save the scheduler name to `~/io-scheduler.txt`
 
 **Hint:**
 ```bash
@@ -33,5 +33,5 @@ The active scheduler is shown in brackets, e.g., `[mq-deadline] kyber bfq none`.
 DEVICE=$(lsblk -no NAME,MOUNTPOINT | awk '$2=="/" {print $1}' | sed 's/[^a-z]//g')
 # If that doesn't work, try:
 DEVICE=$(lsblk -dno NAME | head -1)
-cat /sys/block/$DEVICE/queue/scheduler | grep -oP '\[\K[^\]]+' > /root/io-scheduler.txt
+cat /sys/block/$DEVICE/queue/scheduler | grep -oP '\[\K[^\]]+' > ~/io-scheduler.txt
 ```

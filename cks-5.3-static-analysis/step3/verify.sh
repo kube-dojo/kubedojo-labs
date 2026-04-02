@@ -1,19 +1,21 @@
 #!/bin/bash
-if [ ! -f /root/security-checklist.txt ] || [ ! -s /root/security-checklist.txt ]; then
-  echo "FAIL: /root/security-checklist.txt missing or empty"
+if id 'ubuntu' &>/dev/null; then USER_HOME='/home/ubuntu'; else USER_HOME='/root'; fi
+#!/bin/bash
+if [ ! -f $USER_HOME/security-checklist.txt ] || [ ! -s $USER_HOME/security-checklist.txt ]; then
+  echo "FAIL: $USER_HOME/security-checklist.txt missing or empty"
   exit 1
 fi
-LINES=$(wc -l < /root/security-checklist.txt | tr -d ' ')
+LINES=$(wc -l < $USER_HOME/security-checklist.txt | tr -d ' ')
 if [ "$LINES" -lt 13 ]; then
   echo "FAIL: Expected at least 13 checklist items"
   exit 1
 fi
-if [ ! -x /root/quick-audit.sh ]; then
-  echo "FAIL: /root/quick-audit.sh not found or not executable"
+if [ ! -x $USER_HOME/quick-audit.sh ]; then
+  echo "FAIL: $USER_HOME/quick-audit.sh not found or not executable"
   exit 1
 fi
-if [ ! -f /root/audit-results.txt ] || [ ! -s /root/audit-results.txt ]; then
-  echo "FAIL: /root/audit-results.txt missing or empty"
+if [ ! -f $USER_HOME/audit-results.txt ] || [ ! -s $USER_HOME/audit-results.txt ]; then
+  echo "FAIL: $USER_HOME/audit-results.txt missing or empty"
   exit 1
 fi
 echo "PASS"

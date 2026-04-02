@@ -29,12 +29,12 @@ journalctl -k -p err       # kernel errors only
 
 ### Your task
 
-Save the last 20 lines of `dmesg` output to `/root/dmesg-tail.txt`.
+Save the last 20 lines of `dmesg` output to `~/dmesg-tail.txt`.
 
 <details>
 <summary>Hint</summary>
 
 ```bash
-dmesg | tail -20 > /root/dmesg-tail.txt
+dmesg | tail -20 > ~/dmesg-tail.txt
 ```
 </details>

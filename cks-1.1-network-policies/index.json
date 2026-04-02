@@ -4,7 +4,10 @@
   "difficulty": "Intermediate",
   "time": "35 minutes",
   "details": {
-    "intro": { "text": "intro.md" },
+    "intro": {
+      "text": "intro.md",
+      "background": "setup.sh"
+    },
     "steps": [
       {
         "title": "Create a default deny-all ingress policy",
@@ -31,7 +34,11 @@
         "solution": "step4/solution.sh"
       }
     ],
-    "finish": { "text": "finish.md" }
+    "finish": {
+      "text": "finish.md"
+    }
   },
-  "backend": { "imageid": "kubernetes-kubeadm-1node" }
+  "backend": {
+    "imageid": "kubernetes-kubeadm-1node"
+  }
 }

@@ -21,7 +21,7 @@ fg %1                 # bring job 1 to foreground
 ### Your task
 
 1. Start a `sleep 600` process in the background
-2. Save its PID to `/root/bg-pid.txt`
+2. Save its PID to `~/bg-pid.txt`
 3. Kill it using `kill`
 4. Verify it's gone
 
@@ -32,7 +32,7 @@ The `$!` variable holds the PID of the last background process:
 
 ```bash
 sleep 600 &
-echo $! > /root/bg-pid.txt
-kill $(cat /root/bg-pid.txt)
+echo $! > ~/bg-pid.txt
+kill $(cat ~/bg-pid.txt)
 ```
 </details>

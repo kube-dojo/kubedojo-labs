@@ -6,11 +6,11 @@ YAML is whitespace-sensitive. Common mistakes include:
 - **Inconsistent indentation** — child keys must be indented consistently (2 spaces is standard in K8s)
 - **Missing indentation** — a child key at the wrong level
 
-A broken YAML file has been created at `/root/broken.yaml`. It has indentation errors that prevent it from being parsed.
+A broken YAML file has been created at `~/broken.yaml`. It has indentation errors that prevent it from being parsed.
 
 ## Task
 
-Fix `/root/broken.yaml` so that it is valid YAML representing a Pod with:
+Fix `~/broken.yaml` so that it is valid YAML representing a Pod with:
 - `apiVersion: v1`
 - `kind: Pod`
 - `metadata.name: broken-pod` with label `app: test`

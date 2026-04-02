@@ -31,7 +31,7 @@ nslookup -type=MX gmail.com # Query specific record type
 
 ## Task
 
-Query the A record for `google.com` using `dig` and save the full output to `/root/dig-output.txt`.
+Query the A record for `google.com` using `dig` and save the full output to `~/dig-output.txt`.
 
 <details>
 <summary>Hint 1</summary>
@@ -40,5 +40,5 @@ Run <code>dig google.com</code> and redirect the output to a file.
 
 <details>
 <summary>Hint 2</summary>
-<code>dig google.com > /root/dig-output.txt</code>
+<code>dig google.com > ~/dig-output.txt</code>
 </details>

@@ -24,7 +24,7 @@ SUID binaries are a security audit target — an attacker who finds a vulnerable
 
 ### Your task
 
-Find all SUID binaries on the system and save the list to `/root/suid-bins.txt`.
+Find all SUID binaries on the system and save the list to `~/suid-bins.txt`.
 
 <details>
 <summary>Hint</summary>
@@ -32,7 +32,7 @@ Find all SUID binaries on the system and save the list to `/root/suid-bins.txt`.
 Use `find` with the `-perm` flag to search for the SUID bit:
 
 ```bash
-find / -perm -4000 -type f 2>/dev/null > /root/suid-bins.txt
+find / -perm -4000 -type f 2>/dev/null > ~/suid-bins.txt
 ```
 
 The `-4000` matches files where the SUID bit is set.

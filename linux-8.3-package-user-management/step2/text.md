@@ -17,7 +17,7 @@ usermod -aG ops-team existing-user
 
 ## Your Task
 
-Write `/root/create-team.sh` that:
+Write `~/create-team.sh` that:
 
 1. Creates a group called `ops-team`
 2. Creates 3 users: `ops-alice`, `ops-bob`, `ops-charlie`

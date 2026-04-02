@@ -1,4 +1,6 @@
 #!/bin/bash
+if id 'ubuntu' &>/dev/null; then USER_HOME='/home/ubuntu'; else USER_HOME='/root'; fi
+#!/bin/bash
 for i in $(seq 1 30); do
   STATUS=$(kubectl get pod sidecar-log -n multi-lab -o jsonpath='{.status.phase}' 2>/dev/null)
   [ "$STATUS" = "Running" ] && break

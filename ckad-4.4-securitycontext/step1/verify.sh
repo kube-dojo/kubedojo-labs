@@ -1,4 +1,6 @@
 #!/bin/bash
+if id 'ubuntu' &>/dev/null; then USER_HOME='/home/ubuntu'; else USER_HOME='/root'; fi
+#!/bin/bash
 for i in $(seq 1 30); do
   S=$(kubectl get pod user-pod -n security-lab -o jsonpath='{.status.phase}' 2>/dev/null)
   [ "$S" = "Running" ] && break
@@ -14,8 +16,8 @@ if [ "$GID_VAL" != "3000" ]; then
   echo "FAIL: runAsGroup should be 3000"
   exit 1
 fi
-if [ ! -f /root/user-id.txt ]; then
-  echo "FAIL: /root/user-id.txt not found"
+if [ ! -f $USER_HOME/user-id.txt ]; then
+  echo "FAIL: $USER_HOME/user-id.txt not found"
   exit 1
 fi
 echo "PASS"

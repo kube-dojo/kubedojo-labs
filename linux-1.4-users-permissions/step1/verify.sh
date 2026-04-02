@@ -1,4 +1,6 @@
 #!/bin/bash
+if id 'ubuntu' &>/dev/null; then USER_HOME='/home/ubuntu'; else USER_HOME='/root'; fi
+#!/bin/bash
 # Verify user developer exists and is in devteam group
 if ! id developer > /dev/null 2>&1; then
   echo "User 'developer' does not exist"

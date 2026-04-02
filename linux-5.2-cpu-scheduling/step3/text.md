@@ -36,7 +36,7 @@ ionice -c 3 <command>
    ```bash
    nice -n -10 sleep 300 &
    ```
-2. Save the PID and nice value to `/root/nice-process.txt` in the format:
+2. Save the PID and nice value to `~/nice-process.txt` in the format:
    ```
    PID: <pid>
    Nice: -10

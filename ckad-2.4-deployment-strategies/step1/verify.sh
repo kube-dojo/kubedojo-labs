@@ -1,4 +1,6 @@
 #!/bin/bash
+if id 'ubuntu' &>/dev/null; then USER_HOME='/home/ubuntu'; else USER_HOME='/root'; fi
+#!/bin/bash
 TYPE=$(kubectl get deployment rolling-app -n strategy-lab -o jsonpath='{.spec.strategy.type}' 2>/dev/null)
 if [ "$TYPE" != "RollingUpdate" ]; then
   echo "FAIL: Strategy should be RollingUpdate, got: $TYPE"
@@ -19,8 +21,8 @@ if [ "$IMG" != "nginx:1.25" ]; then
   echo "FAIL: Image should be nginx:1.25 after update"
   exit 1
 fi
-if [ ! -f /root/strategy-type.txt ]; then
-  echo "FAIL: /root/strategy-type.txt not found"
+if [ ! -f $USER_HOME/strategy-type.txt ]; then
+  echo "FAIL: $USER_HOME/strategy-type.txt not found"
   exit 1
 fi
 echo "PASS"

@@ -1,15 +1,17 @@
 #!/bin/bash
-if [ ! -f /root/api-check.sh ]; then
-  echo "FAIL: /root/api-check.sh not found"
+if id 'ubuntu' &>/dev/null; then USER_HOME='/home/ubuntu'; else USER_HOME='/root'; fi
+#!/bin/bash
+if [ ! -f $USER_HOME/api-check.sh ]; then
+  echo "FAIL: $USER_HOME/api-check.sh not found"
   exit 1
 fi
 
-if [ ! -x /root/api-check.sh ]; then
-  echo "FAIL: /root/api-check.sh is not executable"
+if [ ! -x $USER_HOME/api-check.sh ]; then
+  echo "FAIL: $USER_HOME/api-check.sh is not executable"
   exit 1
 fi
 
-OUTPUT=$(/root/api-check.sh 2>&1)
+OUTPUT=$($USER_HOME/api-check.sh 2>&1)
 if echo "$OUTPUT" | grep -qi "status\|version\|healthy"; then
   echo "PASS: Script produces parsed API output"
   exit 0

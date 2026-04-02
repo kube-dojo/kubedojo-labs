@@ -1,4 +1,6 @@
 #!/bin/bash
+if id 'ubuntu' &>/dev/null; then USER_HOME='/home/ubuntu'; else USER_HOME='/root'; fi
+#!/bin/bash
 DEP=$(kubectl get deployment web-deploy -n practice -o json 2>/dev/null)
 if [ $? -ne 0 ]; then
   echo "FAIL: Deployment web-deploy not found"

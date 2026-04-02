@@ -1,4 +1,6 @@
 #!/bin/bash
+if id 'ubuntu' &>/dev/null; then USER_HOME='/home/ubuntu'; else USER_HOME='/root'; fi
+#!/bin/bash
 STATUS=$(kubectl get pod broken-pod -n practice -o jsonpath='{.status.phase}' 2>/dev/null)
 IMAGE=$(kubectl get pod broken-pod -n practice -o jsonpath='{.spec.containers[0].image}' 2>/dev/null)
 

@@ -17,3 +17,9 @@ kubectl create deployment web --image=nginx:1.25 --replicas=2
 kubectl wait --for=condition=available deployment/web --timeout=120s
 
 echo "Setup complete. Deployment 'web' is running with 2 replicas."
+
+# Seed /home/ubuntu if it exists
+if [ -d /home/ubuntu ]; then
+  cp -r /root/* /home/ubuntu/ 2>/dev/null || true
+  chown -R ubuntu:ubuntu /home/ubuntu/ 2>/dev/null || true
+fi

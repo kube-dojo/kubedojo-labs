@@ -1,4 +1,6 @@
 #!/bin/bash
+if id 'ubuntu' &>/dev/null; then USER_HOME='/home/ubuntu'; else USER_HOME='/root'; fi
+#!/bin/bash
 if ! kubectl get sa no-api-access -n sa-lab &>/dev/null; then
   echo "FAIL: ServiceAccount no-api-access not found"
   exit 1
@@ -16,8 +18,8 @@ if ! kubectl get pod needs-api -n sa-lab &>/dev/null; then
   echo "FAIL: Pod needs-api not found"
   exit 1
 fi
-if [ ! -f /root/token-check.txt ]; then
-  echo "FAIL: /root/token-check.txt not found"
+if [ ! -f $USER_HOME/token-check.txt ]; then
+  echo "FAIL: $USER_HOME/token-check.txt not found"
   exit 1
 fi
 echo "PASS"

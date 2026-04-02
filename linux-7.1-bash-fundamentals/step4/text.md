@@ -37,7 +37,7 @@ function cleanup() {
 
 ## Your Task
 
-Write `/root/safe-script.sh` that:
+Write `~/safe-script.sh` that:
 
 1. Uses `set -euo pipefail` for strict error handling
 2. Has a `trap` that cleans up a temp file on exit

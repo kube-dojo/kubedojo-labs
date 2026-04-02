@@ -1,4 +1,6 @@
 #!/bin/bash
+if id 'ubuntu' &>/dev/null; then USER_HOME='/home/ubuntu'; else USER_HOME='/root'; fi
+#!/bin/bash
 if ! helm list 2>/dev/null | grep -q "web"; then
   echo "FAIL: No release named 'web' found in helm list"
   exit 1

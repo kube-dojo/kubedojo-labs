@@ -1,10 +1,12 @@
 #!/bin/bash
-if [ ! -f /root/affinity-pid.txt ]; then
-  echo "FAIL: /root/affinity-pid.txt not found"
+if id 'ubuntu' &>/dev/null; then USER_HOME='/home/ubuntu'; else USER_HOME='/root'; fi
+#!/bin/bash
+if [ ! -f $USER_HOME/affinity-pid.txt ]; then
+  echo "FAIL: $USER_HOME/affinity-pid.txt not found"
   exit 1
 fi
 
-PID=$(cat /root/affinity-pid.txt | tr -d '[:space:]')
+PID=$(cat $USER_HOME/affinity-pid.txt | tr -d '[:space:]')
 if ! [[ "$PID" =~ ^[0-9]+$ ]]; then
   echo "FAIL: Invalid PID in file"
   exit 1

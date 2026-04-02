@@ -34,10 +34,10 @@ restorecon -Rv /srv/web
 
 ## Task
 
-1. Create a test file: `touch /root/selinux-lab/testfile.txt`
-2. Try to view its context with `ls -Z /root/selinux-lab/testfile.txt`
-3. Try changing the context with `chcon -t httpd_sys_content_t /root/selinux-lab/testfile.txt`
-4. Document what happened (success or error) in `/root/selinux-lab/context-report.txt`
+1. Create a test file: `touch ~/selinux-lab/testfile.txt`
+2. Try to view its context with `ls -Z ~/selinux-lab/testfile.txt`
+3. Try changing the context with `chcon -t httpd_sys_content_t ~/selinux-lab/testfile.txt`
+4. Document what happened (success or error) in `~/selinux-lab/context-report.txt`
 5. Include in the report:
    - The original context (or "no context available" if SELinux is disabled)
    - The command you ran

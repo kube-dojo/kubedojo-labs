@@ -31,8 +31,8 @@ nslookup -type=MX example.com
 ## Your Task
 
 1. Debug DNS resolution for `google.com` using `dig`
-2. Save the full output to `/root/dns-debug.txt`
+2. Save the full output to `~/dns-debug.txt`
 
 ```bash
-dig google.com > /root/dns-debug.txt 2>&1
+dig google.com > ~/dns-debug.txt 2>&1
 ```

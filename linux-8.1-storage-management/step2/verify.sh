@@ -1,4 +1,6 @@
 #!/bin/bash
+if id 'ubuntu' &>/dev/null; then USER_HOME='/home/ubuntu'; else USER_HOME='/root'; fi
+#!/bin/bash
 # Check if tmpfs is mounted, or if directory exists (Docker fallback)
 if mount | grep -q "/mnt/ramdisk"; then
   echo "PASS: /mnt/ramdisk is mounted as tmpfs"

@@ -55,3 +55,9 @@ python3 /root/api-server/api.py &
 echo $! > /root/api-server/pid
 
 echo "Setup complete. Template at /root/app.conf.template, API server at localhost:8080"
+
+# Seed /home/ubuntu if it exists
+if [ -d /home/ubuntu ]; then
+  cp -r /root/* /home/ubuntu/ 2>/dev/null || true
+  chown -R ubuntu:ubuntu /home/ubuntu/ 2>/dev/null || true
+fi

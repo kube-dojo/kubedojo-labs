@@ -5,7 +5,7 @@ iptables rules live in kernel memory — they are lost on reboot unless explicit
 ## Saving Rules
 
 ```bash
-iptables-save > /root/my-rules.txt
+iptables-save > ~/my-rules.txt
 ```
 
 This saves ALL tables (filter, nat, mangle, raw) in a format that can be restored later.
@@ -13,7 +13,7 @@ This saves ALL tables (filter, nat, mangle, raw) in a format that can be restore
 ## Restoring Rules
 
 ```bash
-iptables-restore < /root/my-rules.txt
+iptables-restore < ~/my-rules.txt
 ```
 
 ## Persistent Rules on Ubuntu
@@ -42,7 +42,7 @@ Each table starts with `*tablename` and ends with `COMMIT`.
 
 ## Task
 
-Save all current iptables rules (all tables) to `/root/iptables-backup.txt` using `iptables-save`.
+Save all current iptables rules (all tables) to `~/iptables-backup.txt` using `iptables-save`.
 
 <details>
 <summary>Refer to: iptables-save(8) man page</summary>

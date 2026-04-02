@@ -51,11 +51,11 @@ spec:
 
 1. If Docker is available, test the profile:
    ```bash
-   docker run --rm --security-opt seccomp=/root/seccomp-profile.json alpine chmod 777 /tmp
+   docker run --rm --security-opt seccomp=~/seccomp-profile.json alpine chmod 777 /tmp
    ```
    This should fail because `chmod` is blocked.
 
-2. Whether or not Docker is available, create a Kubernetes pod manifest at `/root/k8s-seccomp.yaml` that:
+2. Whether or not Docker is available, create a Kubernetes pod manifest at `~/k8s-seccomp.yaml` that:
    - Deploys an nginx pod named `seccomp-demo`
    - Applies the `RuntimeDefault` seccomp profile at the pod level
    - Applies a custom `Localhost` profile at the container level with path `profiles/no-chmod.json`

@@ -1,4 +1,6 @@
 #!/bin/bash
+if id 'ubuntu' &>/dev/null; then USER_HOME='/home/ubuntu'; else USER_HOME='/root'; fi
+#!/bin/bash
 # Check namespace
 kubectl get namespace exam-sim > /dev/null 2>&1
 if [ $? -ne 0 ]; then
@@ -39,11 +41,11 @@ if [ -z "$SVC_IP" ]; then
 fi
 
 # Check IP file
-if [ ! -f /root/task4-ip.txt ]; then
-  echo "FAIL: /root/task4-ip.txt does not exist"
+if [ ! -f $USER_HOME/task4-ip.txt ]; then
+  echo "FAIL: $USER_HOME/task4-ip.txt does not exist"
   exit 1
 fi
-FILE_IP=$(cat /root/task4-ip.txt | tr -d '[:space:]')
+FILE_IP=$(cat $USER_HOME/task4-ip.txt | tr -d '[:space:]')
 if [ "$FILE_IP" != "$SVC_IP" ]; then
   echo "FAIL: IP mismatch. Service has $SVC_IP, file has $FILE_IP"
   exit 1

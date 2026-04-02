@@ -1,6 +1,8 @@
 #!/bin/bash
-SCRIPT="/root/create-files.sh"
-DIR="/root/timed"
+if id 'ubuntu' &>/dev/null; then USER_HOME='/home/ubuntu'; else USER_HOME='/root'; fi
+#!/bin/bash
+SCRIPT="$USER_HOME/create-files.sh"
+DIR="$USER_HOME/timed"
 
 if [ ! -f "$SCRIPT" ]; then
   echo "FAIL: $SCRIPT does not exist"

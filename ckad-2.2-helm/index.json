@@ -1,10 +1,13 @@
 {
   "title": "CKAD 2.2: Helm Package Manager",
-  "description": "Install, upgrade, rollback, and customize Helm charts — essential CKAD deployment skills",
+  "description": "Install, upgrade, rollback, and customize Helm charts \u2014 essential CKAD deployment skills",
   "difficulty": "Intermediate",
   "time": "30 minutes",
   "details": {
-    "intro": { "text": "intro.md" },
+    "intro": {
+      "text": "intro.md",
+      "background": "setup.sh"
+    },
     "steps": [
       {
         "title": "Install and manage Helm releases",
@@ -25,7 +28,11 @@
         "solution": "step3/solution.sh"
       }
     ],
-    "finish": { "text": "finish.md" }
+    "finish": {
+      "text": "finish.md"
+    }
   },
-  "backend": { "imageid": "kubernetes-kubeadm-1node" }
+  "backend": {
+    "imageid": "kubernetes-kubeadm-1node"
+  }
 }

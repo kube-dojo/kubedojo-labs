@@ -1,15 +1,17 @@
 #!/bin/bash
-if [ ! -x /root/immutability-audit.sh ]; then
-  echo "FAIL: /root/immutability-audit.sh not found or not executable"
+if id 'ubuntu' &>/dev/null; then USER_HOME='/home/ubuntu'; else USER_HOME='/root'; fi
+#!/bin/bash
+if [ ! -x $USER_HOME/immutability-audit.sh ]; then
+  echo "FAIL: $USER_HOME/immutability-audit.sh not found or not executable"
   exit 1
 fi
 for f in immutability-report.txt immutability-best-practices.txt; do
-  if [ ! -f "/root/$f" ] || [ ! -s "/root/$f" ]; then
-    echo "FAIL: /root/$f missing or empty"
+  if [ ! -f "$USER_HOME/$f" ] || [ ! -s "$USER_HOME/$f" ]; then
+    echo "FAIL: $USER_HOME/$f missing or empty"
     exit 1
   fi
 done
-LINES=$(wc -l < /root/immutability-best-practices.txt | tr -d ' ')
+LINES=$(wc -l < $USER_HOME/immutability-best-practices.txt | tr -d ' ')
 if [ "$LINES" -lt 5 ]; then
   echo "FAIL: Expected at least 5 best practices"
   exit 1

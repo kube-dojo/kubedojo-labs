@@ -1,5 +1,7 @@
 #!/bin/bash
-FILE="/root/nginx-deploy.yaml"
+if id 'ubuntu' &>/dev/null; then USER_HOME='/home/ubuntu'; else USER_HOME='/root'; fi
+#!/bin/bash
+FILE="$USER_HOME/nginx-deploy.yaml"
 if [ ! -f "$FILE" ]; then
   echo "FAIL: $FILE does not exist"
   exit 1
@@ -15,7 +17,7 @@ fi
 if grep -q "kind: Deployment" "$FILE" && \
    grep -q "replicas: 2" "$FILE" && \
    grep -q "image: nginx" "$FILE"; then
-  echo "PASS: /root/nginx-deploy.yaml is a valid Deployment with 2 replicas"
+  echo "PASS: $USER_HOME/nginx-deploy.yaml is a valid Deployment with 2 replicas"
   exit 0
 else
   echo "FAIL: YAML is missing required fields (Deployment, replicas: 2, or nginx image)"

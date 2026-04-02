@@ -39,7 +39,7 @@ awk '{print $1}' /var/log/nginx/access.log | sort | uniq -c | sort -rn | head -5
 
 ### Your task
 
-Count lines containing "error" or "ERROR" in the system journal (or `/var/log/syslog`) and save the count to `/root/error-count.txt`.
+Count lines containing "error" or "ERROR" in the system journal (or `/var/log/syslog`) and save the count to `~/error-count.txt`.
 
 A count of 0 is fine — what matters is that you know how to look.
 
@@ -49,12 +49,12 @@ A count of 0 is fine — what matters is that you know how to look.
 Using journalctl:
 
 ```bash
-journalctl --no-pager | grep -ic "error" > /root/error-count.txt
+journalctl --no-pager | grep -ic "error" > ~/error-count.txt
 ```
 
 Or using syslog:
 
 ```bash
-grep -ic "error" /var/log/syslog > /root/error-count.txt 2>/dev/null || echo "0" > /root/error-count.txt
+grep -ic "error" /var/log/syslog > ~/error-count.txt 2>/dev/null || echo "0" > ~/error-count.txt
 ```
 </details>

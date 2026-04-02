@@ -13,7 +13,7 @@ A troubleshooting report should contain at minimum:
 
 ## Your Task
 
-Create `/root/troubleshooting-report.txt` with the following sections based on your investigation:
+Create `~/troubleshooting-report.txt` with the following sections based on your investigation:
 
 ```
 === Problem ===
@@ -35,7 +35,7 @@ Fill in each section with specific details from your investigation.
 <summary>Hint</summary>
 
 ```bash
-cat > /root/troubleshooting-report.txt << 'EOF'
+cat > ~/troubleshooting-report.txt << 'EOF'
 === Problem ===
 The broken-app.service is in a failed state with ERROR entries in logs.
 

@@ -15,3 +15,9 @@ kubectl create deployment webapp --image=nginx:1.24 --replicas=2 -n dev-workflow
 kubectl rollout status deployment/webapp -n dev-workflow --timeout=60s
 
 echo "Cluster is ready!"
+
+# Seed /home/ubuntu if it exists
+if [ -d /home/ubuntu ]; then
+  cp -r /root/* /home/ubuntu/ 2>/dev/null || true
+  chown -R ubuntu:ubuntu /home/ubuntu/ 2>/dev/null || true
+fi

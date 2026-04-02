@@ -1,11 +1,13 @@
 #!/bin/bash
-# Verify /root/bg-pid.txt exists and the process is no longer running
-if [ ! -f /root/bg-pid.txt ]; then
-  echo "/root/bg-pid.txt does not exist"
+if id 'ubuntu' &>/dev/null; then USER_HOME='/home/ubuntu'; else USER_HOME='/root'; fi
+#!/bin/bash
+# Verify $USER_HOME/bg-pid.txt exists and the process is no longer running
+if [ ! -f $USER_HOME/bg-pid.txt ]; then
+  echo "$USER_HOME/bg-pid.txt does not exist"
   exit 1
 fi
 
-pid=$(cat /root/bg-pid.txt | tr -d '[:space:]')
+pid=$(cat $USER_HOME/bg-pid.txt | tr -d '[:space:]')
 if ! [[ "$pid" =~ ^[0-9]+$ ]]; then
   echo "File should contain a PID number, got: '$pid'"
   exit 1

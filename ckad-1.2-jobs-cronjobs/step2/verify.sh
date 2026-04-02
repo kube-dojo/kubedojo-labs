@@ -1,4 +1,6 @@
 #!/bin/bash
+if id 'ubuntu' &>/dev/null; then USER_HOME='/home/ubuntu'; else USER_HOME='/root'; fi
+#!/bin/bash
 for i in $(seq 1 60); do
   SUCCEEDED=$(kubectl get job parallel-job -n jobs-lab -o jsonpath='{.status.succeeded}' 2>/dev/null)
   [ "$SUCCEEDED" = "4" ] && break
@@ -21,11 +23,11 @@ if [ "$PAR" != "2" ]; then
   exit 1
 fi
 
-if [ ! -f /root/parallel-count.txt ]; then
-  echo "FAIL: /root/parallel-count.txt does not exist"
+if [ ! -f $USER_HOME/parallel-count.txt ]; then
+  echo "FAIL: $USER_HOME/parallel-count.txt does not exist"
   exit 1
 fi
-COUNT=$(cat /root/parallel-count.txt | tr -d '[:space:]')
+COUNT=$(cat $USER_HOME/parallel-count.txt | tr -d '[:space:]')
 if [ "$COUNT" != "4" ]; then
   echo "FAIL: parallel-count.txt should contain 4, got: $COUNT"
   exit 1

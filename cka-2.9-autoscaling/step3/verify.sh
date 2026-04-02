@@ -1,4 +1,6 @@
 #!/bin/bash
+if id 'ubuntu' &>/dev/null; then USER_HOME='/home/ubuntu'; else USER_HOME='/root'; fi
+#!/bin/bash
 # Verify: resource-usage.txt exists and has content
-[ -f /root/resource-usage.txt ] && [ -s /root/resource-usage.txt ] && exit 0
+[ -f $USER_HOME/resource-usage.txt ] && [ -s $USER_HOME/resource-usage.txt ] && exit 0
 exit 1

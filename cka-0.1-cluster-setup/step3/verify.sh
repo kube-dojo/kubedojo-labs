@@ -1,4 +1,6 @@
 #!/bin/bash
+if id 'ubuntu' &>/dev/null; then USER_HOME='/home/ubuntu'; else USER_HOME='/root'; fi
+#!/bin/bash
 CURRENT=$(kubectl config current-context 2>/dev/null)
 if [ "$CURRENT" = "cka-practice" ]; then
   echo "PASS: Current context is cka-practice"

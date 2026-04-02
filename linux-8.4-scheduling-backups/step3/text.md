@@ -8,27 +8,27 @@ Keep only the last 5 backups:
 
 ```bash
 # List backups sorted by date (oldest first)
-ls -1t /root/backups/backup-*.tar.gz
+ls -1t ~/backups/backup-*.tar.gz
 
 # Count backups
-ls -1 /root/backups/backup-*.tar.gz | wc -l
+ls -1 ~/backups/backup-*.tar.gz | wc -l
 
 # Delete oldest, keeping last 5
-ls -1t /root/backups/backup-*.tar.gz | tail -n +6 | xargs rm -f
+ls -1t ~/backups/backup-*.tar.gz | tail -n +6 | xargs rm -f
 ```
 
 ## Your Task
 
-Write `/root/rotate-backups.sh` that:
+Write `~/rotate-backups.sh` that:
 
 1. Creates a new backup (can be a simple dummy file for testing)
-2. Keeps only the last 5 backups in `/root/backups/`
+2. Keeps only the last 5 backups in `~/backups/`
 3. Deletes any older backups
 
 To test it, first create some dummy backups:
 ```bash
 for i in $(seq 1 8); do
-  touch /root/backups/backup-2026030${i}.tar.gz
+  touch ~/backups/backup-2026030${i}.tar.gz
   sleep 1
 done
 ```

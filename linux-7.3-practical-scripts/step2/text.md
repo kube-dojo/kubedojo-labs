@@ -11,7 +11,7 @@ A health check script monitors multiple system aspects and reports status.
 
 ## Your Task
 
-Write `/root/healthcheck.sh` that:
+Write `~/healthcheck.sh` that:
 
 1. Checks CPU load average (WARN if > number of CPUs)
 2. Checks memory usage percentage

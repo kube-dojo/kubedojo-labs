@@ -22,15 +22,15 @@ Modules live in `/lib/modules/$(uname -r)/`.
 
 ### Your task
 
-1. Save the kernel version to `/root/kernel-version.txt`
-2. Count the number of loaded kernel modules and save to `/root/module-count.txt`
+1. Save the kernel version to `~/kernel-version.txt`
+2. Count the number of loaded kernel modules and save to `~/module-count.txt`
 
 <details>
 <summary>Hint</summary>
 
 ```bash
-uname -r > /root/kernel-version.txt
-lsmod | tail -n +2 | wc -l > /root/module-count.txt
+uname -r > ~/kernel-version.txt
+lsmod | tail -n +2 | wc -l > ~/module-count.txt
 ```
 
 The `tail -n +2` skips the header line from `lsmod`.

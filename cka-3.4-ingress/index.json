@@ -1,12 +1,13 @@
 {
-  "title": "Ingress — Controller, Rules, TLS & Path-based Routing",
+  "title": "Ingress \u2014 Controller, Rules, TLS & Path-based Routing",
   "description": "Install an Ingress controller, configure host and path-based routing rules, and set up TLS termination for secure traffic.",
   "backend": {
     "imageid": "kubernetes-kubeadm-1node"
   },
   "details": {
     "intro": {
-      "text": "intro.md"
+      "text": "intro.md",
+      "background": "setup.sh"
     },
     "steps": [
       {

@@ -1,12 +1,13 @@
 {
-  "title": "Storage Troubleshooting — PVC Pending, Mount Failures & Capacity Issues",
+  "title": "Storage Troubleshooting \u2014 PVC Pending, Mount Failures & Capacity Issues",
   "description": "Diagnose and fix common storage problems: PVCs stuck in Pending, volume mount failures, access mode mismatches, and capacity issues.",
   "backend": {
     "imageid": "kubernetes-kubeadm-1node"
   },
   "details": {
     "intro": {
-      "text": "intro.md"
+      "text": "intro.md",
+      "background": "setup.sh"
     },
     "steps": [
       {

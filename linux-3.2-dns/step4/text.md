@@ -27,7 +27,7 @@ nslookup -debug kubernetes.io
 
 ## Task
 
-Verify that DNS resolution works for `kubernetes.io`. Resolve its IP address and save it to `/root/k8s-io-ip.txt`.
+Verify that DNS resolution works for `kubernetes.io`. Resolve its IP address and save it to `~/k8s-io-ip.txt`.
 
 <details>
 <summary>Hint 1</summary>
@@ -36,5 +36,5 @@ Use <code>dig +short kubernetes.io</code> to get just the IP address.
 
 <details>
 <summary>Hint 2</summary>
-<code>dig +short kubernetes.io > /root/k8s-io-ip.txt</code>
+<code>dig +short kubernetes.io > ~/k8s-io-ip.txt</code>
 </details>

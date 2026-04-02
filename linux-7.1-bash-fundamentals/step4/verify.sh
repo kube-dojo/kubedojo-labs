@@ -1,15 +1,17 @@
 #!/bin/bash
-if [ ! -f /root/safe-script.sh ]; then
-  echo "FAIL: /root/safe-script.sh not found"
+if id 'ubuntu' &>/dev/null; then USER_HOME='/home/ubuntu'; else USER_HOME='/root'; fi
+#!/bin/bash
+if [ ! -f $USER_HOME/safe-script.sh ]; then
+  echo "FAIL: $USER_HOME/safe-script.sh not found"
   exit 1
 fi
 
-if ! grep -q "set -e" /root/safe-script.sh; then
+if ! grep -q "set -e" $USER_HOME/safe-script.sh; then
   echo "FAIL: Script should contain 'set -e'"
   exit 1
 fi
 
-if ! grep -q "trap" /root/safe-script.sh; then
+if ! grep -q "trap" $USER_HOME/safe-script.sh; then
   echo "FAIL: Script should contain a 'trap' statement"
   exit 1
 fi

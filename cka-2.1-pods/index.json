@@ -1,12 +1,13 @@
 {
-  "title": "Pods — Multi-container Patterns & Troubleshooting",
+  "title": "Pods \u2014 Multi-container Patterns & Troubleshooting",
   "description": "Master multi-container pods, init containers, resource management, and pod troubleshooting for the CKA exam.",
   "backend": {
     "imageid": "kubernetes-kubeadm-1node"
   },
   "details": {
     "intro": {
-      "text": "intro.md"
+      "text": "intro.md",
+      "background": "setup.sh"
     },
     "steps": [
       {

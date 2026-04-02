@@ -1,13 +1,15 @@
 #!/bin/bash
-if [ ! -f /root/.vimrc ]; then
-  echo "FAIL: /root/.vimrc does not exist"
+if id 'ubuntu' &>/dev/null; then USER_HOME='/home/ubuntu'; else USER_HOME='/root'; fi
+#!/bin/bash
+if [ ! -f $USER_HOME/.vimrc ]; then
+  echo "FAIL: $USER_HOME/.vimrc does not exist"
   exit 1
 fi
 
-if grep -q "expandtab" /root/.vimrc && \
-   grep -q "tabstop=2" /root/.vimrc && \
-   grep -q "shiftwidth=2" /root/.vimrc && \
-   grep -q "autoindent" /root/.vimrc; then
+if grep -q "expandtab" $USER_HOME/.vimrc && \
+   grep -q "tabstop=2" $USER_HOME/.vimrc && \
+   grep -q "shiftwidth=2" $USER_HOME/.vimrc && \
+   grep -q "autoindent" $USER_HOME/.vimrc; then
   echo "PASS: .vimrc contains YAML-friendly settings"
   exit 0
 else

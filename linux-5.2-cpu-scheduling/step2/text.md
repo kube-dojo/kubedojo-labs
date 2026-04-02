@@ -32,6 +32,6 @@ The output shows a hexadecimal affinity mask. `1` means CPU 0, `3` means CPUs 0-
    ```bash
    taskset -c 0 sleep 300 &
    ```
-2. Save its PID to `/root/affinity-pid.txt`
+2. Save its PID to `~/affinity-pid.txt`
 
 **Hint:** After running the backgrounded command, `$!` gives you the PID of the last background process.

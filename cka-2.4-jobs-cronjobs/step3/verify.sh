@@ -1,4 +1,6 @@
 #!/bin/bash
+if id 'ubuntu' &>/dev/null; then USER_HOME='/home/ubuntu'; else USER_HOME='/root'; fi
+#!/bin/bash
 # Verify: CronJob exists and has spawned at least 1 Job
 CRONJOB=$(kubectl get cronjob heartbeat -n practice -o jsonpath='{.metadata.name}' 2>/dev/null)
 [ "$CRONJOB" != "heartbeat" ] && exit 1

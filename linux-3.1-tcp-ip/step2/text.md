@@ -23,7 +23,7 @@ default via 172.17.0.1 dev eth0
 
 ## Task
 
-Find the default gateway IP and save it to `/root/gateway.txt`. The file should contain only the gateway IP address (one line).
+Find the default gateway IP and save it to `~/gateway.txt`. The file should contain only the gateway IP address (one line).
 
 <details>
 <summary>Hint 1</summary>

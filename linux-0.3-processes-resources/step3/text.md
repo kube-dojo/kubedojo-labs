@@ -26,15 +26,15 @@ vmstat 1 3           # 3 snapshots, 1 second apart
 
 ### Your task
 
-1. Save the output of `free -m` to `/root/memory.txt`
-2. Save the disk usage of `/` (just the line for `/`) to `/root/disk.txt`
+1. Save the output of `free -m` to `~/memory.txt`
+2. Save the disk usage of `/` (just the line for `/`) to `~/disk.txt`
 
 <details>
 <summary>Hint</summary>
 
 ```bash
-free -m > /root/memory.txt
-df -h / | tail -1 > /root/disk.txt
+free -m > ~/memory.txt
+df -h / | tail -1 > ~/disk.txt
 ```
 
 The `tail -1` grabs only the data line, skipping the header.

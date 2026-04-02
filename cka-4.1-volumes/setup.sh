@@ -21,3 +21,9 @@ mkdir -p /data/hostpath-test
 echo "Hello from the host!" > /data/hostpath-test/index.html
 
 echo "Kubernetes cluster ready."
+
+# Seed /home/ubuntu if it exists
+if [ -d /home/ubuntu ]; then
+  cp -r /root/* /home/ubuntu/ 2>/dev/null || true
+  chown -R ubuntu:ubuntu /home/ubuntu/ 2>/dev/null || true
+fi

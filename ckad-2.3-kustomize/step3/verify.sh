@@ -1,4 +1,6 @@
 #!/bin/bash
+if id 'ubuntu' &>/dev/null; then USER_HOME='/home/ubuntu'; else USER_HOME='/root'; fi
+#!/bin/bash
 for i in $(seq 1 30); do
   SR=$(kubectl get deployment staging-myapp -n staging -o jsonpath='{.status.readyReplicas}' 2>/dev/null)
   [ "$SR" = "2" ] && break
@@ -19,8 +21,8 @@ if [ "$PR" != "5" ]; then
   exit 1
 fi
 
-if [ ! -f /root/staging-deploy-name.txt ]; then
-  echo "FAIL: /root/staging-deploy-name.txt not found"
+if [ ! -f $USER_HOME/staging-deploy-name.txt ]; then
+  echo "FAIL: $USER_HOME/staging-deploy-name.txt not found"
   exit 1
 fi
 echo "PASS"

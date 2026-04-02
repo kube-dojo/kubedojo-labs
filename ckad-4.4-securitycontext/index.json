@@ -1,10 +1,13 @@
 {
   "title": "CKAD 4.4: SecurityContexts",
-  "description": "Configure pod and container security settings — runAsUser, capabilities, readOnlyRootFilesystem",
+  "description": "Configure pod and container security settings \u2014 runAsUser, capabilities, readOnlyRootFilesystem",
   "difficulty": "Intermediate",
   "time": "30 minutes",
   "details": {
-    "intro": { "text": "intro.md" },
+    "intro": {
+      "text": "intro.md",
+      "background": "setup.sh"
+    },
     "steps": [
       {
         "title": "Set user and group security contexts",
@@ -25,7 +28,11 @@
         "solution": "step3/solution.sh"
       }
     ],
-    "finish": { "text": "finish.md" }
+    "finish": {
+      "text": "finish.md"
+    }
   },
-  "backend": { "imageid": "kubernetes-kubeadm-1node" }
+  "backend": {
+    "imageid": "kubernetes-kubeadm-1node"
+  }
 }

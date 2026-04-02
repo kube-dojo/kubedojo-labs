@@ -1,4 +1,6 @@
 #!/bin/bash
+if id 'ubuntu' &>/dev/null; then USER_HOME='/home/ubuntu'; else USER_HOME='/root'; fi
+#!/bin/bash
 # Verify: HPA exists with correct settings
 HPA=$(kubectl get hpa scale-app -n practice -o jsonpath='{.metadata.name}' 2>/dev/null)
 MIN=$(kubectl get hpa scale-app -n practice -o jsonpath='{.spec.minReplicas}' 2>/dev/null)

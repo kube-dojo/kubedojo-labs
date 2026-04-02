@@ -29,7 +29,7 @@ apt list --upgradable
 
 1. Clean the apt cache
 2. List upgradable packages
-3. Save the maintenance results to `/root/maintenance.txt`:
+3. Save the maintenance results to `~/maintenance.txt`:
    - Cache size after cleaning
    - List of upgradable packages (or "none")
 
@@ -42,5 +42,5 @@ apt-get update -qq
   echo ""
   echo "Upgradable packages:"
   apt list --upgradable 2>/dev/null || echo "none"
-} > /root/maintenance.txt
+} > ~/maintenance.txt
 ```

@@ -1,4 +1,6 @@
 #!/bin/bash
+if id 'ubuntu' &>/dev/null; then USER_HOME='/home/ubuntu'; else USER_HOME='/root'; fi
+#!/bin/bash
 # Wait for API server to be healthy
 for i in $(seq 1 30); do
   if kubectl get nodes &>/dev/null; then
@@ -25,7 +27,7 @@ fi
 
 # Accept the audit sample file as evidence even if manifest flags could not be
 # verified (common in kind where manifest edits may have been rolled back).
-if [ "$AUDIT_CONFIGURED" = false ] && [ -f /root/audit-sample.txt ] && [ -s /root/audit-sample.txt ]; then
+if [ "$AUDIT_CONFIGURED" = false ] && [ -f $USER_HOME/audit-sample.txt ] && [ -s $USER_HOME/audit-sample.txt ]; then
   AUDIT_CONFIGURED=true
 fi
 
@@ -34,8 +36,8 @@ if [ "$AUDIT_CONFIGURED" = false ]; then
   exit 1
 fi
 
-if [ ! -f /root/audit-sample.txt ] || [ ! -s /root/audit-sample.txt ]; then
-  echo "FAIL: /root/audit-sample.txt missing or empty"
+if [ ! -f $USER_HOME/audit-sample.txt ] || [ ! -s $USER_HOME/audit-sample.txt ]; then
+  echo "FAIL: $USER_HOME/audit-sample.txt missing or empty"
   exit 1
 fi
 echo "PASS"

@@ -1,4 +1,6 @@
 #!/bin/bash
+if id 'ubuntu' &>/dev/null; then USER_HOME='/home/ubuntu'; else USER_HOME='/root'; fi
+#!/bin/bash
 # Verify /opt/project has correct ownership and permissions
 if [ ! -d /opt/project ]; then
   echo "/opt/project does not exist"

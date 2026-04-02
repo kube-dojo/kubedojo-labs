@@ -1,4 +1,6 @@
 #!/bin/bash
+if id 'ubuntu' &>/dev/null; then USER_HOME='/home/ubuntu'; else USER_HOME='/root'; fi
+#!/bin/bash
 for i in $(seq 1 30); do
   BLUE=$(kubectl get deployment blue-app -n strategy-lab -o jsonpath='{.status.readyReplicas}' 2>/dev/null)
   GREEN=$(kubectl get deployment green-app -n strategy-lab -o jsonpath='{.status.readyReplicas}' 2>/dev/null)
@@ -16,8 +18,8 @@ if [ "$SEL_VER" != "green" ]; then
   exit 1
 fi
 
-if [ ! -f /root/active-version.txt ]; then
-  echo "FAIL: /root/active-version.txt not found"
+if [ ! -f $USER_HOME/active-version.txt ]; then
+  echo "FAIL: $USER_HOME/active-version.txt not found"
   exit 1
 fi
 echo "PASS"

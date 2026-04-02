@@ -6,11 +6,12 @@
   },
   "details": {
     "intro": {
-      "text": "intro.md"
+      "text": "intro.md",
+      "background": "setup.sh"
     },
     "steps": [
       {
-        "title": "DaemonSet — one pod per node",
+        "title": "DaemonSet \u2014 one pod per node",
         "text": "step1/text.md",
         "verify": "step1/verify.sh"
       },

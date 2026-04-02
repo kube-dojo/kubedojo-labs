@@ -1,4 +1,6 @@
 #!/bin/bash
+if id 'ubuntu' &>/dev/null; then USER_HOME='/home/ubuntu'; else USER_HOME='/root'; fi
+#!/bin/bash
 # Verify: Job has 5 completions
 for i in $(seq 1 60); do
   SUCCEEDED=$(kubectl get job parallel-job -n practice -o jsonpath='{.status.succeeded}' 2>/dev/null)

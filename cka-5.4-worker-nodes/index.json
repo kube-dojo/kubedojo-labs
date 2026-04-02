@@ -1,12 +1,13 @@
 {
-  "title": "Worker Node Troubleshooting — NotReady Nodes, kubelet & Disk Pressure",
+  "title": "Worker Node Troubleshooting \u2014 NotReady Nodes, kubelet & Disk Pressure",
   "description": "Diagnose and fix worker node issues: NotReady status, kubelet service failures, and disk pressure conditions.",
   "backend": {
     "imageid": "kubernetes-kubeadm-1node"
   },
   "details": {
     "intro": {
-      "text": "intro.md"
+      "text": "intro.md",
+      "background": "setup.sh"
     },
     "steps": [
       {

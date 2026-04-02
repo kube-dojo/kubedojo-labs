@@ -27,7 +27,7 @@ iptables -t mangle -L        # List mangle table rules
 
 ## Task
 
-List all iptables rules (all chains in the filter table) and save the output to `/root/iptables-rules.txt`.
+List all iptables rules (all chains in the filter table) and save the output to `~/iptables-rules.txt`.
 
 <details>
 <summary>Refer to: iptables(8) man page</summary>

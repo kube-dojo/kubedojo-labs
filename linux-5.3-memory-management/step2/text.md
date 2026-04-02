@@ -25,7 +25,7 @@ Linux aggressively uses "free" memory for page cache. This is why `free` often s
 1. Record the cache size before writing data
 2. Write 100MB to `/tmp/testfile` using `dd`
 3. Record the cache size after
-4. Save both values to `/root/cache-test.txt`:
+4. Save both values to `~/cache-test.txt`:
 
 ```
 Before: <value>MB
@@ -37,5 +37,5 @@ After: <value>MB
 BEFORE=$(free -m | awk '/^Mem:/ {print $6}')
 dd if=/dev/zero of=/tmp/testfile bs=1M count=100 2>/dev/null
 AFTER=$(free -m | awk '/^Mem:/ {print $6}')
-echo -e "Before: ${BEFORE}MB\nAfter: ${AFTER}MB" > /root/cache-test.txt
+echo -e "Before: ${BEFORE}MB\nAfter: ${AFTER}MB" > ~/cache-test.txt
 ```

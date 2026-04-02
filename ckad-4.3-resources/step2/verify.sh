@@ -1,4 +1,6 @@
 #!/bin/bash
+if id 'ubuntu' &>/dev/null; then USER_HOME='/home/ubuntu'; else USER_HOME='/root'; fi
+#!/bin/bash
 kubectl get limitrange default-limits -n resources-lab > /dev/null 2>&1
 if [ $? -ne 0 ]; then
   echo "FAIL: LimitRange default-limits not found"
@@ -14,8 +16,8 @@ if [ "$CPU" != "500m" ]; then
   echo "FAIL: auto-limits should have default CPU limit 500m, got: $CPU"
   exit 1
 fi
-if [ ! -f /root/auto-cpu-limit.txt ]; then
-  echo "FAIL: /root/auto-cpu-limit.txt not found"
+if [ ! -f $USER_HOME/auto-cpu-limit.txt ]; then
+  echo "FAIL: $USER_HOME/auto-cpu-limit.txt not found"
   exit 1
 fi
 echo "PASS"

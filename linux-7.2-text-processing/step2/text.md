@@ -33,11 +33,11 @@ sed '/pattern/i\New line before' file.txt
 
 ## Your Task
 
-Transform `/root/app.conf` so that all **keys are UPPERCASE** (left side of `=`), and save to `/root/sed-output.txt`.
+Transform `~/app.conf` so that all **keys are UPPERCASE** (left side of `=`), and save to `~/sed-output.txt`.
 
 For example: `database_host=localhost` becomes `DATABASE_HOST=localhost`.
 
 **Hint:**
 ```bash
-sed 's/^\([^=]*\)/\U\1/' /root/app.conf > /root/sed-output.txt
+sed 's/^\([^=]*\)/\U\1/' ~/app.conf > ~/sed-output.txt
 ```

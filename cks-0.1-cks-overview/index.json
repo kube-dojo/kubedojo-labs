@@ -4,7 +4,10 @@
   "difficulty": "Intermediate",
   "time": "30 minutes",
   "details": {
-    "intro": { "text": "intro.md" },
+    "intro": {
+      "text": "intro.md",
+      "background": "setup.sh"
+    },
     "steps": [
       {
         "title": "Explore the CKS exam environment and security tools",
@@ -19,13 +22,17 @@
         "solution": "step2/solution.sh"
       },
       {
-        "title": "Practice triage — identify security misconfigurations",
+        "title": "Practice triage \u2014 identify security misconfigurations",
         "text": "step3/text.md",
         "verify": "step3/verify.sh",
         "solution": "step3/solution.sh"
       }
     ],
-    "finish": { "text": "finish.md" }
+    "finish": {
+      "text": "finish.md"
+    }
   },
-  "backend": { "imageid": "kubernetes-kubeadm-1node" }
+  "backend": {
+    "imageid": "kubernetes-kubeadm-1node"
+  }
 }

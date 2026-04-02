@@ -27,7 +27,7 @@ ls /var
 
 ### Your task
 
-Create a file `/root/fhs-quiz.txt` with key=value entries describing the purpose of at least three directories. For example:
+Create a file `~/fhs-quiz.txt` with key=value entries describing the purpose of at least three directories. For example:
 
 ```
 /etc=system configuration files
@@ -41,7 +41,7 @@ Include entries for `/etc`, `/var`, and `/tmp` at minimum.
 <summary>Hint</summary>
 
 ```bash
-cat > /root/fhs-quiz.txt << 'EOF'
+cat > ~/fhs-quiz.txt << 'EOF'
 /etc=system configuration files
 /var=variable data like logs and databases
 /tmp=temporary files cleared on reboot

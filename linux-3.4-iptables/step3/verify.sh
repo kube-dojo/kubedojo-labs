@@ -1,4 +1,6 @@
 #!/bin/bash
+if id 'ubuntu' &>/dev/null; then USER_HOME='/home/ubuntu'; else USER_HOME='/root'; fi
+#!/bin/bash
 # Verify that a DNAT rule exists in the nat table
 if iptables -t nat -L -n | grep -q "DNAT.*tcp.*dpt:8080.*to:127.0.0.1:80"; then
   echo "PASS: DNAT rule forwarding 8080 -> 127.0.0.1:80 exists"

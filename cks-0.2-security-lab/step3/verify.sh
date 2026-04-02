@@ -1,4 +1,6 @@
 #!/bin/bash
+if id 'ubuntu' &>/dev/null; then USER_HOME='/home/ubuntu'; else USER_HOME='/root'; fi
+#!/bin/bash
 if ! kubectl get deployment vuln-app -n security-lab &>/dev/null; then
   echo "FAIL: vuln-app deployment not found"
   exit 1

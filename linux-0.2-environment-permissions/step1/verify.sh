@@ -1,4 +1,6 @@
 #!/bin/bash
+if id 'ubuntu' &>/dev/null; then USER_HOME='/home/ubuntu'; else USER_HOME='/root'; fi
+#!/bin/bash
 # Verify MY_APP and PATH updates in ~/.bashrc
 if ! grep -q 'MY_APP=/opt/myapp' ~/.bashrc 2>/dev/null; then
   echo "MY_APP=/opt/myapp not found in ~/.bashrc"

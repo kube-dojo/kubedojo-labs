@@ -42,7 +42,7 @@ HOST=$(get_hostname)
 
 ## Your Task
 
-Write `/root/utils.sh` with three functions:
+Write `~/utils.sh` with three functions:
 
 1. **`log_info`** — prints `[INFO] <message>` to stdout
 2. **`log_error`** — prints `[ERROR] <message>` to stderr

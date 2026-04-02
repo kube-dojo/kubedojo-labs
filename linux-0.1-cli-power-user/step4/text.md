@@ -24,7 +24,7 @@ watch -n 2 df -h
 
 ### Your task
 
-Find all `.log` files in `/var/log`, count the total number of lines across ALL of them combined, and save that total to `/root/total-lines.txt`.
+Find all `.log` files in `/var/log`, count the total number of lines across ALL of them combined, and save that total to `~/total-lines.txt`.
 
 The file should contain a single number.
 
@@ -34,12 +34,12 @@ The file should contain a single number.
 Use `find` to locate log files, `xargs` to pass them to `wc -l`, then extract the total:
 
 ```bash
-find /var/log -name "*.log" -type f 2>/dev/null | xargs wc -l 2>/dev/null | tail -1 | awk '{print $1}' > /root/total-lines.txt
+find /var/log -name "*.log" -type f 2>/dev/null | xargs wc -l 2>/dev/null | tail -1 | awk '{print $1}' > ~/total-lines.txt
 ```
 
 If there's only one file, `wc -l` won't print a "total" line, so an alternative approach:
 
 ```bash
-find /var/log -name "*.log" -type f 2>/dev/null | xargs cat 2>/dev/null | wc -l > /root/total-lines.txt
+find /var/log -name "*.log" -type f 2>/dev/null | xargs cat 2>/dev/null | wc -l > ~/total-lines.txt
 ```
 </details>

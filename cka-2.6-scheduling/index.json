@@ -1,12 +1,13 @@
 {
-  "title": "Scheduling — Node Selection, Affinity & Taints",
+  "title": "Scheduling \u2014 Node Selection, Affinity & Taints",
   "description": "Control pod placement with nodeSelector, taints/tolerations, node affinity, and topology spread constraints.",
   "backend": {
     "imageid": "kubernetes-kubeadm-1node"
   },
   "details": {
     "intro": {
-      "text": "intro.md"
+      "text": "intro.md",
+      "background": "setup.sh"
     },
     "steps": [
       {

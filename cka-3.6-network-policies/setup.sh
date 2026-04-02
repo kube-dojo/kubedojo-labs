@@ -34,3 +34,9 @@ kubectl wait --for=condition=Ready pod --all -n backend --timeout=60s 2>/dev/nul
 kubectl wait --for=condition=Ready pod --all -n monitoring --timeout=60s 2>/dev/null
 
 echo "Kubernetes cluster ready."
+
+# Seed /home/ubuntu if it exists
+if [ -d /home/ubuntu ]; then
+  cp -r /root/* /home/ubuntu/ 2>/dev/null || true
+  chown -R ubuntu:ubuntu /home/ubuntu/ 2>/dev/null || true
+fi

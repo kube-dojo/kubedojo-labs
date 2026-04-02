@@ -1,4 +1,6 @@
 #!/bin/bash
+if id 'ubuntu' &>/dev/null; then USER_HOME='/home/ubuntu'; else USER_HOME='/root'; fi
+#!/bin/bash
 for i in $(seq 1 30); do
   S1=$(kubectl get pod liveness-http -n probes-lab -o jsonpath='{.status.phase}' 2>/dev/null)
   S2=$(kubectl get pod liveness-exec -n probes-lab -o jsonpath='{.status.phase}' 2>/dev/null)

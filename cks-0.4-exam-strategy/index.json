@@ -4,28 +4,35 @@
   "difficulty": "Intermediate",
   "time": "30 minutes",
   "details": {
-    "intro": { "text": "intro.md" },
+    "intro": {
+      "text": "intro.md",
+      "background": "setup.sh"
+    },
     "steps": [
       {
-        "title": "Quick wins — fix security contexts in under 3 minutes",
+        "title": "Quick wins \u2014 fix security contexts in under 3 minutes",
         "text": "step1/text.md",
         "verify": "step1/verify.sh",
         "solution": "step1/solution.sh"
       },
       {
-        "title": "Medium tasks — configure RBAC and network policies",
+        "title": "Medium tasks \u2014 configure RBAC and network policies",
         "text": "step2/text.md",
         "verify": "step2/verify.sh",
         "solution": "step2/solution.sh"
       },
       {
-        "title": "Complex tasks — audit logging and admission control",
+        "title": "Complex tasks \u2014 audit logging and admission control",
         "text": "step3/text.md",
         "verify": "step3/verify.sh",
         "solution": "step3/solution.sh"
       }
     ],
-    "finish": { "text": "finish.md" }
+    "finish": {
+      "text": "finish.md"
+    }
   },
-  "backend": { "imageid": "kubernetes-kubeadm-1node" }
+  "backend": {
+    "imageid": "kubernetes-kubeadm-1node"
+  }
 }

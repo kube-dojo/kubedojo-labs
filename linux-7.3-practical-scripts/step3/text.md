@@ -19,7 +19,7 @@ Generate an HTML system report that can be viewed in a browser or emailed.
 
 ## Your Task
 
-Write `/root/report.sh` that creates `/root/system-report.html` with:
+Write `~/report.sh` that creates `~/system-report.html` with:
 
 1. Hostname
 2. Uptime

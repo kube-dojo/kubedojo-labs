@@ -1,4 +1,6 @@
 #!/bin/bash
+if id 'ubuntu' &>/dev/null; then USER_HOME='/home/ubuntu'; else USER_HOME='/root'; fi
+#!/bin/bash
 for i in $(seq 1 30); do
   S=$(kubectl get pod slow-start -n probes-lab -o jsonpath='{.status.phase}' 2>/dev/null)
   [ "$S" = "Running" ] && break
@@ -17,11 +19,11 @@ if [ "$LP" != "/" ]; then
   exit 1
 fi
 
-if [ ! -f /root/restart-count.txt ]; then
-  echo "FAIL: /root/restart-count.txt not found"
+if [ ! -f $USER_HOME/restart-count.txt ]; then
+  echo "FAIL: $USER_HOME/restart-count.txt not found"
   exit 1
 fi
-RC=$(cat /root/restart-count.txt | tr -d '[:space:]')
+RC=$(cat $USER_HOME/restart-count.txt | tr -d '[:space:]')
 if [ "$RC" -lt 1 ] 2>/dev/null; then
   echo "FAIL: failing-probe should have restarted at least once"
   exit 1

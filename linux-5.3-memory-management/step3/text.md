@@ -31,7 +31,7 @@ done | sort -rn | head -10
 ## Your Task
 
 1. Find the process with the highest `oom_score`
-2. Save its PID and score to `/root/oom-candidate.txt`:
+2. Save its PID and score to `~/oom-candidate.txt`:
 
 ```
 PID: <pid>
@@ -44,5 +44,5 @@ for pid in /proc/[0-9]*; do
   p=$(basename $pid)
   score=$(cat $pid/oom_score 2>/dev/null)
   [ -n "$score" ] && echo "$score $p"
-done | sort -rn | head -1 | awk '{printf "PID: %s\nScore: %s\n", $2, $1}' > /root/oom-candidate.txt
+done | sort -rn | head -1 | awk '{printf "PID: %s\nScore: %s\n", $2, $1}' > ~/oom-candidate.txt
 ```

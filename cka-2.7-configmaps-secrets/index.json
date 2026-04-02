@@ -1,12 +1,13 @@
 {
   "title": "ConfigMaps & Secrets",
-  "description": "Manage application configuration with ConfigMaps and sensitive data with Secrets — as volumes and environment variables.",
+  "description": "Manage application configuration with ConfigMaps and sensitive data with Secrets \u2014 as volumes and environment variables.",
   "backend": {
     "imageid": "kubernetes-kubeadm-1node"
   },
   "details": {
     "intro": {
-      "text": "intro.md"
+      "text": "intro.md",
+      "background": "setup.sh"
     },
     "steps": [
       {

@@ -1,12 +1,13 @@
 {
-  "title": "Services — Stable Networking",
+  "title": "Services \u2014 Stable Networking",
   "description": "Expose deployments with ClusterIP and NodePort services, and test connectivity inside the cluster.",
   "backend": {
     "imageid": "kubernetes-kubeadm-1node"
   },
   "details": {
     "intro": {
-      "text": "intro.md"
+      "text": "intro.md",
+      "background": "setup.sh"
     },
     "steps": [
       {

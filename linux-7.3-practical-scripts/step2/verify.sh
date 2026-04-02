@@ -1,15 +1,17 @@
 #!/bin/bash
-if [ ! -f /root/healthcheck.sh ]; then
-  echo "FAIL: /root/healthcheck.sh not found"
+if id 'ubuntu' &>/dev/null; then USER_HOME='/home/ubuntu'; else USER_HOME='/root'; fi
+#!/bin/bash
+if [ ! -f $USER_HOME/healthcheck.sh ]; then
+  echo "FAIL: $USER_HOME/healthcheck.sh not found"
   exit 1
 fi
 
-if [ ! -x /root/healthcheck.sh ]; then
-  echo "FAIL: /root/healthcheck.sh is not executable"
+if [ ! -x $USER_HOME/healthcheck.sh ]; then
+  echo "FAIL: $USER_HOME/healthcheck.sh is not executable"
   exit 1
 fi
 
-OUTPUT=$(/root/healthcheck.sh 2>&1)
+OUTPUT=$($USER_HOME/healthcheck.sh 2>&1)
 CHECKS=$(echo "$OUTPUT" | grep -cE '\[(OK|WARN|CRITICAL)\]')
 
 if [ "$CHECKS" -ge 4 ]; then

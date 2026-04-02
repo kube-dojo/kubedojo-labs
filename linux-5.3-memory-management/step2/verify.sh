@@ -1,10 +1,12 @@
 #!/bin/bash
-if [ ! -f /root/cache-test.txt ]; then
-  echo "FAIL: /root/cache-test.txt not found"
+if id 'ubuntu' &>/dev/null; then USER_HOME='/home/ubuntu'; else USER_HOME='/root'; fi
+#!/bin/bash
+if [ ! -f $USER_HOME/cache-test.txt ]; then
+  echo "FAIL: $USER_HOME/cache-test.txt not found"
   exit 1
 fi
 
-if [ -s /root/cache-test.txt ]; then
+if [ -s $USER_HOME/cache-test.txt ]; then
   echo "PASS: cache-test.txt exists and has content"
   exit 0
 else

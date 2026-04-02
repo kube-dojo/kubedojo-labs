@@ -1,10 +1,13 @@
 {
   "title": "CKAD 3.5: API Deprecations",
-  "description": "Understand and handle Kubernetes API deprecations — identify deprecated APIs, migrate resources, and use kubectl convert",
+  "description": "Understand and handle Kubernetes API deprecations \u2014 identify deprecated APIs, migrate resources, and use kubectl convert",
   "difficulty": "Advanced",
   "time": "25 minutes",
   "details": {
-    "intro": { "text": "intro.md" },
+    "intro": {
+      "text": "intro.md",
+      "background": "setup.sh"
+    },
     "steps": [
       {
         "title": "Explore API versions and groups",
@@ -25,7 +28,11 @@
         "solution": "step3/solution.sh"
       }
     ],
-    "finish": { "text": "finish.md" }
+    "finish": {
+      "text": "finish.md"
+    }
   },
-  "backend": { "imageid": "kubernetes-kubeadm-1node" }
+  "backend": {
+    "imageid": "kubernetes-kubeadm-1node"
+  }
 }

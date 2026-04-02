@@ -10,7 +10,7 @@ The power of the USE method is having a systematic checklist for every resource.
 
 ## Your Task
 
-Create `/root/use-checklist.txt` with USE commands for all four resources: **CPU, Memory, Disk, Network**.
+Create `~/use-checklist.txt` with USE commands for all four resources: **CPU, Memory, Disk, Network**.
 
 Your file should contain entries for each resource with at least one command per metric. Format:
 

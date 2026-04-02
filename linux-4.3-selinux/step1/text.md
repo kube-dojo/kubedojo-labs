@@ -39,7 +39,7 @@ id -Z                   # Show current user context
 
 1. Check whether SELinux is installed by running `sestatus` and `getenforce`
 2. List the three available SELinux modes
-3. Save a status report to `/root/selinux-status.txt` containing:
+3. Save a status report to `~/selinux-status.txt` containing:
    - Output of `sestatus` (or error message if SELinux is not enforcing)
    - Output of `getenforce`
    - A brief note listing the three modes: enforcing, permissive, disabled

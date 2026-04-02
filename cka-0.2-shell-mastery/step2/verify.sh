@@ -1,6 +1,8 @@
 #!/bin/bash
-TARGET_FILE="/root/names.txt"
-SAMPLE_JSON="/root/sample.json"
+if id 'ubuntu' &>/dev/null; then USER_HOME='/home/ubuntu'; else USER_HOME='/root'; fi
+#!/bin/bash
+TARGET_FILE="$USER_HOME/names.txt"
+SAMPLE_JSON="$USER_HOME/sample.json"
 
 if [ ! -f "$TARGET_FILE" ]; then
   echo "FAIL: $TARGET_FILE does not exist"

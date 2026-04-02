@@ -1,4 +1,6 @@
 #!/bin/bash
+if id 'ubuntu' &>/dev/null; then USER_HOME='/home/ubuntu'; else USER_HOME='/root'; fi
+#!/bin/bash
 # Verify: webapp deployment is available with all replicas ready
 for i in $(seq 1 30); do
   AVAILABLE=$(kubectl get deployment webapp -n practice -o jsonpath='{.status.availableReplicas}' 2>/dev/null)
