@@ -9,6 +9,11 @@ A **ClusterRole** is like a Role but works cluster-wide. It can grant access to:
 
 Create a ClusterRole named `node-viewer` that allows `get` and `list` operations on `nodes`.
 
-## Hint
+<details>
+<summary>Hint</summary>
 
-Imperative: `kubectl create clusterrole node-viewer --verb=get --verb=list --resource=nodes`
+Imperative: 
+```bash
+kubectl create clusterrole node-viewer --verb=get --verb=list --resource=nodes
+```
+</details>

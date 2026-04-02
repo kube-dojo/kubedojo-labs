@@ -13,8 +13,11 @@ Create a Role named `pod-reader` in the `rbac-test` namespace that allows `get` 
 
 You can use either imperative commands or a YAML manifest.
 
-## Hint
+<details>
+<summary>Hint</summary>
 
-Imperative: `kubectl create role pod-reader --verb=get --verb=list --resource=pods -n rbac-test`
-
-Or apply a YAML with `apiVersion: rbac.authorization.k8s.io/v1`, `kind: Role`.
+Imperative: 
+```bash
+kubectl create role pod-reader --verb=get --verb=list --resource=pods -n rbac-test
+```
+</details>

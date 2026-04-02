@@ -1,14 +1,19 @@
 #!/bin/bash
-if [ ! -f /root/can-i-result.txt ]; then
-  echo "FAIL: /root/can-i-result.txt does not exist"
+FILE="/root/can-i-result.txt"
+if [ ! -f "$FILE" ]; then
+  echo "FAIL: $FILE does not exist"
   exit 1
 fi
 
-CONTENT=$(cat /root/can-i-result.txt | tr -d '[:space:]')
-if [ "$CONTENT" = "yes" ] || [ "$CONTENT" = "no" ]; then
-  echo "PASS: File contains '$CONTENT'"
+CONTENT=$(cat "$FILE" | tr -d '[:space:]' | tr '[:upper:]' '[:lower:]')
+# For a fresh namespace, default SA should NOT have access
+if [ "$CONTENT" = "no" ]; then
+  echo "PASS: Correct access check recorded: no"
   exit 0
+elif [ "$CONTENT" = "yes" ]; then
+  echo "FAIL: Recorded 'yes', but default ServiceAccount should not have access"
+  exit 1
 else
-  echo "FAIL: File should contain 'yes' or 'no', got: $CONTENT"
+  echo "FAIL: File should contain 'yes' or 'no', got: '$CONTENT'"
   exit 1
 fi

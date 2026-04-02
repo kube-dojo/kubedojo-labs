@@ -13,10 +13,11 @@ To grant a pod specific permissions:
 2. Create a RoleBinding that binds the `pod-reader` role (from Step 1) to `deploy-bot`.
 3. Verify that `deploy-bot` can get pods in the `rbac-test` namespace.
 
-## Hint
+<details>
+<summary>Hint</summary>
 
 ```bash
 kubectl create serviceaccount deploy-bot -n rbac-test
 kubectl create rolebinding deploy-bot-binding --role=pod-reader --serviceaccount=rbac-test:deploy-bot -n rbac-test
-kubectl auth can-i get pods --as=system:serviceaccount:rbac-test:deploy-bot -n rbac-test
 ```
+</details>

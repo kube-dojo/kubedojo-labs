@@ -14,6 +14,10 @@ kubectl auth can-i '*' '*'                                     # Am I a cluster 
 
 Check if the `default` ServiceAccount in the `rbac-test` namespace can get pods, and save the result (`yes` or `no`) to `/root/can-i-result.txt`.
 
-## Hint
+<details>
+<summary>Hint</summary>
 
-Run: `kubectl auth can-i get pods --as=system:serviceaccount:rbac-test:default -n rbac-test`
+```bash
+kubectl auth can-i get pods --as=system:serviceaccount:rbac-test:default -n rbac-test > /root/can-i-result.txt
+```
+</details>
