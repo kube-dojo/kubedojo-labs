@@ -24,15 +24,15 @@ Create a production overlay in `/root/overlays/prod/` that:
 
 Verify with `kubectl kustomize /root/overlays/prod/` — the output should show `prod-myapp` with 3 replicas.
 
-## Hint
+<details>
+<summary>Hint</summary>
 
-The overlay kustomization.yaml should reference the base with `resources: [../../base]`, add `namePrefix: prod-`, and include a patch. For the replica patch, create a file like:
 ```yaml
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: myapp
-spec:
-  replicas: 3
+# overlays/prod/kustomization.yaml
+resources:
+  - ../../base
+namePrefix: prod-
+patches:
+  - path: replica-patch.yaml
 ```
-And reference it in kustomization.yaml under `patches: [{path: replica-patch.yaml}]`.
+</details>

@@ -22,11 +22,13 @@ Create the following files in `/root/base/`:
 
 Verify with `kubectl kustomize /root/base/` which should produce valid combined YAML.
 
-## Hint
+<details>
+<summary>Hint</summary>
 
-The kustomization.yaml should look like:
 ```yaml
+# base/kustomization.yaml
 resources:
   - deployment.yaml
   - service.yaml
 ```
+</details>
