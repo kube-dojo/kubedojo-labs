@@ -1,9 +1,9 @@
 #!/bin/bash
-# Verify user found stopped services and saved to file
-[ -f /home/user/projects/lab-results/stopped.txt ] || exit 1
-# Should contain postgres and worker (both stopped)
-grep -q "postgres" /home/user/projects/lab-results/stopped.txt 2>/dev/null || exit 1
-grep -q "worker" /home/user/projects/lab-results/stopped.txt 2>/dev/null || exit 1
-# Should NOT contain running services
-grep -q "nginx" /home/user/projects/lab-results/stopped.txt 2>/dev/null && exit 1
-exit 0
+if id "ubuntu" &>/dev/null; then USER_HOME="/home/ubuntu"; else USER_HOME="/root"; fi
+TARGET="$USER_HOME/projects/lab-results/stopped.txt"
+if [ -f "$TARGET" ] && grep -q "postgres" "$TARGET" && grep -q "worker" "$TARGET" && ! grep -q "nginx" "$TARGET"; then
+  echo "PASS: Step 3 verified!"
+  exit 0
+fi
+echo "FAIL: stopped.txt does not contain the correct filtered list."
+exit 1

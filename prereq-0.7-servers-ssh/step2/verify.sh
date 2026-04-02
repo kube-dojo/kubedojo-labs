@@ -1,5 +1,5 @@
 #!/bin/bash
-# Verify ports.txt exists and contains port 80
-[ -f /home/user/ports.txt ] || exit 1
-grep -q ":80" /home/user/ports.txt || exit 1
-exit 0
+if id "ubuntu" &>/dev/null; then USER_HOME="/home/ubuntu"; else USER_HOME="/root"; fi
+FILE="$USER_HOME/ports.txt"
+[ -f "$FILE" ] && grep -q ":80" "$FILE" && echo "PASS" && exit 0
+exit 1

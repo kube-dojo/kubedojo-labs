@@ -48,7 +48,7 @@ cat /tmp/demo3.txt
 
 ### Your task
 
-Create the file `/home/user/configs/app.env` with exactly these four lines:
+Create the file `~/configs/app.env` with exactly these four lines:
 
 ```
 APP_NAME=kubedojo
@@ -63,7 +63,7 @@ Use whichever method you prefer -- `echo -e`, heredoc, or multiple echoes.
 <summary>Hint: using a heredoc</summary>
 
 ```bash
-cat << EOF > /home/user/configs/app.env
+cat << EOF > ~/configs/app.env
 APP_NAME=kubedojo
 APP_PORT=8080
 DB_HOST=localhost
@@ -76,6 +76,6 @@ EOF
 <summary>Hint: using echo -e</summary>
 
 ```bash
-echo -e "APP_NAME=kubedojo\nAPP_PORT=8080\nDB_HOST=localhost\nDB_PORT=5432" > /home/user/configs/app.env
+echo -e "APP_NAME=kubedojo\nAPP_PORT=8080\nDB_HOST=localhost\nDB_PORT=5432" > ~/configs/app.env
 ```
 </details>

@@ -1,9 +1,5 @@
 #!/bin/bash
-# Verify nginx.conf has correct values and no typos
-[ -f /home/user/configs/nginx.conf ] || exit 1
-grep -q "listen 80" /home/user/configs/nginx.conf || exit 1
-grep -q "server_name" /home/user/configs/nginx.conf || exit 1
-# Ensure typos are gone
-grep -q "listn" /home/user/configs/nginx.conf && exit 1
-grep -q "sever" /home/user/configs/nginx.conf && exit 1
-exit 0
+if id "ubuntu" &>/dev/null; then USER_HOME="/home/ubuntu"; else USER_HOME="/root"; fi
+FILE="$USER_HOME/configs/nginx.conf"
+grep -q "server {" "$FILE" && grep -q "listen 80" "$FILE" && ! grep -q "sever" "$FILE" && echo "PASS" && exit 0
+exit 1

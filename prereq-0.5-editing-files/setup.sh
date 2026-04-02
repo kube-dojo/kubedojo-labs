@@ -1,8 +1,13 @@
 #!/bin/bash
-# Create working directory and a config file with typos for step 3
-mkdir -p /home/user/configs
-
-cat > /home/user/configs/nginx.conf << 'EOF'
+if id "ubuntu" &>/dev/null; then
+  TARGET_USER="ubuntu"
+  USER_HOME="/home/ubuntu"
+else
+  TARGET_USER="root"
+  USER_HOME="/root"
+fi
+mkdir -p "$USER_HOME/configs"
+cat > "$USER_HOME/configs/nginx.conf" << 'CONFEOF'
 sever {
     listn 80;
     sever_name localhost;
@@ -10,4 +15,5 @@ sever {
         root /var/www/html;
     }
 }
-EOF
+CONFEOF
+chown -R $TARGET_USER:$TARGET_USER "$USER_HOME/configs" 2>/dev/null || true

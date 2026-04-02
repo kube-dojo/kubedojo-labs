@@ -1,12 +1,8 @@
 #!/bin/bash
-if [ ! -f /root/code.txt ]; then
-  echo "FAIL: /root/code.txt not found. Did you find the secret code in welcome.txt?"
-  exit 1
-fi
-if grep -q "DOJO123" /root/code.txt; then
+if id "ubuntu" &>/dev/null; then USER_HOME="/home/ubuntu"; else USER_HOME="/root"; fi
+if [ -f "$USER_HOME/code.txt" ] && grep -q "DOJO123" "$USER_HOME/code.txt"; then
   echo "PASS: Secret code verified!"
   exit 0
-else
-  echo "FAIL: Incorrect code in /root/code.txt."
-  exit 1
 fi
+echo "FAIL: Secret code (DOJO123) not found in ~/code.txt."
+exit 1

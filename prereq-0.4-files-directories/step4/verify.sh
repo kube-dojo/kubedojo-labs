@@ -1,5 +1,11 @@
 #!/bin/bash
-# Verify: relative_test.txt in docs/drafts, absolute_test.txt in /tmp
-[ -f /home/user/lab-workspace/docs/drafts/relative_test.txt ] && \
-[ -f /tmp/absolute_test.txt ] && \
-exit 0 || exit 1
+if id "ubuntu" &>/dev/null; then USER_HOME="/home/ubuntu"; else USER_HOME="/root"; fi
+BASE="$USER_HOME/lab-workspace"
+
+if [ -f "$BASE/backup/report.txt" ] && [ -f "$BASE/backup/notes.txt" ]; then
+  echo "PASS: Step 4 verified!"
+  exit 0
+else
+  echo "FAIL: backup/ is missing expected .txt files."
+  exit 1
+fi

@@ -1,7 +1,12 @@
 #!/bin/bash
-# Verify: report.txt copied to backup, notes.txt moved to archive, old_data.csv renamed
-[ -f /home/user/lab-workspace/backup/report.txt ] && \
-[ -f /home/user/lab-workspace/docs/archive/notes.txt ] && \
-[ -f /home/user/lab-workspace/docs/archive/historical_data.csv ] && \
-[ ! -f /home/user/lab-workspace/docs/archive/old_data.csv ] && \
-exit 0 || exit 1
+if id "ubuntu" &>/dev/null; then USER_HOME="/home/ubuntu"; else USER_HOME="/root"; fi
+BASE="$USER_HOME/lab-workspace"
+
+[ -f "$BASE/backup/report.txt" ] && \
+[ -f "$BASE/docs/archive/notes.txt" ] && \
+[ -f "$BASE/docs/archive/historical_data.csv" ] && \
+[ ! -f "$BASE/docs/archive/old_data.csv" ] && \
+echo "PASS: Step 1 verified!" && exit 0
+
+echo "FAIL: Files not moved/copied correctly."
+exit 1

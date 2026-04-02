@@ -1,7 +1,6 @@
 #!/bin/bash
-# Verify checksum.txt exists and contains the correct md5 for "kubedojo-integrity-test" (no newline)
-[ -f /home/user/checksum.txt ] || exit 1
-# The expected md5 of "kubedojo-integrity-test" (echo -n)
+if id "ubuntu" &>/dev/null; then USER_HOME="/home/ubuntu"; else USER_HOME="/root"; fi
+FILE="$USER_HOME/checksum.txt"
 EXPECTED="66a5f7fac1658423d3e0f3e1170b6b1d"
-grep -q "$EXPECTED" /home/user/checksum.txt || exit 1
-exit 0
+[ -f "$FILE" ] && grep -q "$EXPECTED" "$FILE" && echo "PASS" && exit 0
+exit 1

@@ -1,5 +1,5 @@
 #!/bin/bash
-# Verify curl-info.txt exists and contains package info
-[ -f /home/user/curl-info.txt ] || exit 1
-grep -q "Package: curl" /home/user/curl-info.txt || exit 1
-exit 0
+if id "ubuntu" &>/dev/null; then USER_HOME="/home/ubuntu"; else USER_HOME="/root"; fi
+FILE="$USER_HOME/curl-info.txt"
+[ -f "$FILE" ] && grep -q "Package: curl" "$FILE" && echo "PASS" && exit 0
+exit 1

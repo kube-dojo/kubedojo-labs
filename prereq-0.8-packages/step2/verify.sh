@@ -1,5 +1,5 @@
 #!/bin/bash
-# Verify htop is installed and version file exists
-which htop > /dev/null 2>&1 || exit 1
-[ -f /home/user/htop-version.txt ] || exit 1
-exit 0
+if id "ubuntu" &>/dev/null; then USER_HOME="/home/ubuntu"; else USER_HOME="/root"; fi
+FILE="$USER_HOME/wget-version.txt"
+[ -f "$FILE" ] && grep -qi "wget" "$FILE" && echo "PASS" && exit 0
+exit 1

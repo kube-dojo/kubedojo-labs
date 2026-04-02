@@ -1,10 +1,13 @@
 #!/bin/bash
-# Install openssh-server and nginx, create test data file
+if id "ubuntu" &>/dev/null; then
+  TARGET_USER="ubuntu"
+  USER_HOME="/home/ubuntu"
+else
+  TARGET_USER="root"
+  USER_HOME="/root"
+fi
 apt-get update -qq > /dev/null 2>&1
 apt-get install -y openssh-server nginx -qq > /dev/null 2>&1
-
-# Create the home directory
-mkdir -p /home/user
-
-# Create a file with known content for integrity verification
-echo -n "kubedojo-integrity-test" > /home/user/important-data.bin
+mkdir -p "$USER_HOME"
+echo -n "kubedojo-integrity-test" > "$USER_HOME/important-data.bin"
+chown -R $TARGET_USER:$TARGET_USER "$USER_HOME/important-data.bin"

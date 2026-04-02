@@ -1,5 +1,5 @@
 #!/bin/bash
-# Verify ssh-port.txt exists and contains 22
-[ -f /home/user/ssh-port.txt ] || exit 1
-grep -q "22" /home/user/ssh-port.txt || exit 1
-exit 0
+if id "ubuntu" &>/dev/null; then USER_HOME="/home/ubuntu"; else USER_HOME="/root"; fi
+FILE="$USER_HOME/ssh-port.txt"
+[ -f "$FILE" ] && grep -q "22" "$FILE" && echo "PASS" && exit 0
+exit 1

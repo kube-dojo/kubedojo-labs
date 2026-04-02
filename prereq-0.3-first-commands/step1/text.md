@@ -1,46 +1,30 @@
 ## Step 1: Navigate the Filesystem
 
-Every file on Linux lives in a tree structure starting from `/` (root). Let's explore.
+Every file on Linux lives in a tree structure starting from `/` (root). The `~` symbol represents your **home directory**.
 
 ### Find out where you are
-
 ```bash
 pwd
 ```
 
-This prints your **present working directory**.
-
 ### List what's here
-
 ```bash
 ls
 ```
 
-Now try with details:
-
-```bash
-ls -la
-```
-
-### Move around
-
-Go to the user's home directory and see what's there:
-
-```bash
-cd /home/user
-ls -la
-```
-
 ### Your task
-
-Navigate into the `documents` directory, read the `welcome.txt` file, find the **secret code**, and save it to a file named `/root/code.txt`.
+1. Navigate into your home directory: `cd ~`
+2. Go into the `documents` directory.
+3. Read the `welcome.txt` file to find the **secret code**.
+4. Save that code (and only the code) into a file named `~/code.txt`.
 
 <details>
 <summary>Hint</summary>
 
 ```bash
-cd /home/user/documents
+cd ~/documents
 cat welcome.txt
-echo "DOJO123" > /root/code.txt
+# Copy the code (DOJO123) and save it:
+echo "DOJO123" > ~/code.txt
 ```
 </details>

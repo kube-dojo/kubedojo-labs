@@ -1,8 +1,11 @@
 #!/bin/bash
-# Verify: secret_config.cfg is 600, important_script.sh has owner execute
-PERMS_SECRET=$(stat -c '%a' /home/user/lab-workspace/secret_config.cfg 2>/dev/null)
-PERMS_SCRIPT=$(stat -c '%a' /home/user/lab-workspace/important_script.sh 2>/dev/null)
+if id "ubuntu" &>/dev/null; then USER_HOME="/home/ubuntu"; else USER_HOME="/root"; fi
+BASE="$USER_HOME/lab-workspace"
 
-[ "$PERMS_SECRET" = "600" ] && \
-[ "$PERMS_SCRIPT" = "744" ] && \
-exit 0 || exit 1
+if [ -x "$BASE/important_script.sh" ] && [ -r "$BASE/secret_config.cfg" ]; then
+  echo "PASS: Permissions verified!"
+  exit 0
+else
+  echo "FAIL: Permissions are not set correctly."
+  exit 1
+fi

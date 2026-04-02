@@ -1,5 +1,4 @@
 #!/bin/bash
-# Verify SSH key pair exists
-[ -f /root/.ssh/lab_key ] || exit 1
-[ -f /root/.ssh/lab_key.pub ] || exit 1
-exit 0
+if id "ubuntu" &>/dev/null; then USER_HOME="/home/ubuntu"; else USER_HOME="/root"; fi
+[ -f "$USER_HOME/.ssh/lab_key" ] && [ -f "$USER_HOME/.ssh/lab_key.pub" ] && echo "PASS" && exit 0
+exit 1
