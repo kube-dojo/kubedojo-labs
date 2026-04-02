@@ -13,6 +13,10 @@ List all storage classes in the cluster and save the output to `/root/storage-cl
 
 If no storage classes exist, save the text "no storage classes found" to the file.
 
-## Hint
+<details>
+<summary>Hint</summary>
 
-Run `kubectl get storageclass` and redirect the output. Even if the cluster has no storage classes, the command header or a "No resources found" message is acceptable.
+```bash
+kubectl get storageclass > /root/storage-classes.txt
+```
+</details>

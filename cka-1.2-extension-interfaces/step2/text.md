@@ -13,6 +13,11 @@ Identify the CNI plugin used by the cluster and save the name to `/root/cni-plug
 
 Check both `/etc/cni/net.d/` directory and CNI-related pods in `kube-system`.
 
-## Hint
+<details>
+<summary>Hint</summary>
 
-Run `ls /etc/cni/net.d/` to see CNI config files. Also check `kubectl get pods -n kube-system` for pods with names like `calico`, `flannel`, `cilium`, or `weave`.
+Run `ls /etc/cni/net.d/` to see CNI config files. 
+```bash
+ls /etc/cni/net.d/ | head -1 > /root/cni-plugin.txt
+```
+</details>
