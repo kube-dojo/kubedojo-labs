@@ -1,0 +1,708 @@
+=========================================
+KubeDojo K8s Scenario Tester (kind)
+=========================================
+
+  Using existing kind cluster: kubedojo-test
+  TEST prereq-k8s-1.1-first-cluster
+Waiting for Kubernetes cluster to be ready...
+Cluster is ready!
+Setup complete. You have a single-node Kubernetes cluster ready to explore.
+    PASS step 1
+    PASS step 2
+namespace/my-first-ns created
+    PASS step 3
+  ALL STEPS PASSED
+pod "web-nginx-6545f5c55-d6qwm" deleted
+service "kubernetes" deleted
+service "web-nginx" deleted
+deployment.apps "web-nginx" deleted
+replicaset.apps "web-nginx-6545f5c55" deleted
+No resources found
+namespace "my-first-ns" deleted
+  TEST prereq-k8s-1.2-kubectl
+Waiting for Kubernetes cluster to be ready...
+Cluster is ready!
+Setup complete. Your cluster is ready for kubectl exploration.
+    PASS step 1
+    PASS step 2
+    PASS step 3
+    PASS step 4
+  ALL STEPS PASSED
+service "kubernetes" deleted
+No resources found
+namespace "my-first-ns" deleted
+  TEST prereq-k8s-1.3-pods
+Waiting for Kubernetes cluster to be ready...
+Cluster is ready!
+Setup complete. Your cluster is ready for pod creation.
+pod/web created
+pod/web condition met
+    PASS step 1
+pod/api created
+pod/api condition met
+    PASS step 2
+    PASS step 3
+pod "api" deleted from default namespace
+    PASS step 4
+  ALL STEPS PASSED
+pod "web" deleted
+service "kubernetes" deleted
+No resources found
+  TEST prereq-k8s-1.4-deployments
+Waiting for Kubernetes cluster to be ready...
+Cluster is ready!
+Setup complete. Your cluster is ready for Deployment exercises.
+deployment.apps/webapp created
+Waiting for deployment "webapp" rollout to finish: 0 out of 3 new replicas have been updated...
+Waiting for deployment "webapp" rollout to finish: 0 of 3 updated replicas are available...
+Waiting for deployment "webapp" rollout to finish: 1 of 3 updated replicas are available...
+Waiting for deployment "webapp" rollout to finish: 2 of 3 updated replicas are available...
+deployment "webapp" successfully rolled out
+    PASS step 1
+deployment.apps/webapp scaled
+Waiting for deployment "webapp" rollout to finish: 3 of 5 updated replicas are available...
+Waiting for deployment "webapp" rollout to finish: 4 of 5 updated replicas are available...
+deployment "webapp" successfully rolled out
+    PASS step 2
+deployment.apps/webapp image updated
+Waiting for deployment "webapp" rollout to finish: 3 out of 5 new replicas have been updated...
+Waiting for deployment "webapp" rollout to finish: 3 out of 5 new replicas have been updated...
+Waiting for deployment "webapp" rollout to finish: 3 out of 5 new replicas have been updated...
+Waiting for deployment "webapp" rollout to finish: 4 out of 5 new replicas have been updated...
+Waiting for deployment "webapp" rollout to finish: 4 out of 5 new replicas have been updated...
+Waiting for deployment "webapp" rollout to finish: 2 old replicas are pending termination...
+Waiting for deployment "webapp" rollout to finish: 1 old replicas are pending termination...
+Waiting for deployment "webapp" rollout to finish: 1 old replicas are pending termination...
+Waiting for deployment "webapp" rollout to finish: 1 old replicas are pending termination...
+Waiting for deployment "webapp" rollout to finish: 1 old replicas are pending termination...
+Waiting for deployment "webapp" rollout to finish: 1 old replicas are pending termination...
+Waiting for deployment "webapp" rollout to finish: 1 old replicas are pending termination...
+Waiting for deployment "webapp" rollout to finish: 1 old replicas are pending termination...
+deployment "webapp" successfully rolled out
+    PASS step 3
+deployment.apps/webapp rolled back
+Waiting for deployment "webapp" rollout to finish: 0 out of 5 new replicas have been updated...
+Waiting for deployment "webapp" rollout to finish: 0 out of 5 new replicas have been updated...
+Waiting for deployment "webapp" rollout to finish: 0 out of 5 new replicas have been updated...
+Waiting for deployment "webapp" rollout to finish: 0 out of 5 new replicas have been updated...
+Waiting for deployment "webapp" rollout to finish: 2 out of 5 new replicas have been updated...
+Waiting for deployment "webapp" rollout to finish: 3 out of 5 new replicas have been updated...
+Waiting for deployment "webapp" rollout to finish: 3 out of 5 new replicas have been updated...
+Waiting for deployment "webapp" rollout to finish: 3 out of 5 new replicas have been updated...
+Waiting for deployment "webapp" rollout to finish: 3 out of 5 new replicas have been updated...
+Waiting for deployment "webapp" rollout to finish: 4 out of 5 new replicas have been updated...
+Waiting for deployment "webapp" rollout to finish: 4 out of 5 new replicas have been updated...
+Waiting for deployment "webapp" rollout to finish: 4 out of 5 new replicas have been updated...
+Waiting for deployment "webapp" rollout to finish: 4 out of 5 new replicas have been updated...
+Waiting for deployment "webapp" rollout to finish: 2 old replicas are pending termination...
+Waiting for deployment "webapp" rollout to finish: 1 old replicas are pending termination...
+Waiting for deployment "webapp" rollout to finish: 1 old replicas are pending termination...
+Waiting for deployment "webapp" rollout to finish: 1 old replicas are pending termination...
+Waiting for deployment "webapp" rollout to finish: 1 old replicas are pending termination...
+deployment "webapp" successfully rolled out
+    PASS step 4
+  ALL STEPS PASSED
+pod "webapp-6f754749dc-zk9f2" deleted
+pod "webapp-77877485b6-c442h" deleted
+pod "webapp-77877485b6-jgj2l" deleted
+pod "webapp-77877485b6-kdzx8" deleted
+pod "webapp-77877485b6-mvxsx" deleted
+pod "webapp-77877485b6-wmvrd" deleted
+deployment.apps "webapp" deleted
+replicaset.apps "webapp-6f754749dc" deleted
+replicaset.apps "webapp-77877485b6" deleted
+No resources found
+  TEST prereq-k8s-1.5-services
+Waiting for Kubernetes cluster to be ready...
+Cluster is ready!
+Creating web deployment with 2 nginx replicas...
+deployment.apps/web created
+deployment.apps/web condition met
+Setup complete. Deployment 'web' is running with 2 replicas.
+service/web-svc exposed
+    PASS step 1
+    PASS step 2
+service/web-nodeport exposed
+    PASS step 3
+  ALL STEPS PASSED
+pod "web-86648cb98c-gx2hw" deleted
+pod "web-86648cb98c-n7vft" deleted
+service "kubernetes" deleted
+service "web-nodeport" deleted
+service "web-svc" deleted
+deployment.apps "web" deleted
+No resources found
+  TEST cka-0.1-cluster-setup
+Waiting for Kubernetes cluster to be ready...
+Cluster is ready!
+Kubernetes control plane is running at https://kubedojo-test-control-plane:6443
+CoreDNS is running at https://kubedojo-test-control-plane:6443/api/v1/namespaces/kube-system/services/kube-dns:dns/proxy
+
+To further debug and diagnose cluster problems, use 'kubectl cluster-info dump'.
+NAME                          STATUS   ROLES           AGE     VERSION
+kubedojo-test-control-plane   Ready    control-plane   8m25s   v1.35.0
+Node count saved:
+1
+PASS: Node count is 1
+    PASS step 1
+NAME                                                  READY   STATUS    RESTARTS   AGE
+coredns-7d764666f9-st9tn                              1/1     Running   0          8m16s
+coredns-7d764666f9-xpvcx                              1/1     Running   0          8m16s
+etcd-kubedojo-test-control-plane                      1/1     Running   0          8m25s
+kindnet-x62dh                                         1/1     Running   0          8m16s
+kube-apiserver-kubedojo-test-control-plane            1/1     Running   0          8m25s
+kube-controller-manager-kubedojo-test-control-plane   1/1     Running   0          8m24s
+kube-proxy-k4dgs                                      1/1     Running   0          8m16s
+kube-scheduler-kubedojo-test-control-plane            1/1     Running   0          8m25s
+API server pod name saved:
+kube-apiserver-kubedojo-test-control-plane
+PASS: File contains kube-apiserver pod name
+    PASS step 2
+Context "cka-practice" modified.
+Switched to context "cka-practice".
+Current context:
+cka-practice
+PASS: Current context is cka-practice
+    PASS step 3
+  ALL STEPS PASSED
+pod "web-86648cb98c-8ltgr" deleted
+pod "web-86648cb98c-gbbds" deleted
+No resources found
+  TEST cka-0.4-k8s-docs
+Waiting for Kubernetes cluster to be ready...
+Cluster is ready!
+Saved pod.spec fields to /root/pod-spec-fields.txt
+KIND:       Pod
+VERSION:    v1
+
+FIELD: spec <PodSpec>
+
+
+DESCRIPTION:
+    Specification of the desired behavior of the pod. More info:
+    https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#spec-and-status
+    PodSpec is a description of a pod.
+    
+FIELDS:
+  activeDeadlineSeconds	<integer>
+    Optional duration in seconds the pod may be active on the node relative to
+    StartTime before the system will actively try to mark it failed and kill
+    associated containers. Value must be a positive integer.
+
+  affinity	<Affinity>
+    If specified, the pod's scheduling constraints
+
+PASS: File contains pod spec fields including 'containers'
+    PASS step 1
+Short name for deployments:
+deploy
+
+Full api-resources entry:
+deployments                         deploy       apps/v1                           true         Deployment
+PASS: File contains 'deploy'
+    PASS step 2
+Generated /root/nginx-deploy.yaml:
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: nginx
+  name: nginx
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: nginx
+  strategy: {}
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      containers:
+      - image: nginx
+        name: nginx
+        resources: {}
+status: {}
+PASS: YAML contains replicas: 2 and nginx
+    PASS step 3
+  ALL STEPS PASSED
+No resources found
+No resources found
+  TEST cka-1.1-control-plane
+Waiting for Kubernetes cluster to be ready...
+Waiting for control plane pods...
+Cluster is ready!
+Static pod manifests:
+etcd.yaml
+kube-apiserver.yaml
+kube-controller-manager.yaml
+kube-scheduler.yaml
+PASS: File contains apiserver and etcd entries
+    PASS step 1
+etcd endpoint:
+https://127.0.0.1:2379,https://192.168.117.2:2379
+PASS: File contains etcd endpoint with port 2379
+    PASS step 2
+Service CIDR:
+10.96.0.0/16
+PASS: File contains a CIDR range
+    PASS step 3
+Control plane health:
+kube-controller-manager-kubedojo-test-control-plane   1/1     Running   0          8m26s
+kube-scheduler-kubedojo-test-control-plane            1/1     Running   0          8m27s
+PASS: File contains control plane health information
+    PASS step 4
+  ALL STEPS PASSED
+No resources found
+No resources found
+  TEST cka-1.2-extension-interfaces
+Waiting for Kubernetes cluster to be ready...
+Cluster is ready!
+Container runtime:
+containerd://2.2.0PASS: File identifies a container runtime
+    PASS step 1
+CNI plugin:
+10-kindnet.conflist
+PASS: File contains CNI plugin information: 10-kindnet.conflist
+    PASS step 2
+Storage classes:
+NAME                 PROVISIONER             RECLAIMPOLICY   VOLUMEBINDINGMODE      ALLOWVOLUMEEXPANSION   AGE
+standard (default)   rancher.io/local-path   Delete          WaitForFirstConsumer   false                  8m24s
+PASS: File has content
+    PASS step 3
+  ALL STEPS PASSED
+No resources found
+No resources found
+  TEST cka-1.3-helm
+Waiting for Kubernetes cluster to be ready...
+Cluster is ready!
+[WARNING] Could not find git. It is required for plugin installation.
+Helm v3.20.1 is already latest
+version.BuildInfo{Version:"v3.20.1", GitCommit:"a2369ca71c0ef633bf6e4fccd66d634eb379b371", GitTreeState:"clean", GoVersion:"go1.25.8"}
+PASS: Helm is installed
+    PASS step 1
+"bitnami" already exists with the same configuration, skipping
+Hang tight while we grab the latest from your chart repositories...
+...Successfully got an update from the "bitnami" chart repository
+Update Complete. ⎈Happy Helming!⎈
+Chart name saved:
+bitnami/nginx
+
+Search results:
+NAME                            	CHART VERSION	APP VERSION	DESCRIPTION                                       
+bitnami/nginx                   	22.6.10      	1.29.7     	NGINX Open Source is a web server that can be a...
+bitnami/nginx-ingress-controller	12.0.7       	1.13.1     	NGINX Ingress Controller is an Ingress controll...
+bitnami/nginx-intel             	2.1.15       	0.4.9      	DEPRECATED NGINX Open Source for Intel is a lig...
+PASS: File contains bitnami/nginx
+    PASS step 2
+
+Release list:
+NAME	NAMESPACE	REVISION	UPDATED                                	STATUS	CHART        	APP VERSION
+web 	default  	1       	2026-04-01 22:03:59.560390784 +0000 UTC	failed	nginx-22.6.10	1.29.7     
+PASS: Release 'web' exists
+    PASS step 3
+Release "web" has been upgraded. Happy Helming!
+NAME: web
+LAST DEPLOYED: Wed Apr  1 22:10:42 2026
+NAMESPACE: default
+STATUS: deployed
+REVISION: 2
+TEST SUITE: None
+NOTES:
+CHART NAME: nginx
+CHART VERSION: 22.6.10
+APP VERSION: 1.29.7
+
+⚠ WARNING: Since August 28th, 2025, only a limited subset of images/charts are available for free.
+    Subscribe to Bitnami Secure Images to receive continued support and security updates.
+    More info at https://bitnami.com and https://github.com/bitnami/containers/issues/83267
+
+** Please be patient while the chart is being deployed **
+NGINX can be accessed through the following DNS name from within your cluster:
+
+    web-nginx.default.svc.cluster.local (port 80)
+
+To access NGINX from outside the cluster, follow the steps below:
+
+1. Get the NGINX URL by running these commands:
+
+  NOTE: It may take a few minutes for the LoadBalancer IP to be available.
+        Watch the status with: 'kubectl get svc --namespace default -w web-nginx'
+
+    export SERVICE_PORT=$(kubectl get --namespace default -o jsonpath="{.spec.ports[0].port}" services web-nginx)
+    export SERVICE_IP=$(kubectl get svc --namespace default web-nginx -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
+    echo "http://${SERVICE_IP}:${SERVICE_PORT}"
+WARNING: Rolling tag detected (bitnami/nginx:latest), please note that it is strongly recommended to avoid using rolling tags in a production environment.
++info https://techdocs.broadcom.com/us/en/vmware-tanzu/bitnami-secure-images/bitnami-secure-images/services/bsi-doc/apps-tutorials-understand-rolling-tags-containers-index.html
+WARNING: Rolling tag detected (bitnami/git:latest), please note that it is strongly recommended to avoid using rolling tags in a production environment.
++info https://techdocs.broadcom.com/us/en/vmware-tanzu/bitnami-secure-images/bitnami-secure-images/services/bsi-doc/apps-tutorials-understand-rolling-tags-containers-index.html
+WARNING: Rolling tag detected (bitnami/nginx-exporter:latest), please note that it is strongly recommended to avoid using rolling tags in a production environment.
++info https://techdocs.broadcom.com/us/en/vmware-tanzu/bitnami-secure-images/bitnami-secure-images/services/bsi-doc/apps-tutorials-understand-rolling-tags-containers-index.html
+
+WARNING: There are "resources" sections in the chart not set. Using "resourcesPreset" is not recommended for production. For production installations, please set the following values according to your workload needs:
+  - cloneStaticSiteFromGit.gitSync.resources
+  - resources
++info https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/
+Rollback was a success! Happy Helming!
+Release history:
+REVISION	UPDATED                 	STATUS    	CHART        	APP VERSION	DESCRIPTION                                    
+1       	Wed Apr  1 22:03:59 2026	superseded	nginx-22.6.10	1.29.7     	Release "web" failed: context deadline exceeded
+2       	Wed Apr  1 22:10:42 2026	superseded	nginx-22.6.10	1.29.7     	Upgrade complete                               
+3       	Wed Apr  1 22:10:42 2026	deployed  	nginx-22.6.10	1.29.7     	Rollback to 1                                  
+PASS: Release 'web' has 3 revisions (need >= 3)
+    PASS step 4
+  ALL STEPS PASSED
+pod "web-nginx-6545f5c55-jphnb" deleted
+pod "web-nginx-6545f5c55-mp88b" deleted
+pod "web-nginx-6545f5c55-rgp4j" deleted
+service "kubernetes" deleted
+service "web-nginx" deleted
+deployment.apps "web-nginx" deleted
+No resources found
+  TEST cka-1.4-kustomize
+Waiting for Kubernetes cluster to be ready...
+Cluster is ready!
+Base kustomization output:
+apiVersion: v1
+kind: Service
+metadata:
+  name: myapp
+spec:
+  ports:
+  - port: 80
+    targetPort: 80
+  selector:
+    app: myapp
+  type: ClusterIP
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: myapp
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: myapp
+  template:
+    metadata:
+      labels:
+        app: myapp
+    spec:
+      containers:
+      - image: nginx:1.27
+        name: nginx
+        ports:
+        - containerPort: 80
+PASS: kubectl kustomize /root/base/ produces valid YAML
+    PASS step 1
+Prod overlay output:
+apiVersion: v1
+kind: Service
+metadata:
+  name: prod-myapp
+spec:
+  ports:
+  - port: 80
+    targetPort: 80
+  selector:
+    app: myapp
+  type: ClusterIP
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: prod-myapp
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: myapp
+  template:
+    metadata:
+      labels:
+        app: myapp
+    spec:
+      containers:
+      - image: nginx:1.27
+        name: nginx
+        ports:
+        - containerPort: 80
+PASS: Overlay output contains 'prod-' prefix
+    PASS step 2
+service/prod-myapp created
+deployment.apps/prod-myapp created
+Waiting for deployment "prod-myapp" rollout to finish: 0 of 3 updated replicas are available...
+Waiting for deployment "prod-myapp" rollout to finish: 1 of 3 updated replicas are available...
+Waiting for deployment "prod-myapp" rollout to finish: 2 of 3 updated replicas are available...
+deployment "prod-myapp" successfully rolled out
+
+Deployments:
+NAME         READY   UP-TO-DATE   AVAILABLE   AGE
+prod-myapp   3/3     3            3           10s
+
+Pods:
+NAME                          READY   STATUS    RESTARTS   AGE
+prod-myapp-595d8d9969-k4c8z   1/1     Running   0          10s
+prod-myapp-595d8d9969-r95tk   1/1     Running   0          10s
+prod-myapp-595d8d9969-xntqs   1/1     Running   0          10s
+PASS: Deployment with 'prod-' prefix exists
+    PASS step 3
+  ALL STEPS PASSED
+pod "prod-myapp-595d8d9969-k4c8z" deleted
+pod "prod-myapp-595d8d9969-r95tk" deleted
+pod "prod-myapp-595d8d9969-xntqs" deleted
+service "kubernetes" deleted
+service "prod-myapp" deleted
+deployment.apps "prod-myapp" deleted
+No resources found
+  TEST cka-1.5-crds-operators
+Waiting for Kubernetes cluster to be ready...
+Cluster is ready!
+CRD count: 0
+PASS: File contains a number: 0
+    PASS step 1
+customresourcedefinition.apiextensions.k8s.io/backups.kubedojo.io created
+customresourcedefinition.apiextensions.k8s.io/backups.kubedojo.io condition met
+
+CRD created:
+NAME                  CREATED AT
+backups.kubedojo.io   2026-04-01T22:10:58Z
+NAME                  CREATED AT
+backups.kubedojo.io   2026-04-01T22:10:58Z
+PASS: CRD backups.kubedojo.io exists
+    PASS step 2
+backup.kubedojo.io/daily-backup created
+
+Backup resources:
+NAME           AGE
+daily-backup   0s
+
+Backup details:
+Name:         daily-backup
+Namespace:    default
+Labels:       <none>
+Annotations:  <none>
+API Version:  kubedojo.io/v1
+Kind:         Backup
+Metadata:
+  Creation Timestamp:  2026-04-01T22:11:00Z
+  Generation:          1
+  Resource Version:    2679
+  UID:                 5046c864-a09f-4e0c-9a0c-16babe689ccd
+Spec:
+  Retention:  7
+  Schedule:   0 2 * * *
+  Target:     etcd
+Events:       <none>
+NAME           AGE
+daily-backup   0s
+PASS: Backup resource 'daily-backup' exists
+    PASS step 3
+  ALL STEPS PASSED
+service "kubernetes" deleted
+No resources found
+  TEST cka-1.6-rbac
+Waiting for Kubernetes cluster to be ready...
+namespace/rbac-test created
+Cluster is ready!
+role.rbac.authorization.k8s.io/pod-reader created
+
+Role created:
+Name:         pod-reader
+Labels:       <none>
+Annotations:  <none>
+PolicyRule:
+  Resources  Non-Resource URLs  Resource Names  Verbs
+  ---------  -----------------  --------------  -----
+  pods       []                 []              [get list]
+NAME         CREATED AT
+pod-reader   2026-04-01T22:11:01Z
+PASS: Role pod-reader exists in rbac-test namespace
+    PASS step 1
+clusterrole.rbac.authorization.k8s.io/node-viewer created
+
+ClusterRole created:
+Name:         node-viewer
+Labels:       <none>
+Annotations:  <none>
+PolicyRule:
+  Resources  Non-Resource URLs  Resource Names  Verbs
+  ---------  -----------------  --------------  -----
+  nodes      []                 []              [get list]
+NAME          CREATED AT
+node-viewer   2026-04-01T22:11:01Z
+PASS: ClusterRole node-viewer exists
+    PASS step 2
+Can default SA get pods in rbac-test?
+no
+PASS: File contains 'no'
+    PASS step 3
+serviceaccount/deploy-bot created
+rolebinding.rbac.authorization.k8s.io/deploy-bot-binding created
+Can deploy-bot get pods?
+yes
+PASS: deploy-bot can get pods in rbac-test
+    PASS step 4
+  ALL STEPS PASSED
+No resources found
+No resources found
+  TEST cka-1.7-kubeadm
+Waiting for Kubernetes cluster to be ready...
+Cluster is ready!
+Cluster name:
+kubedojo-test
+
+Full kubeadm config:
+apiVersion: v1
+data:
+  ClusterConfiguration: |
+    apiServer:
+      certSANs:
+      - localhost
+      - 127.0.0.1
+      extraArgs:
+      - name: runtime-config
+        value: ""
+    apiVersion: kubeadm.k8s.io/v1beta4
+    caCertificateValidityPeriod: 87600h0m0s
+    certificateValidityPeriod: 8760h0m0s
+    certificatesDir: /etc/kubernetes/pki
+    clusterName: kubedojo-test
+    controlPlaneEndpoint: kubedojo-test-control-plane:6443
+    controllerManager:
+      extraArgs:
+      - name: enable-hostpath-provisioner
+        value: "true"
+    dns: {}
+    encryptionAlgorithm: RSA-2048
+    etcd:
+      local:
+        dataDir: /var/lib/etcd
+    imageRepository: registry.k8s.io
+    kind: ClusterConfiguration
+    kubernetesVersion: v1.35.0
+    networking:
+      dnsDomain: cluster.local
+PASS: File contains cluster name: kubedojo-test
+    PASS step 1
+Certificate expiration dates:
+[check-expiration] Reading configuration from the "kubeadm-config" ConfigMap in namespace "kube-system"...
+[check-expiration] Use 'kubeadm init phase upload-config kubeadm --config your-config-file' to re-upload it.
+
+CERTIFICATE                EXPIRES                  RESIDUAL TIME   CERTIFICATE AUTHORITY   EXTERNALLY MANAGED
+admin.conf                 Apr 01, 2027 22:02 UTC   364d            ca                      no      
+apiserver                  Apr 01, 2027 22:02 UTC   364d            ca                      no      
+apiserver-etcd-client      Apr 01, 2027 22:02 UTC   364d            etcd-ca                 no      
+apiserver-kubelet-client   Apr 01, 2027 22:02 UTC   364d            ca                      no      
+controller-manager.conf    Apr 01, 2027 22:02 UTC   364d            ca                      no      
+etcd-healthcheck-client    Apr 01, 2027 22:02 UTC   364d            etcd-ca                 no      
+etcd-peer                  Apr 01, 2027 22:02 UTC   364d            etcd-ca                 no      
+etcd-server                Apr 01, 2027 22:02 UTC   364d            etcd-ca                 no      
+front-proxy-client         Apr 01, 2027 22:02 UTC   364d            front-proxy-ca          no      
+scheduler.conf             Apr 01, 2027 22:02 UTC   364d            ca                      no      
+super-admin.conf           Apr 01, 2027 22:02 UTC   364d            ca                      no      
+
+CERTIFICATE AUTHORITY   EXPIRES                  RESIDUAL TIME   EXTERNALLY MANAGED
+ca                      Mar 29, 2036 22:02 UTC   9y              no      
+etcd-ca                 Mar 29, 2036 22:02 UTC   9y              no      
+front-proxy-ca          Mar 29, 2036 22:02 UTC   9y              no      
+PASS: File contains certificate expiration information
+    PASS step 2
+Upgrade plan:
+[preflight] Running pre-flight checks.
+[upgrade/config] Reading configuration from the "kubeadm-config" ConfigMap in namespace "kube-system"...
+[upgrade/config] Use 'kubeadm init phase upload-config kubeadm --config your-config-file' to re-upload it.
+[upgrade] Running cluster health checks
+[upgrade] Fetching available versions to upgrade to
+[upgrade/versions] Cluster version: 1.35.0
+[upgrade/versions] kubeadm version: v1.35.0
+[upgrade/versions] Target version: v1.35.3
+[upgrade/versions] Latest version in the v1.35 series: v1.35.3
+
+Components that must be upgraded manually after you have upgraded the control plane with 'kubeadm upgrade apply':
+COMPONENT   NODE                          CURRENT   TARGET
+kubelet     kubedojo-test-control-plane   v1.35.0   v1.35.3
+
+Upgrade to the latest version in the v1.35 series:
+
+COMPONENT                 NODE                          CURRENT   TARGET
+kube-apiserver            kubedojo-test-control-plane   v1.35.0   v1.35.3
+kube-controller-manager   kubedojo-test-control-plane   v1.35.0   v1.35.3
+kube-scheduler            kubedojo-test-control-plane   v1.35.0   v1.35.3
+kube-proxy                                              1.35.0    v1.35.3
+CoreDNS                                                 v1.13.1   v1.13.1
+etcd                      kubedojo-test-control-plane   3.6.6-0   3.6.6-0
+
+You can now apply the upgrade by executing the following command:
+
+	kubeadm upgrade apply v1.35.3
+
+Note: Before you can perform this upgrade, you have to update kubeadm to v1.35.3.
+
+_____________________________________________________________________
+
+
+The table below shows the current state of component configs as understood by this version of kubeadm.
+Configs that have a "yes" mark in the "MANUAL UPGRADE REQUIRED" column require manual config upgrade or
+resetting to kubeadm defaults before a successful upgrade can be performed. The version to manually
+upgrade to is denoted in the "PREFERRED VERSION" column.
+
+API GROUP                 CURRENT VERSION   PREFERRED VERSION   MANUAL UPGRADE REQUIRED
+kubeproxy.config.k8s.io   v1alpha1          v1alpha1            no
+kubelet.config.k8s.io     v1beta1           v1beta1             no
+_____________________________________________________________________
+
+PASS: File has content
+    PASS step 3
+  ALL STEPS PASSED
+service "kubernetes" deleted
+No resources found
+  TEST cka-2.1-pods
+node/kubedojo-test-control-plane condition met
+namespace/practice created
+pod/broken-pod created
+Kubernetes cluster ready.
+pod/sidecar-pod created
+pod/sidecar-pod condition met
+    PASS step 1
+pod/init-pod created
+service/myservice created
+pod/init-pod condition met
+    PASS step 2
+pod/resource-pod created
+pod/resource-pod condition met
+    PASS step 3
+pod "broken-pod" deleted from practice namespace
+pod/broken-pod created
+pod/broken-pod condition met
+    PASS step 4
+  ALL STEPS PASSED
+service "kubernetes" deleted
+pod "broken-pod" deleted
+pod "init-pod" deleted
+pod "resource-pod" deleted
+pod "sidecar-pod" deleted
+service "myservice" deleted
+namespace "practice" deleted
+  TEST cka-2.2-deployments
+node/kubedojo-test-control-plane condition met
+namespace/practice unchanged
+Kubernetes cluster ready.
+    FAIL step 1
+  FAIL cka-2.2-deployments
+service "kubernetes" deleted
+pod "broken-mount-pod" deleted
+namespace "practice" deleted
+  TEST cka-2.3-daemonsets-statefulsets
+node/kubedojo-test-control-plane condition met
+namespace/practice unchanged
+Kubernetes cluster ready.
+OCI runtime exec failed: exec failed: unable to start container process: error executing setns process: exit status 1
+    FAIL step 1
+  FAIL cka-2.3-daemonsets-statefulsets
+  TEST cka-2.4-jobs-cronjobs
+Error response from daemon: No such container: kubedojo-test-control-plane
+
+Cleaning up kind cluster...

@@ -22,8 +22,6 @@ Now try with details:
 ls -la
 ```
 
-The `-l` flag shows permissions, owner, size, and date. The `-a` flag shows hidden files (starting with `.`).
-
 ### Move around
 
 Go to the user's home directory and see what's there:
@@ -33,17 +31,16 @@ cd /home/user
 ls -la
 ```
 
-You should see three directories: `documents`, `projects`, and `downloads`.
-
 ### Your task
 
-Navigate into the `documents` directory and list its contents.
+Navigate into the `documents` directory, read the `welcome.txt` file, find the **secret code**, and save it to a file named `/root/code.txt`.
 
 <details>
 <summary>Hint</summary>
 
 ```bash
 cd /home/user/documents
-ls
+cat welcome.txt
+echo "DOJO123" > /root/code.txt
 ```
 </details>
