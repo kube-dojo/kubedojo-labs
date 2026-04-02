@@ -1,9 +1,11 @@
 #!/bin/bash
-# Verify: broken-pod is Running with correct image
-for i in $(seq 1 30); do
-  STATUS=$(kubectl get pod broken-pod -n practice -o jsonpath='{.status.phase}' 2>/dev/null)
-  IMAGE=$(kubectl get pod broken-pod -n practice -o jsonpath='{.spec.containers[0].image}' 2>/dev/null)
-  [ "$STATUS" = "Running" ] && [[ "$IMAGE" == *"nginx"* ]] && exit 0
-  sleep 2
-done
-exit 1
+STATUS=$(kubectl get pod broken-pod -n practice -o jsonpath='{.status.phase}' 2>/dev/null)
+IMAGE=$(kubectl get pod broken-pod -n practice -o jsonpath='{.spec.containers[0].image}' 2>/dev/null)
+
+if [ "$STATUS" = "Running" ] && [ "$IMAGE" = "nginx:1.25" ]; then
+  echo "PASS: broken-pod is fixed and running"
+  exit 0
+else
+  echo "FAIL: broken-pod status: $STATUS, image: $IMAGE. Expected Running with nginx:1.25"
+  exit 1
+fi
