@@ -14,13 +14,19 @@ In the CKA exam, typing `kubectl` hundreds of times wastes precious seconds. Ali
 
 Add the following aliases to your `~/.bashrc`:
 
-```
+```bash
 alias k=kubectl
 alias kgp='kubectl get pods'
 ```
 
 Then source the file so the aliases take effect.
 
-## Hint
+<details>
+<summary>Hint</summary>
 
-Use `echo` to append lines to `~/.bashrc`, then run `source ~/.bashrc`. In the real exam, these aliases are often pre-configured, but knowing how to set them up is important.
+```bash
+echo "alias k=kubectl" >> ~/.bashrc
+echo "alias kgp='kubectl get pods'" >> ~/.bashrc
+source ~/.bashrc
+```
+</details>

@@ -1,15 +1,34 @@
 #!/bin/bash
-MISSING=0
+SCRIPT="/root/create-files.sh"
+DIR="/root/timed"
+
+if [ ! -f "$SCRIPT" ]; then
+  echo "FAIL: $SCRIPT does not exist"
+  exit 1
+fi
+
+if [ ! -x "$SCRIPT" ]; then
+  echo "FAIL: $SCRIPT is not executable"
+  exit 1
+fi
+
+if [ ! -d "$DIR" ]; then
+  echo "FAIL: Directory $DIR was not created"
+  exit 1
+fi
+
 for i in 1 2 3 4 5; do
-  if [ ! -f "/root/timed/test-${i}.txt" ]; then
-    echo "FAIL: /root/timed/test-${i}.txt does not exist"
-    MISSING=1
+  FILE="$DIR/test-${i}.txt"
+  if [ ! -f "$FILE" ]; then
+    echo "FAIL: $FILE missing"
+    exit 1
+  fi
+  CONTENT=$(cat "$FILE")
+  if [ "$CONTENT" != "file $i" ]; then
+    echo "FAIL: $FILE content is wrong. Expected 'file $i', got '$CONTENT'"
+    exit 1
   fi
 done
 
-if [ "$MISSING" -eq 0 ]; then
-  echo "PASS: All 5 files exist in /root/timed/"
-  exit 0
-else
-  exit 1
-fi
+echo "PASS: Script verified, directory exists, and all 5 files have correct content"
+exit 0
