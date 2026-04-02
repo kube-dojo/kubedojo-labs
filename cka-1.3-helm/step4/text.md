@@ -15,6 +15,12 @@ helm history <release>                            # Show revision history
 2. Then rollback to revision 1 (the original installation).
 3. Verify with `helm history web` — you should see 3 revisions.
 
-## Hint
+<details>
+<summary>Hint</summary>
 
-Run `helm upgrade web bitnami/nginx --set replicaCount=3`, then `helm rollback web 1`. Check with `helm history web` — revision 1 is the original install, 2 is the upgrade, 3 is the rollback.
+```bash
+helm upgrade web bitnami/nginx --set replicaCount=3
+helm rollback web 1
+helm history web
+```
+</details>

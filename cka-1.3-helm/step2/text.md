@@ -18,6 +18,12 @@ helm search hub <keyword>      # Search Artifact Hub
 
 The chart name should be in the format `bitnami/nginx`.
 
-## Hint
+<details>
+<summary>Hint</summary>
 
-Run `helm repo add bitnami https://charts.bitnami.com/bitnami`, then `helm repo update`, then `helm search repo bitnami/nginx`.
+```bash
+helm repo add bitnami https://charts.bitnami.com/bitnami
+helm repo update
+helm search repo bitnami/nginx | grep bitnami/nginx | awk '{print $1}' | head -1 > /root/nginx-chart.txt
+```
+</details>

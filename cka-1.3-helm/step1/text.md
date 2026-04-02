@@ -17,6 +17,11 @@ mv linux-amd64/helm /usr/local/bin/
 
 Install Helm and verify it works by running `helm version`.
 
-## Hint
+<details>
+<summary>Hint</summary>
 
-The easiest way is: `curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash`
+The easiest way is: 
+```bash
+curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
+```
+</details>

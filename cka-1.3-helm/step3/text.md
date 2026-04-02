@@ -16,6 +16,10 @@ Install the `bitnami/nginx` chart as a release named `web`.
 
 Wait for the deployment to become available (this may take a minute or two).
 
-## Hint
+<details>
+<summary>Hint</summary>
 
-Run `helm install web bitnami/nginx --wait --timeout 5m`. The `--wait` flag waits for pods to be ready. Then verify with `helm list`.
+```bash
+helm install web bitnami/nginx --wait --timeout 5m
+```
+</details>

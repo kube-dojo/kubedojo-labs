@@ -1,13 +1,15 @@
 #!/bin/bash
-if [ ! -f /root/nginx-chart.txt ]; then
-  echo "FAIL: /root/nginx-chart.txt does not exist"
+FILE="/root/nginx-chart.txt"
+if [ ! -f "$FILE" ]; then
+  echo "FAIL: $FILE does not exist"
   exit 1
 fi
 
-if grep -q "bitnami/nginx" /root/nginx-chart.txt; then
-  echo "PASS: File contains bitnami/nginx"
+CONTENT=$(cat "$FILE" | tr -d '[:space:]')
+if [ "$CONTENT" = "bitnami/nginx" ]; then
+  echo "PASS: bitnami/nginx repo found and saved"
   exit 0
 else
-  echo "FAIL: File should contain 'bitnami/nginx'"
+  echo "FAIL: expected 'bitnami/nginx', got: '$CONTENT'"
   exit 1
 fi
