@@ -13,6 +13,17 @@ Create a Backup resource in the `default` namespace with:
 
 Apply it and verify with `kubectl get backups`.
 
-## Hint
+<details>
+<summary>Hint</summary>
 
-Create a YAML file with `apiVersion: kubedojo.io/v1`, `kind: Backup`, and the spec fields. Apply with `kubectl apply -f`.
+```yaml
+apiVersion: kubedojo.io/v1
+kind: Backup
+metadata:
+  name: daily-backup
+spec:
+  schedule: "0 2 * * *"
+  target: "etcd"
+  retention: 7
+```
+</details>

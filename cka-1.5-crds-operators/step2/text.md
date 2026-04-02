@@ -19,6 +19,34 @@ Create and apply a CRD with the following specification:
 - **Version:** `v1`
 - **Schema properties:** `schedule` (string), `target` (string), `retention` (integer)
 
-## Hint
+<details>
+<summary>Hint</summary>
 
-Refer to the Kubernetes docs for CRD structure. The CRD should be a `CustomResourceDefinition` in apiVersion `apiextensions.k8s.io/v1`. Each property in the schema needs a `type` field. The schema must include `openAPIV3Schema` with `type: object` and `properties` under `spec`.
+```yaml
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  name: backups.kubedojo.io
+spec:
+  group: kubedojo.io
+  versions:
+    - name: v1
+      served: true
+      storage: true
+      schema:
+        openAPIV3Schema:
+          type: object
+          properties:
+            spec:
+              type: object
+              properties:
+                schedule: {type: string}
+                target: {type: string}
+                retention: {type: integer}
+  scope: Namespaced
+  names:
+    plural: backups
+    singular: backup
+    kind: Backup
+```
+</details>

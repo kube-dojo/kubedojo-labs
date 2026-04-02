@@ -15,6 +15,10 @@ List all CRDs in the cluster and save the count (number of CRDs) to `/root/crd-c
 
 If there are no CRDs, save `0`.
 
-## Hint
+<details>
+<summary>Hint</summary>
 
-Use `kubectl get crd --no-headers 2>/dev/null | wc -l` to count CRDs. If the command returns "No resources found", the count is 0.
+```bash
+kubectl get crd --no-headers 2>/dev/null | wc -l > /root/crd-count.txt
+```
+</details>
