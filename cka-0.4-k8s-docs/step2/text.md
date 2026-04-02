@@ -17,6 +17,11 @@ kubectl api-resources | grep deploy      # Search for deployments
 
 Find the short name for `deployments` and save it to `/root/deploy-short.txt`.
 
-## Hint
+<details>
+<summary>Hint</summary>
 
 Run `kubectl api-resources | grep deployments` and look at the SHORTNAMES column. The short name for deployments is commonly used in day-to-day kubectl work.
+```bash
+echo "deploy" > /root/deploy-short.txt
+```
+</details>

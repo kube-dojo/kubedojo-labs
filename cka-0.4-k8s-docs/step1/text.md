@@ -14,6 +14,11 @@ kubectl explain pod --recursive        # All fields (long output)
 
 Run `kubectl explain pod.spec` and save the output to `/root/pod-spec-fields.txt`.
 
-## Hint
+<details>
+<summary>Hint</summary>
 
-Simply redirect the output: `kubectl explain pod.spec > /root/pod-spec-fields.txt`
+Simply redirect the output:
+```bash
+kubectl explain pod.spec > /root/pod-spec-fields.txt
+```
+</details>

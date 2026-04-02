@@ -1,13 +1,14 @@
 #!/bin/bash
-if [ ! -f /root/pod-spec-fields.txt ]; then
-  echo "FAIL: /root/pod-spec-fields.txt does not exist"
+FILE="/root/pod-spec-fields.txt"
+if [ ! -f "$FILE" ]; then
+  echo "FAIL: $FILE does not exist"
   exit 1
 fi
 
-if grep -q "containers" /root/pod-spec-fields.txt; then
-  echo "PASS: File contains pod spec fields including 'containers'"
+if grep -q "KIND:       Pod" "$FILE" && grep -q "VERSION:    v1" "$FILE" && grep -q "containers" "$FILE"; then
+  echo "PASS: File contains valid 'kubectl explain' output for pod.spec"
   exit 0
 else
-  echo "FAIL: File should contain pod spec fields (expected 'containers')"
+  echo "FAIL: File does not appear to be valid 'kubectl explain pod.spec' output"
   exit 1
 fi

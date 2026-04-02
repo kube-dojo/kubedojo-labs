@@ -1,14 +1,15 @@
 #!/bin/bash
-if [ ! -f /root/deploy-short.txt ]; then
-  echo "FAIL: /root/deploy-short.txt does not exist"
+FILE="/root/deploy-short.txt"
+if [ ! -f "$FILE" ]; then
+  echo "FAIL: $FILE does not exist"
   exit 1
 fi
 
-CONTENT=$(cat /root/deploy-short.txt | tr -d '[:space:]')
-if echo "$CONTENT" | grep -q "deploy"; then
-  echo "PASS: File contains 'deploy'"
+CONTENT=$(cat "$FILE" | tr -d '[:space:]')
+if [ "$CONTENT" = "deploy" ]; then
+  echo "PASS: deploy-short.txt contains the correct short name"
   exit 0
 else
-  echo "FAIL: File should contain 'deploy', got: $CONTENT"
+  echo "FAIL: expected 'deploy', got: '$CONTENT'"
   exit 1
 fi

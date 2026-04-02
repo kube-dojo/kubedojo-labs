@@ -24,6 +24,10 @@ The YAML must contain:
 - `replicas: 2`
 - Image `nginx`
 
-## Hint
+<details>
+<summary>Hint</summary>
 
-Use `kubectl create deployment nginx --image=nginx --replicas=2 --dry-run=client -o yaml > /root/nginx-deploy.yaml`
+```bash
+kubectl create deployment nginx --image=nginx --replicas=2 --dry-run=client -o yaml > /root/nginx-deploy.yaml
+```
+</details>
