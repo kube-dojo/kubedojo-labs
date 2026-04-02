@@ -13,6 +13,10 @@ kubectl get configmap kubeadm-config -n kube-system -o yaml   # Show kubeadm con
 
 Get the kubeadm cluster configuration and save the cluster name (from the kubeconfig or node name) to `/root/cluster-name.txt`.
 
-## Hint
+<details>
+<summary>Hint</summary>
 
-Try `kubectl config view -o jsonpath='{.clusters[0].name}'` to get the cluster name from kubeconfig. Alternatively, check `kubectl get configmap kubeadm-config -n kube-system -o yaml` for the clusterName field.
+```bash
+kubectl config view -o jsonpath='{.clusters[0].name}' > /root/cluster-name.txt
+```
+</details>

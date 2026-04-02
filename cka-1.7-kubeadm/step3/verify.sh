@@ -1,14 +1,14 @@
 #!/bin/bash
-if [ ! -f /root/upgrade-plan.txt ]; then
-  echo "FAIL: /root/upgrade-plan.txt does not exist"
+FILE="/root/upgrade-plan.txt"
+if [ ! -f "$FILE" ]; then
+  echo "FAIL: $FILE does not exist"
   exit 1
 fi
 
-CONTENT=$(cat /root/upgrade-plan.txt | tr -d '[:space:]')
-if [ -n "$CONTENT" ]; then
-  echo "PASS: File has content"
+if grep -q "COMPONENT" "$FILE" && grep -q "CURRENT" "$FILE"; then
+  echo "PASS: Upgrade plan verified"
   exit 0
 else
-  echo "FAIL: File is empty"
+  echo "FAIL: File does not appear to be a valid 'kubeadm upgrade plan' output"
   exit 1
 fi

@@ -1,14 +1,17 @@
 #!/bin/bash
-if [ ! -f /root/cluster-name.txt ]; then
-  echo "FAIL: /root/cluster-name.txt does not exist"
+FILE="/root/cluster-name.txt"
+if [ ! -f "$FILE" ]; then
+  echo "FAIL: $FILE does not exist"
   exit 1
 fi
 
-CONTENT=$(cat /root/cluster-name.txt | tr -d '[:space:]')
-if [ -n "$CONTENT" ]; then
-  echo "PASS: File contains cluster name: $CONTENT"
+CONTENT=$(cat "$FILE" | tr -d '[:space:]')
+EXPECTED=$(kubectl config view -o jsonpath='{.clusters[0].name}')
+
+if [ "$CONTENT" = "$EXPECTED" ]; then
+  echo "PASS: Correct cluster name identified: $CONTENT"
   exit 0
 else
-  echo "FAIL: File is empty"
+  echo "FAIL: Expected '$EXPECTED', got: '$CONTENT'"
   exit 1
 fi

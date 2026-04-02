@@ -18,6 +18,10 @@ Run `kubeadm upgrade plan` and save the output to `/root/upgrade-plan.txt`.
 
 This is a read-only operation and will not modify your cluster.
 
-## Hint
+<details>
+<summary>Hint</summary>
 
-Run: `kubeadm upgrade plan > /root/upgrade-plan.txt 2>&1`. The output will show your current version and any available upgrades.
+```bash
+kubeadm upgrade plan > /root/upgrade-plan.txt 2>&1
+```
+</details>

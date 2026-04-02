@@ -1,19 +1,14 @@
 #!/bin/bash
-if [ ! -f /root/cert-expiry.txt ]; then
-  echo "FAIL: /root/cert-expiry.txt does not exist"
+FILE="/root/cert-expiry.txt"
+if [ ! -f "$FILE" ]; then
+  echo "FAIL: $FILE does not exist"
   exit 1
 fi
 
-CONTENT=$(cat /root/cert-expiry.txt)
-if echo "$CONTENT" | grep -qiE "EXPIRES|expir|RESIDUAL"; then
-  echo "PASS: File contains certificate expiration information"
+if grep -qi "CERTIFICATE" "$FILE" && grep -qi "EXPIRES" "$FILE"; then
+  echo "PASS: Certificate expiration report verified"
   exit 0
 else
-  # Also accept if it has dates
-  if echo "$CONTENT" | grep -qE "[0-9]{4}"; then
-    echo "PASS: File contains date information"
-    exit 0
-  fi
-  echo "FAIL: File should contain certificate expiration dates"
+  echo "FAIL: File does not appear to be a valid 'kubeadm certs check-expiration' output"
   exit 1
 fi
