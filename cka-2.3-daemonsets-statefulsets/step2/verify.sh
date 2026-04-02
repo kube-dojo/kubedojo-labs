@@ -1,10 +1,15 @@
 #!/bin/bash
-# Verify: pods named web-sts-0, web-sts-1, web-sts-2 exist
-for i in $(seq 1 30); do
-  P0=$(kubectl get pod web-sts-0 -n practice -o jsonpath='{.metadata.name}' 2>/dev/null)
-  P1=$(kubectl get pod web-sts-1 -n practice -o jsonpath='{.metadata.name}' 2>/dev/null)
-  P2=$(kubectl get pod web-sts-2 -n practice -o jsonpath='{.metadata.name}' 2>/dev/null)
-  [ "$P0" = "web-sts-0" ] && [ "$P1" = "web-sts-1" ] && [ "$P2" = "web-sts-2" ] && exit 0
-  sleep 2
-done
-exit 1
+# Check if 3 pods are ready in order
+if ! kubectl get pod web-sts-2 -n practice >/dev/null 2>&1; then
+  echo "FAIL: Pod web-sts-2 not found. Is the StatefulSet scaled to 3?"
+  exit 1
+fi
+
+READY_COUNT=$(kubectl get sts web-sts -n practice -o jsonpath='{.status.readyReplicas}')
+if [ "$READY_COUNT" -eq 3 ]; then
+  echo "PASS: StatefulSet scaled to 3 and pods are ready"
+  exit 0
+else
+  echo "FAIL: Only $READY_COUNT replicas are ready"
+  exit 1
+fi
