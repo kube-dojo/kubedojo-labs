@@ -1,13 +1,14 @@
 #!/bin/bash
-if [ ! -f /root/etcd-endpoint.txt ]; then
-  echo "FAIL: /root/etcd-endpoint.txt does not exist"
+FILE="/root/etcd-endpoint.txt"
+if [ ! -f "$FILE" ]; then
+  echo "FAIL: $FILE does not exist"
   exit 1
 fi
 
-if grep -q "2379" /root/etcd-endpoint.txt; then
-  echo "PASS: File contains etcd endpoint with port 2379"
+if grep -qE "https?://[0-9.]+:(2379|4001)" "$FILE"; then
+  echo "PASS: etcd endpoint verified"
   exit 0
 else
-  echo "FAIL: File should contain an etcd endpoint URL with port 2379"
+  echo "FAIL: File should contain a valid etcd endpoint URL (e.g., https://127.0.0.1:2379)"
   exit 1
 fi

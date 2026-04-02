@@ -14,6 +14,10 @@ The kubelet watches this directory and ensures these pods are always running.
 
 List the YAML files in `/etc/kubernetes/manifests/` and save the list to `/root/static-pods.txt`.
 
-## Hint
+<details>
+<summary>Hint</summary>
 
-Use `ls /etc/kubernetes/manifests/` and redirect to the file. The output should include filenames like `kube-apiserver.yaml` and `etcd.yaml`.
+```bash
+ls /etc/kubernetes/manifests/ > /root/static-pods.txt
+```
+</details>

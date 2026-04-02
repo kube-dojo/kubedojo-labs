@@ -1,13 +1,17 @@
 #!/bin/bash
-if [ ! -f /root/cp-health.txt ]; then
-  echo "FAIL: /root/cp-health.txt does not exist"
+FILE="/root/cp-health.txt"
+if [ ! -f "$FILE" ]; then
+  echo "FAIL: $FILE does not exist"
   exit 1
 fi
 
-if grep -qi -E "scheduler|controller" /root/cp-health.txt; then
-  echo "PASS: File contains control plane health information"
+S_RUNNING=$(grep "scheduler" "$FILE" | grep -i "Running" | wc -l)
+C_RUNNING=$(grep "controller-manager" "$FILE" | grep -i "Running" | wc -l)
+
+if [ "$S_RUNNING" -ge 1 ] && [ "$C_RUNNING" -ge 1 ]; then
+  echo "PASS: Scheduler and Controller Manager are confirmed Running"
   exit 0
 else
-  echo "FAIL: File should contain scheduler and controller-manager status"
+  echo "FAIL: File must show both scheduler and controller-manager in Running state"
   exit 1
 fi

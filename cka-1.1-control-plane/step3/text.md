@@ -12,6 +12,12 @@ The API server has many configuration flags that control cluster behavior. Knowi
 
 Find the `--service-cluster-ip-range` value from the API server configuration and save it to `/root/service-cidr.txt`.
 
-## Hint
+<details>
+<summary>Hint</summary>
 
-Check the API server manifest: `cat /etc/kubernetes/manifests/kube-apiserver.yaml | grep service-cluster-ip-range`. The value is typically something like `10.96.0.0/12`.
+Check the API server manifest: 
+```bash
+grep service-cluster-ip-range /etc/kubernetes/manifests/kube-apiserver.yaml > /root/service-cidr.txt
+```
+The value is typically something like `10.96.0.0/12`.
+</details>
