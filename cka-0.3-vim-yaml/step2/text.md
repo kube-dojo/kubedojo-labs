@@ -16,6 +16,21 @@ Fix `/root/broken.yaml` so that it is valid YAML representing a Pod with:
 - `metadata.name: broken-pod` with label `app: test`
 - `spec.containers` with one container: name `nginx`, image `nginx:1.27`, containerPort `80`
 
-## Hint
+<details>
+<summary>Hint</summary>
 
-Use `python3 -c "import yaml; yaml.safe_load(open('/root/broken.yaml'))"` to test if your YAML is valid. The key issues are indentation levels for `name` under `metadata` and `image` under the container list item.
+```yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: broken-pod
+  labels:
+    app: test
+spec:
+  containers:
+  - name: nginx
+    image: nginx:1.27
+    ports:
+    - containerPort: 80
+```
+</details>

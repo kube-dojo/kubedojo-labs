@@ -33,6 +33,15 @@ metadata:
 
 The file must contain all four lines with correct YAML indentation.
 
-## Hint
+<details>
+<summary>Hint</summary>
 
-You can use `vim /root/practice.yaml`, press `i` to enter insert mode, type the content, press `Esc`, then type `:wq` to save and quit.
+```bash
+cat <<'YAML' > /root/practice.yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: test
+YAML
+```
+</details>

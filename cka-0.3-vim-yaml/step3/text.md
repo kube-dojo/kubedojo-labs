@@ -18,6 +18,15 @@ Create `/root/.vimrc` with YAML-friendly settings. Include at minimum:
 - `shiftwidth=2`
 - `autoindent`
 
-## Hint
+<details>
+<summary>Hint</summary>
 
-Create the file with `cat > /root/.vimrc` or use vim itself. Each setting goes on its own line preceded by `set`.
+```bash
+cat <<'EOF' > /root/.vimrc
+set expandtab
+set tabstop=2
+set shiftwidth=2
+set autoindent
+EOF
+```
+</details>
