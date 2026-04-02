@@ -20,6 +20,15 @@ Create `/root/bookmarks.txt` with at least 4 URLs from `kubernetes.io` covering:
 
 One URL per line.
 
-## Hint
+<details>
+<summary>Hint</summary>
 
-Simply create the file with the URLs listed in the table above. Make sure each URL starts with `https://kubernetes.io/`.
+```bash
+cat <<'EOF' > /root/bookmarks.txt
+https://kubernetes.io/docs/reference/kubernetes-api/workload-resources/pod-v1/
+https://kubernetes.io/docs/reference/kubernetes-api/workload-resources/deployment-v1/
+https://kubernetes.io/docs/concepts/services-networking/service/
+https://kubernetes.io/docs/reference/access-authn-authz/rbac/
+EOF
+```
+</details>

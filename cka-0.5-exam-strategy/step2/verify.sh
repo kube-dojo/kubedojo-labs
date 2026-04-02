@@ -1,14 +1,16 @@
 #!/bin/bash
-if [ ! -f /root/task-order.txt ]; then
-  echo "FAIL: /root/task-order.txt does not exist"
+FILE="/root/task-order.txt"
+if [ ! -f "$FILE" ]; then
+  echo "FAIL: $FILE does not exist"
   exit 1
 fi
 
-LINES=$(wc -l < /root/task-order.txt | tr -d ' ')
-if [ "$LINES" -ge 5 ]; then
-  echo "PASS: task-order.txt has $LINES lines (need >= 5)"
+CONTENT=$(tr -d '[:space:]' < "$FILE" | tr '[:lower:]' '[:upper:]')
+
+if [ "$CONTENT" = "BDEAC" ]; then
+  echo "PASS: Optimal task order verified!"
   exit 0
 else
-  echo "FAIL: task-order.txt should have 5 lines (one per task), found $LINES"
+  echo "FAIL: Incorrect order. Found: $CONTENT, Expected: BDEAC"
   exit 1
 fi

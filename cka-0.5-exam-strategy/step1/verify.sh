@@ -1,14 +1,20 @@
 #!/bin/bash
-if [ ! -f /root/bookmarks.txt ]; then
-  echo "FAIL: /root/bookmarks.txt does not exist"
+FILE="/root/bookmarks.txt"
+if [ ! -f "$FILE" ]; then
+  echo "FAIL: $FILE does not exist"
   exit 1
 fi
 
-URL_COUNT=$(grep -c "kubernetes.io" /root/bookmarks.txt)
-if [ "$URL_COUNT" -ge 4 ]; then
-  echo "PASS: File contains $URL_COUNT kubernetes.io URLs (need >= 4)"
-  exit 0
-else
-  echo "FAIL: File should contain at least 4 kubernetes.io URLs, found $URL_COUNT"
+MISSING=""
+grep -q "workload-resources/pod-v1" "$FILE" || MISSING="$MISSING pod,"
+grep -q "workload-resources/deployment-v1" "$FILE" || MISSING="$MISSING deployment,"
+grep -q "concepts/services-networking/service" "$FILE" || MISSING="$MISSING service,"
+grep -q "access-authn-authz/rbac" "$FILE" || MISSING="$MISSING rbac,"
+
+if [ -n "$MISSING" ]; then
+  echo "FAIL: Bookmarks file missing URLs for: $MISSING"
   exit 1
 fi
+
+echo "PASS: bookmarks.txt verified with all required URLs"
+exit 0
