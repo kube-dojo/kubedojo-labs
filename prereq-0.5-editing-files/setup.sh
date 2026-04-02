@@ -1,13 +1,8 @@
 #!/bin/bash
-if id "ubuntu" &>/dev/null; then
-  TARGET_USER="ubuntu"
-  USER_HOME="/home/ubuntu"
-else
-  TARGET_USER="root"
-  USER_HOME="/root"
-fi
-mkdir -p "$USER_HOME/configs"
-cat > "$USER_HOME/configs/nginx.conf" << 'CONFEOF'
+for user_home in /root /home/ubuntu; do
+  if [ -d "$user_home" ]; then
+    mkdir -p "$user_home/configs"
+    cat > "$user_home/configs/nginx.conf" << 'CONFEOF'
 sever {
     listn 80;
     sever_name localhost;
@@ -16,4 +11,8 @@ sever {
     }
 }
 CONFEOF
-chown -R $TARGET_USER:$TARGET_USER "$USER_HOME/configs" 2>/dev/null || true
+    if [ "$user_home" == "/home/ubuntu" ]; then
+      chown -R ubuntu:ubuntu "$user_home/configs" 2>/dev/null || true
+    fi
+  fi
+done
