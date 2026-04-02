@@ -1,8 +1,26 @@
 #!/bin/bash
-# Verify: deployment exists with RollingUpdate strategy, maxSurge=1, maxUnavailable=0
-STRATEGY=$(kubectl get deployment web-deploy -n practice -o jsonpath='{.spec.strategy.type}' 2>/dev/null)
-MAX_SURGE=$(kubectl get deployment web-deploy -n practice -o jsonpath='{.spec.strategy.rollingUpdate.maxSurge}' 2>/dev/null)
-MAX_UNAVAIL=$(kubectl get deployment web-deploy -n practice -o jsonpath='{.spec.strategy.rollingUpdate.maxUnavailable}' 2>/dev/null)
+DEP=$(kubectl get deployment web-deploy -n practice -o json 2>/dev/null)
+if [ $? -ne 0 ]; then
+  echo "FAIL: Deployment web-deploy not found"
+  exit 1
+fi
 
-[ "$STRATEGY" = "RollingUpdate" ] && [ "$MAX_SURGE" = "1" ] && [ "$MAX_UNAVAIL" = "0" ] && exit 0
-exit 1
+# Verify strategy
+STRATEGY=$(echo "$DEP" | jq -r '.spec.strategy.type')
+SURGE=$(echo "$DEP" | jq -r '.spec.strategy.rollingUpdate.maxSurge')
+UNAVAIL=$(echo "$DEP" | jq -r '.spec.strategy.rollingUpdate.maxUnavailable')
+
+if [ "$STRATEGY" = "RollingUpdate" ] && [ "$SURGE" = "1" ] && [ "$UNAVAIL" = "0" ]; then
+  # Check if at least 3 replicas are available
+  AVAIL=$(echo "$DEP" | jq -r '.status.availableReplicas')
+  if [ "$AVAIL" -ge 3 ]; then
+    echo "PASS: Deployment strategy and availability verified"
+    exit 0
+  else
+    echo "FAIL: Waiting for replicas to be available (found $AVAIL)"
+    exit 1
+  fi
+else
+  echo "FAIL: Strategy parameters mismatch. Expected RollingUpdate, Surge: 1, Unavail: 0"
+  exit 1
+fi

@@ -1,14 +1,25 @@
 #!/bin/bash
-# Verify: deployment is not paused and has rolled out
 PAUSED=$(kubectl get deployment web-deploy -n practice -o jsonpath='{.spec.paused}' 2>/dev/null)
-# paused should be empty or false (not "true")
-[ "$PAUSED" = "true" ] && exit 1
+if [ "$PAUSED" = "true" ]; then
+  echo "FAIL: Deployment is still paused"
+  exit 1
+fi
 
-# Check rollout completed
-for i in $(seq 1 30); do
-  AVAILABLE=$(kubectl get deployment web-deploy -n practice -o jsonpath='{.status.availableReplicas}' 2>/dev/null)
-  DESIRED=$(kubectl get deployment web-deploy -n practice -o jsonpath='{.spec.replicas}' 2>/dev/null)
-  [ "$AVAILABLE" = "$DESIRED" ] && [ -n "$AVAILABLE" ] && exit 0
-  sleep 2
-done
-exit 1
+DEP=$(kubectl get deployment web-deploy -n practice -o json 2>/dev/null)
+IMAGE=$(echo "$DEP" | jq -r '.spec.template.spec.containers[0].image')
+LIMIT_CPU=$(echo "$DEP" | jq -r '.spec.template.spec.containers[0].resources.limits.cpu')
+
+if [ "$IMAGE" = "nginx:1.27" ] && [ "$LIMIT_CPU" = "200m" ]; then
+  # Wait for rollout
+  AVAIL=$(echo "$DEP" | jq -r '.status.availableReplicas')
+  if [ "$AVAIL" -ge 3 ]; then
+    echo "PASS: Multiple changes applied and rolled out after resume"
+    exit 0
+  else
+    echo "FAIL: Changes applied but pods are not yet available ($AVAIL)"
+    exit 1
+  fi
+else
+  echo "FAIL: Multiple changes not found. Found Image: $IMAGE, CPU Limit: $LIMIT_CPU"
+  exit 1
+fi
