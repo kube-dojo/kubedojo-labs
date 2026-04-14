@@ -2,12 +2,13 @@
 
 You have completed the Control Plane Components lab. You now know how to:
 
-- Find static pod manifests in `/etc/kubernetes/manifests/`
-- Locate etcd endpoints and configuration
-- Inspect API server flags like `service-cluster-ip-range`
-- Verify scheduler and controller manager health
+- Confirm control plane components from both `/etc/kubernetes/manifests/` and live mirror pods
+- Query etcd directly with `etcdctl` and the control plane TLS assets
+- Add an API server flag and verify it from the running process
+- Diagnose and recover a broken scheduler configuration
+- Capture a `kubectl --v=8` trace and recognize the request path and response status
 
-Understanding the control plane is essential for troubleshooting cluster issues on the CKA exam.
+This is an intermediate 40-minute lab because it combines inspection, direct control plane access, live static pod edits, and a real recover-the-cluster troubleshooting task.
 
 ## Next Lab
 

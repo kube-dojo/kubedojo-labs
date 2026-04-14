@@ -1,4 +1,16 @@
 #!/bin/bash
-grep "listen-client-urls" /etc/kubernetes/manifests/etcd.yaml | awk -F'=' '{print $2}' | tr -d ' ' > /root/etcd-endpoint.txt
-echo "etcd endpoint:"
-cat /root/etcd-endpoint.txt
+ETCDCTL_API=3 etcdctl \
+  --endpoints=https://127.0.0.1:2379 \
+  --cacert=/etc/kubernetes/pki/etcd/ca.crt \
+  --cert=/etc/kubernetes/pki/etcd/healthcheck-client.crt \
+  --key=/etc/kubernetes/pki/etcd/healthcheck-client.key \
+  member list
+
+echo
+
+ETCDCTL_API=3 etcdctl \
+  --endpoints=https://127.0.0.1:2379 \
+  --cacert=/etc/kubernetes/pki/etcd/ca.crt \
+  --cert=/etc/kubernetes/pki/etcd/healthcheck-client.crt \
+  --key=/etc/kubernetes/pki/etcd/healthcheck-client.key \
+  endpoint health

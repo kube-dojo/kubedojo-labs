@@ -1,24 +1,31 @@
-# Explore etcd
+# Examine etcd Directly
 
-etcd is the key-value store that holds all cluster state. Understanding how to interact with it is important for backup/restore scenarios on the CKA exam.
-
-**Key information:**
-- etcd listens on port `2379` for client connections
-- The endpoint URL is configured in the etcd static pod manifest
-- etcd uses TLS certificates for authentication
+etcd is the control plane's source of truth. For CKA troubleshooting, you need to be comfortable talking to it directly instead of only looking at pod specs.
 
 ## Task
 
-Find the etcd endpoint URL (the `--listen-client-urls` flag) from the etcd configuration and save it to `/root/etcd-endpoint.txt`.
+Use `etcdctl` on the control plane node to inspect the live etcd member and confirm the endpoint is healthy.
 
-You can find this in the etcd static pod manifest at `/etc/kubernetes/manifests/etcd.yaml` or by describing the etcd pod.
+You must use the local TLS material from `/etc/kubernetes/pki/etcd/` and query the member on `https://127.0.0.1:2379`.
+
+Run both:
+
+1. `member list`
+2. `endpoint health`
+
+Suggested command shape:
+
+```bash
+ETCDCTL_API=3 etcdctl \
+  --endpoints=https://127.0.0.1:2379 \
+  --cacert=/etc/kubernetes/pki/etcd/ca.crt \
+  --cert=/etc/kubernetes/pki/etcd/healthcheck-client.crt \
+  --key=/etc/kubernetes/pki/etcd/healthcheck-client.key \
+  member list
+```
 
 <details>
 <summary>Hint</summary>
 
-Look at the etcd pod manifest: 
-```bash
-grep listen-client-urls /etc/kubernetes/manifests/etcd.yaml > /root/etcd-endpoint.txt
-```
-The endpoint typically looks like `https://127.0.0.1:2379`.
+Use the same flags for `endpoint health`. If you are unsure which certs to use, inspect `/etc/kubernetes/manifests/etcd.yaml`.
 </details>

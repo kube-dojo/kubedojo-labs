@@ -1,19 +1,28 @@
 #!/bin/bash
-if id 'ubuntu' &>/dev/null; then USER_HOME='/home/ubuntu'; else USER_HOME='/root'; fi
-#!/bin/bash
-FILE="$USER_HOME/cp-health.txt"
-if [ ! -f "$FILE" ]; then
-  echo "FAIL: $FILE does not exist"
-  exit 1
-fi
+set -euo pipefail
 
-S_RUNNING=$(grep "scheduler" "$FILE" | grep -i "Running" | wc -l)
-C_RUNNING=$(grep "controller-manager" "$FILE" | grep -i "Running" | wc -l)
-
-if [ "$S_RUNNING" -ge 1 ] && [ "$C_RUNNING" -ge 1 ]; then
-  echo "PASS: Scheduler and Controller Manager are confirmed Running"
-  exit 0
-else
-  echo "FAIL: File must show both scheduler and controller-manager in Running state"
+fail() {
+  echo "FAIL: $1"
   exit 1
-fi
+}
+
+python3 - <<'PY' || exit 1
+from pathlib import Path
+
+text = Path("/etc/kubernetes/manifests/kube-scheduler.yaml").read_text()
+if "--kubeconfig=/etc/kubernetes/scheduler.conf" not in text:
+    raise SystemExit("FAIL: kube-scheduler manifest does not reference /etc/kubernetes/scheduler.conf")
+if "/etc/kubernetes/broken-scheduler.conf" in text:
+    raise SystemExit("FAIL: kube-scheduler manifest still references the broken kubeconfig")
+PY
+
+scheduler_pod=$(kubectl get pods -n kube-system -l component=kube-scheduler -o jsonpath='{.items[0].metadata.name}' 2>/dev/null || true)
+[ -n "${scheduler_pod}" ] || fail "No kube-scheduler pod found"
+
+smoke_phase=$(kubectl get pod scheduler-smoke -n practice -o jsonpath='{.status.phase}' 2>/dev/null || true)
+[ "${smoke_phase}" = "Running" ] || fail "scheduler-smoke is not Running"
+
+smoke_node=$(kubectl get pod scheduler-smoke -n practice -o jsonpath='{.spec.nodeName}' 2>/dev/null || true)
+[ -n "${smoke_node}" ] || fail "scheduler-smoke does not have a node assignment"
+
+echo "PASS: Scheduler configuration is restored and scheduler-smoke is scheduled."

@@ -1,6 +1,7 @@
 {
   "title": "CKA 1.1: Control Plane Components",
-  "description": "Explore Kubernetes control plane: static pods, etcd, API server flags, scheduler, and controller manager",
+  "description": "Identify control plane static pods, query etcd directly, change an API server flag, recover a broken scheduler, and trace a kubectl request.",
+  "module": "k8s/cka/part1-cluster-architecture/module-1.1-control-plane",
   "difficulty": "Intermediate",
   "time": "40 minutes",
   "details": {
@@ -10,28 +11,34 @@
     },
     "steps": [
       {
-        "title": "Identify control plane components",
+        "title": "Identify the control plane static pods",
         "text": "step1/text.md",
         "verify": "step1/verify.sh",
         "solution": "step1/solution.sh"
       },
       {
-        "title": "Explore etcd",
+        "title": "Query etcd directly",
         "text": "step2/text.md",
         "verify": "step2/verify.sh",
         "solution": "step2/solution.sh"
       },
       {
-        "title": "API server flags",
+        "title": "Modify an API server flag",
         "text": "step3/text.md",
         "verify": "step3/verify.sh",
         "solution": "step3/solution.sh"
       },
       {
-        "title": "Scheduler and controller manager",
+        "title": "Diagnose and recover the scheduler",
         "text": "step4/text.md",
         "verify": "step4/verify.sh",
         "solution": "step4/solution.sh"
+      },
+      {
+        "title": "Trace a kubectl request",
+        "text": "step5/text.md",
+        "verify": "step5/verify.sh",
+        "solution": "step5/solution.sh"
       }
     ],
     "finish": {
