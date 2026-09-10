@@ -1,0 +1,50 @@
+{
+  "title": "Union Filesystems: Mount, Copy-Up, Whiteout, Diff",
+  "description": "Build a real OverlayFS stack by hand, watch writes land in the upper layer, trigger copy-on-write, create a whiteout, and read the writable layer the way docker diff does",
+  "difficulty": "Intermediate",
+  "time": "40 minutes",
+  "details": {
+    "intro": {
+      "text": "intro.md",
+      "background": "setup.sh"
+    },
+    "steps": [
+      {
+        "title": "Build and Mount the Overlay Stack",
+        "text": "step1/text.md",
+        "verify": "step1/verify.sh",
+        "solution": "step1/solution.sh"
+      },
+      {
+        "title": "Read Through, Write New",
+        "text": "step2/text.md",
+        "verify": "step2/verify.sh",
+        "solution": "step2/solution.sh"
+      },
+      {
+        "title": "Trigger Copy-on-Write",
+        "text": "step3/text.md",
+        "verify": "step3/verify.sh",
+        "solution": "step3/solution.sh"
+      },
+      {
+        "title": "Delete Creates a Whiteout",
+        "text": "step4/text.md",
+        "verify": "step4/verify.sh",
+        "solution": "step4/solution.sh"
+      },
+      {
+        "title": "Read the Writable Layer Like docker diff",
+        "text": "step5/text.md",
+        "verify": "step5/verify.sh",
+        "solution": "step5/solution.sh"
+      }
+    ],
+    "finish": {
+      "text": "finish.md"
+    }
+  },
+  "backend": {
+    "imageid": "ubuntu"
+  }
+}
