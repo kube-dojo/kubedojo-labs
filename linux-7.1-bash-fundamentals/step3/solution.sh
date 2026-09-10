@@ -1,6 +1,6 @@
 #!/bin/bash
 # Solution: Create utils.sh with functions
-cat > /root/utils.sh << 'SCRIPT'
+cat > "$HOME"/utils.sh << 'SCRIPT'
 #!/bin/bash
 
 function log_info() {
@@ -28,5 +28,5 @@ if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
   fi
 fi
 SCRIPT
-chmod +x /root/utils.sh
-/root/utils.sh
+chmod +x "$HOME"/utils.sh
+"$HOME"/utils.sh
