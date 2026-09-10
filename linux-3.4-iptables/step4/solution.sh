@@ -1,2 +1,2 @@
 #!/bin/bash
-iptables-save > /root/iptables-backup.txt
+sudo iptables-save > "$HOME"/iptables-backup.txt

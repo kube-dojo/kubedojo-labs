@@ -1,9 +1,21 @@
 #!/bin/bash
-if id "ubuntu" &>/dev/null; then USER_HOME="/home/ubuntu"; else USER_HOME="/root"; fi
-# Seed dummy logs for journalctl simulation
-mkdir -p /var/log/journal
-echo "Apr 01 12:00:01 server nginx[123]: Starting nginx..." > /var/log/nginx-mock.log
-echo "Apr 01 12:00:02 server nginx[123]: Started nginx." >> /var/log/nginx-mock.log
-# Mock journalctl to read our file
-echo -e '#!/bin/bash\ncat /var/log/nginx-mock.log' > /usr/local/bin/journalctl
-chmod +x /usr/local/bin/journalctl
+# Setup for services & logs lab: nginx installed but stopped (step 1 starts it).
+export DEBIAN_FRONTEND=noninteractive
+if ! command -v nginx > /dev/null 2>&1; then
+  apt-get update -qq > /dev/null 2>&1
+  apt-get install -y -qq nginx > /dev/null 2>&1
+fi
+systemctl stop nginx 2>/dev/null || true
+pkill nginx 2>/dev/null || true
+# Step 3 expects this script to exist (text.md: "A script already exists at
+# /opt/myservice/run.sh").
+mkdir -p /opt/myservice
+cat > /opt/myservice/run.sh << 'EOF'
+#!/bin/bash
+while true; do
+  echo "myservice heartbeat $(date)"
+  sleep 30
+done
+EOF
+chmod +x /opt/myservice/run.sh
+echo "Setup complete."

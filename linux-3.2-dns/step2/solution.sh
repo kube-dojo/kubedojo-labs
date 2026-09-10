@@ -1,2 +1,2 @@
 #!/bin/bash
-dig google.com > /root/dig-output.txt
+dig google.com > "$HOME"/dig-output.txt

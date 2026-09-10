@@ -1,4 +1,4 @@
 #!/bin/bash
 # Solution: List block devices
-lsblk -o NAME,SIZE,TYPE,MOUNTPOINT > /root/block-devices.txt
-cat /root/block-devices.txt
+lsblk -o NAME,SIZE,TYPE,MOUNTPOINT > "$HOME"/block-devices.txt
+cat "$HOME"/block-devices.txt

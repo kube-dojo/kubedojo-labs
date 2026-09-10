@@ -1,6 +1,6 @@
 #!/bin/bash
 # Solution: Create health check script
-cat > /root/healthcheck.sh << 'SCRIPT'
+cat > "$HOME"/healthcheck.sh << 'SCRIPT'
 #!/bin/bash
 
 # CPU Check
@@ -36,5 +36,5 @@ else
   echo "[WARN] Service: bash is not running"
 fi
 SCRIPT
-chmod +x /root/healthcheck.sh
-/root/healthcheck.sh
+chmod +x "$HOME"/healthcheck.sh
+"$HOME"/healthcheck.sh

@@ -6,5 +6,5 @@ if ! pgrep -f "dd if=/dev/zero" > /dev/null 2>&1; then
   sleep 1
 fi
 
-ps aux --sort=-%cpu | awk 'NR==2 {print $2}' > /root/cpu-hog.txt
-echo "Top CPU process PID: $(cat /root/cpu-hog.txt)"
+ps aux --sort=-%cpu | awk 'NR==2 {print $2}' > "$HOME"/cpu-hog.txt
+echo "Top CPU process PID: $(cat "$HOME"/cpu-hog.txt)"

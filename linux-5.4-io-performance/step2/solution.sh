@@ -5,5 +5,5 @@ SCHED=$(cat /sys/block/$DEVICE/queue/scheduler 2>/dev/null | grep -oP '\[\K[^\]]
 if [ -z "$SCHED" ]; then
   SCHED=$(cat /sys/block/$DEVICE/queue/scheduler 2>/dev/null)
 fi
-echo "$SCHED" > /root/io-scheduler.txt
-echo "I/O scheduler: $(cat /root/io-scheduler.txt)"
+echo "$SCHED" > "$HOME"/io-scheduler.txt
+echo "I/O scheduler: $(cat "$HOME"/io-scheduler.txt)"

@@ -1,6 +1,6 @@
 #!/bin/bash
 # Solution: Create CI/CD pipeline script
-cat > /root/pipeline.sh << 'SCRIPT'
+cat > "$HOME"/pipeline.sh << 'SCRIPT'
 #!/bin/bash
 set -euo pipefail
 
@@ -35,5 +35,5 @@ deploy
 
 echo "Pipeline completed successfully!"
 SCRIPT
-chmod +x /root/pipeline.sh
-/root/pipeline.sh
+chmod +x "$HOME"/pipeline.sh
+"$HOME"/pipeline.sh

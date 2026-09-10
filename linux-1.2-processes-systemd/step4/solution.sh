@@ -1,8 +1,8 @@
 #!/bin/bash
 # Solution: List cgroup controllers
 if [ -f /sys/fs/cgroup/cgroup.controllers ]; then
-  cat /sys/fs/cgroup/cgroup.controllers > /root/cgroup-controllers.txt
+  cat /sys/fs/cgroup/cgroup.controllers > "$HOME"/cgroup-controllers.txt
 else
-  ls /sys/fs/cgroup/ > /root/cgroup-controllers.txt
+  ls /sys/fs/cgroup/ > "$HOME"/cgroup-controllers.txt
 fi
-cat /root/cgroup-controllers.txt
+cat "$HOME"/cgroup-controllers.txt
