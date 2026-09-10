@@ -1,0 +1,50 @@
+{
+  "title": "Control Groups: Limit, Charge, Enforce",
+  "description": "Identify cgroup v2, create a cgroup with a hard memory limit, charge memory to it, watch the kernel OOM-kill a hog, and prove CPU quota throttling with cpu.stat",
+  "difficulty": "Intermediate",
+  "time": "35 minutes",
+  "details": {
+    "intro": {
+      "text": "intro.md",
+      "background": "setup.sh"
+    },
+    "steps": [
+      {
+        "title": "Identify cgroup v2 and Your Own Group",
+        "text": "step1/text.md",
+        "verify": "step1/verify.sh",
+        "solution": "step1/solution.sh"
+      },
+      {
+        "title": "Create a cgroup with a Memory Limit",
+        "text": "step2/text.md",
+        "verify": "step2/verify.sh",
+        "solution": "step2/solution.sh"
+      },
+      {
+        "title": "Charge Memory to the cgroup",
+        "text": "step3/text.md",
+        "verify": "step3/verify.sh",
+        "solution": "step3/solution.sh"
+      },
+      {
+        "title": "Cross the Limit: OOM Kill Evidence",
+        "text": "step4/text.md",
+        "verify": "step4/verify.sh",
+        "solution": "step4/solution.sh"
+      },
+      {
+        "title": "Throttle CPU with a Quota",
+        "text": "step5/text.md",
+        "verify": "step5/verify.sh",
+        "solution": "step5/solution.sh"
+      }
+    ],
+    "finish": {
+      "text": "finish.md"
+    }
+  },
+  "backend": {
+    "imageid": "ubuntu"
+  }
+}
