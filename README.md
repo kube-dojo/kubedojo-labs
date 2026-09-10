@@ -1,5 +1,7 @@
 # KubeDojo Labs
 
+[![Test Lab Scenarios](https://github.com/kube-dojo/kubedojo-labs/actions/workflows/test-scenarios.yml/badge.svg?branch=main)](https://github.com/kube-dojo/kubedojo-labs/actions/workflows/test-scenarios.yml)
+
 Interactive lab scenarios for [KubeDojo](https://kube-dojo.github.io/) — powered by [Killercoda](https://killercoda.com/).
 
 ## Structure
