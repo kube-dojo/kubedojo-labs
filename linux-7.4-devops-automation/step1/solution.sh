@@ -1,6 +1,6 @@
 #!/bin/bash
 # Solution: Create deploy-config.sh
-cat > /root/deploy-config.sh << 'SCRIPT'
+cat > "$HOME"/deploy-config.sh << 'SCRIPT'
 #!/bin/bash
 set -euo pipefail
 
@@ -12,9 +12,9 @@ export DB_PORT=5432
 export DB_NAME=myapp_prod
 export LOG_LEVEL=warn
 
-envsubst < /root/app.conf.template > /root/app.conf
+envsubst < "$HOME"/app.conf.template > "$HOME"/app.conf
 echo "Configuration deployed:"
-cat /root/app.conf
+cat "$HOME"/app.conf
 SCRIPT
-chmod +x /root/deploy-config.sh
-/root/deploy-config.sh
+chmod +x "$HOME"/deploy-config.sh
+"$HOME"/deploy-config.sh

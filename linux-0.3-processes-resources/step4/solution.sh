@@ -1,4 +1,4 @@
 #!/bin/bash
 # Solution: Save open files limit
-ulimit -n > /root/nofile-limit.txt
-cat /root/nofile-limit.txt
+ulimit -n > "$HOME"/nofile-limit.txt
+cat "$HOME"/nofile-limit.txt

@@ -1,5 +1,5 @@
 #!/bin/bash
 # Solution: Create user and group
-groupadd devteam
-useradd -m -s /bin/bash -G devteam developer
+sudo groupadd devteam
+sudo useradd -m -s /bin/bash -G devteam developer
 id developer

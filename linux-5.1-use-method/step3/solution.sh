@@ -1,6 +1,6 @@
 #!/bin/bash
 # Solution: Create USE checklist
-cat > /root/use-checklist.txt << 'EOF'
+cat > "$HOME"/use-checklist.txt << 'EOF'
 CPU:
   Utilization: mpstat -P ALL 1 1
   Saturation: vmstat 1 1 (check 'r' column for run queue)

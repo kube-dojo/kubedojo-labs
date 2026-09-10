@@ -1,11 +1,11 @@
 #!/bin/bash
-cat > /root/boot-params.txt << 'EOF'
+cat > "$HOME"/boot-params.txt << 'EOF'
 === Current Boot Parameters ===
 EOF
 
-cat /proc/cmdline >> /root/boot-params.txt
+cat /proc/cmdline >> "$HOME"/boot-params.txt
 
-cat >> /root/boot-params.txt << 'EOF'
+cat >> "$HOME"/boot-params.txt << 'EOF'
 
 === Security Analysis ===
 Checking for security-relevant parameters:

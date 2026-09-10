@@ -1,7 +1,7 @@
 #!/bin/bash
 # Solution: List active timers
-if systemctl list-timers --no-pager > /root/active-timers.txt 2>/dev/null && [ -s /root/active-timers.txt ]; then
-  cat /root/active-timers.txt
+if systemctl list-timers --no-pager > "$HOME"/active-timers.txt 2>/dev/null && [ -s "$HOME"/active-timers.txt ]; then
+  cat "$HOME"/active-timers.txt
 else
   # Docker fallback: list scheduled tasks from cron and at
   {
@@ -10,6 +10,6 @@ else
     crontab -l 2>/dev/null || echo "(no user crontab)"
     echo "=== /etc/crontab ==="
     cat /etc/crontab 2>/dev/null || echo "(no /etc/crontab)"
-  } > /root/active-timers.txt
-  cat /root/active-timers.txt
+  } > "$HOME"/active-timers.txt
+  cat "$HOME"/active-timers.txt
 fi
