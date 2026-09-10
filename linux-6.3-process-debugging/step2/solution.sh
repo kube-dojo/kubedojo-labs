@@ -1,5 +1,5 @@
 #!/bin/bash
 # Solution: List open files
-PID=$(cat /root/target-pid.txt)
-lsof -p "$PID" > /root/open-files.txt
-cat /root/open-files.txt
+PID=$(cat "$HOME"/target-pid.txt)
+lsof -p "$PID" > "$HOME"/open-files.txt
+cat "$HOME"/open-files.txt
