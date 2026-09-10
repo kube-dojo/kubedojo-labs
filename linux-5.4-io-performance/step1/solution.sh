@@ -1,4 +1,4 @@
 #!/bin/bash
 # Solution: Save iostat output
-iostat -xz 1 1 > /root/iostat.txt
-cat /root/iostat.txt
+iostat -xz 1 1 > "$HOME"/iostat.txt
+cat "$HOME"/iostat.txt

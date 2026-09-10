@@ -1,5 +1,5 @@
 #!/bin/bash
-cat > /root/seccomp-profile.json << 'EOF'
+cat > "$HOME"/seccomp-profile.json << 'EOF'
 {
   "defaultAction": "SCMP_ACT_ALLOW",
   "syscalls": [
@@ -17,4 +17,4 @@ cat > /root/seccomp-profile.json << 'EOF'
 }
 EOF
 
-jq . /root/seccomp-profile.json
+jq . "$HOME"/seccomp-profile.json

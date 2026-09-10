@@ -1,6 +1,6 @@
 #!/bin/bash
 # Solution: Install and hold nginx
-apt-get install -y -qq nginx > /dev/null 2>&1
-apt-mark hold nginx
+sudo apt-get install -y -qq nginx > /dev/null 2>&1
+sudo apt-mark hold nginx
 echo "Held packages:"
-apt-mark showhold
+sudo apt-mark showhold

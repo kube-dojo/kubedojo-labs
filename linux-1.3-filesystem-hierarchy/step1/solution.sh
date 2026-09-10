@@ -1,6 +1,6 @@
 #!/bin/bash
 # Solution: Create FHS quiz file
-cat > /root/fhs-quiz.txt << 'EOF'
+cat > "$HOME"/fhs-quiz.txt << 'EOF'
 /etc=system configuration files
 /var=variable data like logs and databases
 /tmp=temporary files cleared on reboot
@@ -8,4 +8,4 @@ cat > /root/fhs-quiz.txt << 'EOF'
 /usr=user programs and libraries
 /opt=optional third-party software
 EOF
-cat /root/fhs-quiz.txt
+cat "$HOME"/fhs-quiz.txt
