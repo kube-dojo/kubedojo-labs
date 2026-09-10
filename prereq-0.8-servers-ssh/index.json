@@ -1,0 +1,50 @@
+{
+  "title": "Servers and SSH: Context, Keys, Session Lifecycle",
+  "description": "Prove where your commands run, generate an SSH key pair, connect to a real SSH server on localhost, disconnect cleanly with evidence, and build a remote connection command without running it",
+  "difficulty": "Beginner",
+  "time": "25 minutes",
+  "details": {
+    "intro": {
+      "text": "intro.md",
+      "background": "setup.sh"
+    },
+    "steps": [
+      {
+        "title": "Record Your Local Context",
+        "text": "step1/text.md",
+        "verify": "step1/verify.sh",
+        "solution": "step1/solution.sh"
+      },
+      {
+        "title": "Create and Authorize an SSH Key Pair",
+        "text": "step2/text.md",
+        "verify": "step2/verify.sh",
+        "solution": "step2/solution.sh"
+      },
+      {
+        "title": "First Connection: Trust the Host, Check the Context",
+        "text": "step3/text.md",
+        "verify": "step3/verify.sh",
+        "solution": "step3/solution.sh"
+      },
+      {
+        "title": "Work Through the Session, Then Disconnect",
+        "text": "step4/text.md",
+        "verify": "step4/verify.sh",
+        "solution": "step4/solution.sh"
+      },
+      {
+        "title": "Build the Remote Command Without Running It",
+        "text": "step5/text.md",
+        "verify": "step5/verify.sh",
+        "solution": "step5/solution.sh"
+      }
+    ],
+    "finish": {
+      "text": "finish.md"
+    }
+  },
+  "backend": {
+    "imageid": "ubuntu"
+  }
+}
