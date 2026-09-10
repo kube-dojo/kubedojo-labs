@@ -1,5 +1,5 @@
 #!/bin/bash
-cat > /root/selinux-workflow.txt << 'WORKFLOW'
+cat > "$HOME"/selinux-workflow.txt << 'WORKFLOW'
 === SELinux Troubleshooting Workflow ===
 
 STEP 1: IDENTIFY THE DENIAL
