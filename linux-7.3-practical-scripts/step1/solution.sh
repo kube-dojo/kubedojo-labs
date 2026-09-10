@@ -12,7 +12,7 @@ FILEPATH="${BACKUP_DIR}/${FILENAME}"
 mkdir -p "$BACKUP_DIR"
 
 echo "Creating backup of /etc..."
-tar -czf "$FILEPATH" /etc 2>/dev/null
+sudo tar -czf "$FILEPATH" /etc 2>/dev/null
 
 SIZE=$(ls -lh "$FILEPATH" | awk '{print $5}')
 echo "Backup complete: $FILEPATH ($SIZE)"
