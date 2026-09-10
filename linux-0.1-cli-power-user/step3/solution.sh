@@ -1,4 +1,4 @@
 #!/bin/bash
 # Solution: Extract unique sorted IPs from access.log
-awk '{print $1}' /root/access.log | sort -u > /root/unique-ips.txt
-cat /root/unique-ips.txt
+awk '{print $1}' "$HOME"/access.log | sort -u > "$HOME"/unique-ips.txt
+cat "$HOME"/unique-ips.txt
