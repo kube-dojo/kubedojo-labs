@@ -1,2 +1,2 @@
 #!/bin/bash
-iptables -L -v -n > /root/iptables-rules.txt
+sudo iptables -L -v -n > "$HOME"/iptables-rules.txt

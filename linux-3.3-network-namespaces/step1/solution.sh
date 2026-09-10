@@ -1,2 +1,2 @@
 #!/bin/bash
-ip netns add lab-ns
+sudo ip netns add lab-ns

@@ -1,2 +1,2 @@
 #!/bin/bash
-dig +short kubernetes.io > /root/k8s-io-ip.txt
+dig +short kubernetes.io > "$HOME"/k8s-io-ip.txt
