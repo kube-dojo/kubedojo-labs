@@ -1,13 +1,13 @@
 #!/bin/bash
-cat > /root/create-files.sh << 'SCRIPT'
+cat > "$HOME"/create-files.sh << 'SCRIPT'
 #!/bin/bash
-mkdir -p /root/timed
+mkdir -p "$HOME"/timed
 for i in $(seq 1 5); do
-  echo "file $i" > /root/timed/test-${i}.txt
+  echo "file $i" > "$HOME"/timed/test-${i}.txt
 done
 SCRIPT
 
-chmod +x /root/create-files.sh
-/root/create-files.sh
+chmod +x "$HOME"/create-files.sh
+"$HOME"/create-files.sh
 echo "Files created:"
-ls -la /root/timed/
+ls -la "$HOME"/timed/

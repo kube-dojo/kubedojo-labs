@@ -1,5 +1,5 @@
 #!/bin/bash
-cat > /root/broken.yaml << 'EOF'
+cat > "$HOME"/broken.yaml << 'EOF'
 apiVersion: v1
 kind: Pod
 metadata:
@@ -13,6 +13,6 @@ spec:
       ports:
       - containerPort: 80
 EOF
-echo "Fixed /root/broken.yaml:"
-cat /root/broken.yaml
-python3 -c "import yaml; print('Valid YAML:', yaml.safe_load(open('/root/broken.yaml'))['kind'])"
+echo "Fixed "$HOME"/broken.yaml:"
+cat "$HOME"/broken.yaml
+python3 -c "import yaml; print('Valid YAML:', yaml.safe_load(open('"$HOME"/broken.yaml'))['kind'])"
