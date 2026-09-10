@@ -1,5 +1,5 @@
 #!/bin/bash
-cat > /etc/apparmor.d/usr.bin.curl << 'EOF'
+sudo tee /etc/apparmor.d/usr.bin.curl > /dev/null << 'EOF'
 #include <tunables/global>
 
 /usr/bin/curl {

@@ -40,4 +40,4 @@
     echo ""
     echo "These booleans are toggled with: setsebool -P <boolean> on|off"
   fi
-} > /root/sebooleans.txt
+} > "$HOME"/sebooleans.txt
