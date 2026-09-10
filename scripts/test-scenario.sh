@@ -44,6 +44,9 @@ test_scenario_as_user() {
   # `is-system-running --wait`, which can hang before dbus is up.
   local state="" i
   for i in $(seq 1 45); do
+    if [ "$(docker inspect -f '{{.State.Running}}' "$cname" 2>/dev/null)" != "true" ]; then
+      break  # container died — no point polling out the full window
+    fi
     state=$(docker exec "$cname" systemctl is-system-running 2>/dev/null)
     case "$state" in running|degraded) break ;; esac
     sleep 2

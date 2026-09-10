@@ -27,4 +27,5 @@ if [ -n "$SETUP_SCRIPT" ] && [ -f "/scenario/$SETUP_SCRIPT" ]; then
   }
 fi
 
-exec python3 /opt/harness/run-steps.py
+# -u: unbuffered — progress must survive a lane timeout killing docker exec.
+exec python3 -u /opt/harness/run-steps.py

@@ -16,6 +16,7 @@ import os
 import re
 import subprocess
 import sys
+import tempfile
 
 TEST_USER = os.environ["TEST_USER"]
 USER_HOME = os.path.expanduser(f"~{TEST_USER}")
@@ -28,8 +29,13 @@ def run_script(argv: list[str], env: dict | None = None) -> tuple[int, str]:
     Scenarios legitimately leave background processes running (CPU hogs,
     daemons). With pipes, subprocess.run() would block until those
     grandchildren exit; with a file it returns as soon as the script does.
+    A UNIQUE file per invocation: background survivors inherit the fd, and
+    reusing one path would truncate under them and interleave their output
+    into later steps' logs.
     """
-    with open("/tmp/step-output.txt", "w+") as out:
+    with tempfile.NamedTemporaryFile(
+        mode="w+", prefix="step-out-", suffix=".txt", delete=False,
+    ) as out:
         try:
             proc = subprocess.run(
                 argv, stdout=out, stderr=out, env=env, timeout=SCRIPT_TIMEOUT,
