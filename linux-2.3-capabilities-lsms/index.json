@@ -1,0 +1,50 @@
+{
+  "title": "Capabilities & LSMs: Audit, Grant, Drop, Diagnose",
+  "description": "Decode process capability sets, replace setuid-root with a file capability, drop a capability and watch the kernel refuse, diagnose the live LSM stack, and enforce a real seccomp filter",
+  "difficulty": "Intermediate",
+  "time": "40 minutes",
+  "details": {
+    "intro": {
+      "text": "intro.md",
+      "background": "setup.sh"
+    },
+    "steps": [
+      {
+        "title": "Read and Decode Capability Sets",
+        "text": "step1/text.md",
+        "verify": "step1/verify.sh",
+        "solution": "step1/solution.sh"
+      },
+      {
+        "title": "Grant One Power: File Capabilities",
+        "text": "step2/text.md",
+        "verify": "step2/verify.sh",
+        "solution": "step2/solution.sh"
+      },
+      {
+        "title": "Drop a Capability and Watch Root Fail",
+        "text": "step3/text.md",
+        "verify": "step3/verify.sh",
+        "solution": "step3/solution.sh"
+      },
+      {
+        "title": "Diagnose the LSM Stack",
+        "text": "step4/text.md",
+        "verify": "step4/verify.sh",
+        "solution": "step4/solution.sh"
+      },
+      {
+        "title": "Enforce a Seccomp Syscall Filter",
+        "text": "step5/text.md",
+        "verify": "step5/verify.sh",
+        "solution": "step5/solution.sh"
+      }
+    ],
+    "finish": {
+      "text": "finish.md"
+    }
+  },
+  "backend": {
+    "imageid": "ubuntu"
+  }
+}
