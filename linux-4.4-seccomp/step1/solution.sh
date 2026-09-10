@@ -18,4 +18,4 @@
   echo ""
   echo "In a Kubernetes pod, containers typically run with Seccomp: 2 (filter)"
   echo "when the RuntimeDefault or a custom seccomp profile is applied."
-} > /root/seccomp-status.txt
+} > "$HOME"/seccomp-status.txt
