@@ -1,9 +1,9 @@
 #!/bin/bash
-cat > /root/.vimrc << 'EOF'
+cat > "$HOME"/.vimrc << 'EOF'
 set expandtab
 set tabstop=2
 set shiftwidth=2
 set autoindent
 EOF
-echo "Created /root/.vimrc:"
-cat /root/.vimrc
+echo "Created $HOME/.vimrc:"
+cat "$HOME"/.vimrc

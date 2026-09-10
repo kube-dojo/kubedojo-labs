@@ -1,4 +1,4 @@
 #!/bin/bash
-jq -r '.items[].name' /root/sample.json > /root/names.txt
+jq -r '.items[].name' "$HOME"/sample.json > "$HOME"/names.txt
 echo "Names extracted:"
-cat /root/names.txt
+cat "$HOME"/names.txt
