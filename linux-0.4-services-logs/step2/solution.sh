@@ -1,7 +1,7 @@
 #!/bin/bash
 # Solution: Get nginx journal/log output
-if journalctl -u nginx -n 20 --no-pager > /root/nginx-journal.txt 2>/dev/null && [ -s /root/nginx-journal.txt ]; then
-  cat /root/nginx-journal.txt
+if journalctl -u nginx -n 20 --no-pager > "$HOME"/nginx-journal.txt 2>/dev/null && [ -s "$HOME"/nginx-journal.txt ]; then
+  cat "$HOME"/nginx-journal.txt
 else
   # Docker fallback: use nginx log files
   {
@@ -9,10 +9,10 @@ else
     tail -20 /var/log/nginx/access.log 2>/dev/null || echo "(empty)"
     echo "=== nginx error log ==="
     tail -20 /var/log/nginx/error.log 2>/dev/null || echo "(empty)"
-  } > /root/nginx-journal.txt
+  } > "$HOME"/nginx-journal.txt
   # Ensure file is non-empty
-  if [ ! -s /root/nginx-journal.txt ]; then
-    echo "No nginx log entries found yet" > /root/nginx-journal.txt
+  if [ ! -s "$HOME"/nginx-journal.txt ]; then
+    echo "No nginx log entries found yet" > "$HOME"/nginx-journal.txt
   fi
-  cat /root/nginx-journal.txt
+  cat "$HOME"/nginx-journal.txt
 fi
