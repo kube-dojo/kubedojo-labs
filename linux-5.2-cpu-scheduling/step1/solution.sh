@@ -1,4 +1,4 @@
 #!/bin/bash
 # Solution: Check scheduling policy of PID 1
-chrt -p 1 > /root/sched-policy.txt
-cat /root/sched-policy.txt
+chrt -p 1 > "$HOME"/sched-policy.txt
+cat "$HOME"/sched-policy.txt
