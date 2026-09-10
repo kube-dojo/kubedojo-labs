@@ -7,5 +7,5 @@ for logfile in /var/log/syslog /var/log/messages /var/log/*.log; do
     COUNT=$((COUNT + C))
   fi
 done
-echo "$COUNT" > /root/error-count.txt
+echo "$COUNT" > "$HOME"/error-count.txt
 echo "Error count: $COUNT"

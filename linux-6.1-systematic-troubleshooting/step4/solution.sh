@@ -1,6 +1,6 @@
 #!/bin/bash
 # Solution: Create troubleshooting report
-cat > /root/troubleshooting-report.txt << 'EOF'
+cat > "$HOME"/troubleshooting-report.txt << 'EOF'
 === Problem ===
 The broken-app.service is in a failed state. Multiple ERROR and CRITICAL
 messages were found in system logs including database timeouts, port conflicts,
