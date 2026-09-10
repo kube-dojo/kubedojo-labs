@@ -3,15 +3,15 @@
 
 # First create dummy backups for testing
 for i in $(seq 1 8); do
-  touch "/root/backups/backup-2026030${i}.tar.gz"
+  touch "$HOME/backups/backup-2026030${i}.tar.gz"
   sleep 0.1
 done
 
-cat > /root/rotate-backups.sh << 'SCRIPT'
+cat > "$HOME"/rotate-backups.sh << 'SCRIPT'
 #!/bin/bash
 set -euo pipefail
 
-BACKUP_DIR="/root/backups"
+BACKUP_DIR="$HOME/backups"
 KEEP=5
 
 echo "=== Backup Rotation ==="
@@ -34,5 +34,5 @@ echo "After rotation:"
 ls -1t "$BACKUP_DIR"/backup-*.tar.gz 2>/dev/null
 echo "Total: $(ls -1 "$BACKUP_DIR"/backup-*.tar.gz 2>/dev/null | wc -l) backups"
 SCRIPT
-chmod +x /root/rotate-backups.sh
-/root/rotate-backups.sh
+chmod +x "$HOME"/rotate-backups.sh
+"$HOME"/rotate-backups.sh
