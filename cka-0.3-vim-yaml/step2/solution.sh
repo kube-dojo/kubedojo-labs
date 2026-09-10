@@ -13,6 +13,6 @@ spec:
       ports:
       - containerPort: 80
 EOF
-echo "Fixed "$HOME"/broken.yaml:"
+echo "Fixed $HOME/broken.yaml:"
 cat "$HOME"/broken.yaml
-python3 -c "import yaml; print('Valid YAML:', yaml.safe_load(open('"$HOME"/broken.yaml'))['kind'])"
+python3 -c "import yaml; print('Valid YAML:', yaml.safe_load(open('$HOME/broken.yaml'))['kind'])"

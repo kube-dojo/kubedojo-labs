@@ -5,5 +5,5 @@ kind: Pod
 metadata:
   name: test
 EOF
-echo "Created "$HOME"/practice.yaml"
+echo "Created $HOME/practice.yaml"
 cat "$HOME"/practice.yaml
