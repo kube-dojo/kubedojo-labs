@@ -1,6 +1,6 @@
 #!/bin/bash
 # Solution: Create system report
-cat > /root/system-report.txt << EOF
+cat > "$HOME"/system-report.txt << EOF
 === System Report ===
 Hostname: $(hostname)
 Kernel: $(uname -r)
@@ -13,4 +13,4 @@ $(df -h)
 $(free -m)
 EOF
 echo "Report created."
-cat /root/system-report.txt
+cat "$HOME"/system-report.txt

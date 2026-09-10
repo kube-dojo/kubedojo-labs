@@ -16,4 +16,4 @@
   echo ""
   echo "Note: On this Ubuntu system, SELinux kernel support may not be"
   echo "enabled. On RHEL/CentOS/Fedora systems, SELinux is enforcing by default."
-} > /root/selinux-status.txt
+} > "$HOME"/selinux-status.txt

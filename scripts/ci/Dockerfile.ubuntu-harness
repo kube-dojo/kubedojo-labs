@@ -1,0 +1,44 @@
+# Harness image for kubedojo-labs Ubuntu scenario CI.
+#
+# Approximates the Killercoda `ubuntu` environment: a full Ubuntu 22.04
+# system with REAL systemd as PID 1 (no systemctl mock), booted per
+# scenario-lane as a privileged, disposable container.
+#
+# Trust boundary: this image runs UNTRUSTED scenario code with full
+# privileges INSIDE a throwaway container on an ephemeral GitHub-hosted
+# runner. The workflow must therefore only ever trigger via `push` /
+# `pull_request` (never `pull_request_target`), with a read-only token
+# and no secrets in the job environment.
+FROM ubuntu:22.04
+
+ENV DEBIAN_FRONTEND=noninteractive container=docker
+
+# Baseline toolset: harness needs (python3, jq, sudo) + the common tools
+# scenarios exercise. Scenario setup.sh scripts still apt-get their own
+# extras; preinstalling the common set keeps per-scenario runtime low.
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    systemd systemd-sysv dbus \
+    python3 python3-yaml jq sudo curl ca-certificates \
+    openssh-server openssh-client \
+    cron rsyslog kmod \
+    iproute2 iputils-ping dnsutils netcat-openbsd traceroute tcpdump nmap \
+    iptables \
+    procps psmisc lsof strace ltrace sysstat \
+    tmux vim nano tree less \
+    apparmor apparmor-utils selinux-utils policycoreutils \
+    tar gzip cpio file \
+    && rm -rf /var/lib/apt/lists/*
+
+# Don't let units that can never work in a container leave the boot
+# "failed"; everything else runs for real.
+RUN systemctl mask systemd-udevd.service systemd-udevd-kernel.socket \
+    systemd-udevd-control.socket systemd-modules-load.service \
+    e2scrubb_all.timer 2>/dev/null; \
+    systemctl set-default multi-user.target
+
+COPY run-lane.sh /opt/harness/run-lane.sh
+COPY run-steps.py /opt/harness/run-steps.py
+RUN chmod +x /opt/harness/run-lane.sh
+
+STOPSIGNAL SIGRTMIN+3
+CMD ["/sbin/init"]

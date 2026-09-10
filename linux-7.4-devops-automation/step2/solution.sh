@@ -1,12 +1,12 @@
 #!/bin/bash
 # Ensure API server is running (may have died in Docker)
 if ! curl -s http://localhost:8080/ > /dev/null 2>&1; then
-  python3 /root/api-server/api.py &
+  python3 "$HOME"/api-server/api.py &
   sleep 2
 fi
 
 # Solution: Create API check script
-cat > /root/api-check.sh << 'SCRIPT'
+cat > "$HOME"/api-check.sh << 'SCRIPT'
 #!/bin/bash
 set -euo pipefail
 
@@ -24,5 +24,5 @@ echo "Database: $DB"
 echo "Cache: $CACHE"
 echo "Queue: $QUEUE"
 SCRIPT
-chmod +x /root/api-check.sh
-/root/api-check.sh
+chmod +x "$HOME"/api-check.sh
+"$HOME"/api-check.sh

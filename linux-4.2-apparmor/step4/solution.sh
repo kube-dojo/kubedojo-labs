@@ -35,4 +35,4 @@ curl --version > /dev/null 2>&1
   echo ""
   echo "In Docker, AppArmor kernel module may not be available."
   echo "The profile file above shows what would be enforced on a full system."
-} > /root/apparmor-logs.txt
+} > "$HOME"/apparmor-logs.txt

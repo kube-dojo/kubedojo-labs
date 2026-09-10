@@ -1,6 +1,6 @@
 #!/bin/bash
 # Solution: Create safe-script.sh
-cat > /root/safe-script.sh << 'SCRIPT'
+cat > "$HOME"/safe-script.sh << 'SCRIPT'
 #!/bin/bash
 set -euo pipefail
 
@@ -18,5 +18,5 @@ echo "Some important data" > "$TMPFILE"
 cat "$TMPFILE"
 echo "Script completed successfully."
 SCRIPT
-chmod +x /root/safe-script.sh
-/root/safe-script.sh
+chmod +x "$HOME"/safe-script.sh
+"$HOME"/safe-script.sh

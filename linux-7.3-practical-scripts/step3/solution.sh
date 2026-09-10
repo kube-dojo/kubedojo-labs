@@ -1,10 +1,10 @@
 #!/bin/bash
 # Solution: Create HTML report generator
-cat > /root/report.sh << 'SCRIPT'
+cat > "$HOME"/report.sh << 'SCRIPT'
 #!/bin/bash
 set -euo pipefail
 
-OUTPUT="/root/system-report.html"
+OUTPUT="$HOME/system-report.html"
 
 cat > "$OUTPUT" << EOF
 <html>
@@ -31,5 +31,5 @@ EOF
 
 echo "Report generated: $OUTPUT"
 SCRIPT
-chmod +x /root/report.sh
-/root/report.sh
+chmod +x "$HOME"/report.sh
+"$HOME"/report.sh

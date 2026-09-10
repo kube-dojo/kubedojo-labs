@@ -1,6 +1,6 @@
 #!/bin/bash
 # Solution: Create check-disk.sh
-cat > /root/check-disk.sh << 'SCRIPT'
+cat > "$HOME"/check-disk.sh << 'SCRIPT'
 #!/bin/bash
 USAGE=$(df / | awk 'NR==2 {print $5}' | tr -d '%')
 
@@ -10,5 +10,5 @@ else
   echo "OK: Disk usage is normal (currently ${USAGE}%)"
 fi
 SCRIPT
-chmod +x /root/check-disk.sh
-/root/check-disk.sh
+chmod +x "$HOME"/check-disk.sh
+"$HOME"/check-disk.sh
