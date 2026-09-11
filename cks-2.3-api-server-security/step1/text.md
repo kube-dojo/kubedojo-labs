@@ -5,9 +5,9 @@ Examine current authentication configuration and disable insecure options.
 ## Task
 
 1. Examine the API server manifest at `/etc/kubernetes/manifests/kube-apiserver.yaml`.
-2. Save all authentication-related flags (containing "auth", "token", "cert") to `/root/auth-flags.txt`.
-3. Verify that anonymous authentication is handled properly. Check if `--anonymous-auth` is set and save the finding to `/root/anonymous-auth.txt`.
-4. Verify that `--insecure-port` is not set (or set to 0). Save the finding to `/root/insecure-port.txt`.
+2. Save all authentication-related flags (containing "auth", "token", "cert") to `"$HOME"/auth-flags.txt`.
+3. Verify that anonymous authentication is handled properly. Check if `--anonymous-auth` is set and save the finding to `"$HOME"/anonymous-auth.txt`.
+4. Verify that `--insecure-port` is not set (or set to 0). Save the finding to `"$HOME"/insecure-port.txt`.
 
 ## Hint
 

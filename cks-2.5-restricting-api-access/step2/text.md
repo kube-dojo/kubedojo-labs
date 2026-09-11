@@ -4,10 +4,10 @@ Understand how anonymous access works and verify token authentication.
 
 ## Task
 
-1. Test anonymous API access: `curl -sk https://localhost:6443/api/v1/namespaces` and save the response status to `/root/anon-access.txt`.
-2. Test authenticated access using the admin kubeconfig and save to `/root/auth-access.txt`.
-3. Create a ServiceAccount named `limited-user` in `default` namespace, create a token for it, and test API access with that token. Save the response to `/root/sa-access.txt`.
-4. Document the difference in access between anonymous, ServiceAccount token, and admin kubeconfig in `/root/access-comparison.txt`.
+1. Test anonymous API access: `curl -sk https://localhost:6443/api/v1/namespaces` and save the response status to `"$HOME"/anon-access.txt`.
+2. Test authenticated access using the admin kubeconfig and save to `"$HOME"/auth-access.txt`.
+3. Create a ServiceAccount named `limited-user` in `default` namespace, create a token for it, and test API access with that token. Save the response to `"$HOME"/sa-access.txt`.
+4. Document the difference in access between anonymous, ServiceAccount token, and admin kubeconfig in `"$HOME"/access-comparison.txt`.
 
 ## Hint
 

@@ -4,13 +4,13 @@ Admission controllers intercept API requests before persistence. Several are sec
 
 ## Task
 
-1. Extract the current `--enable-admission-plugins` value and save to `/root/admission-plugins.txt`.
+1. Extract the current `--enable-admission-plugins` value and save to `"$HOME"/admission-plugins.txt`.
 2. Verify that these security-critical admission controllers are enabled:
    - `NodeRestriction`
    - `PodSecurity` (or `PodSecurityPolicy` in older versions)
-   Save the compliance status to `/root/admission-check.txt`.
-3. List the default admission controllers that are always enabled and save to `/root/default-admission.txt` (check the Kubernetes docs or `kube-apiserver -h`).
-4. Create `/root/admission-security.txt` explaining the security role of: NodeRestriction, PodSecurity, and AlwaysPullImages.
+   Save the compliance status to `"$HOME"/admission-check.txt`.
+3. List the default admission controllers that are always enabled and save to `"$HOME"/default-admission.txt` (check the Kubernetes docs or `kube-apiserver -h`).
+4. Create `"$HOME"/admission-security.txt` explaining the security role of: NodeRestriction, PodSecurity, and AlwaysPullImages.
 
 ## Hint
 
