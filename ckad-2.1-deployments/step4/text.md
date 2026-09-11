@@ -7,7 +7,7 @@ The setup created `broken-deploy` in `deploy-lab` with a non-existent image. Fix
 1. Check `broken-deploy` — pods should be in ImagePullBackOff.
 2. Fix the deployment by setting the image to `nginx:1.25`.
 3. Wait for all 3 replicas to be ready.
-4. Save the number of available replicas to `/root/fixed-replicas.txt`.
+4. Save the number of available replicas to `"$HOME"/fixed-replicas.txt`.
 
 ## Hint
 

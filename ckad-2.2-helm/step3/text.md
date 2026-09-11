@@ -8,7 +8,7 @@
    ```
 2. Check the release history: `helm history web-app -n helm-lab`.
 3. Roll back to revision 1: `helm rollback web-app 1 -n helm-lab`.
-4. Save the revision number after rollback to `/root/helm-revision.txt`:
+4. Save the revision number after rollback to `"$HOME"/helm-revision.txt`:
    ```
    helm list -n helm-lab -o json | ...
    ```

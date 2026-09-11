@@ -13,7 +13,7 @@ Create a deployment named `rolling-app` in `strategy-lab` with:
 
 Then update the image to `nginx:1.25` and observe that pods are replaced one at a time (zero downtime).
 
-Save the strategy type to `/root/strategy-type.txt`.
+Save the strategy type to `"$HOME"/strategy-type.txt`.
 
 ## Hint
 

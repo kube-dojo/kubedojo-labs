@@ -5,7 +5,7 @@
 1. Create a deployment named `webapp` in `deploy-lab` with image `nginx:1.24` and 2 replicas.
 2. Verify all pods are running.
 3. Scale the deployment to 5 replicas.
-4. Save the number of ready replicas to `/root/ready-replicas.txt`.
+4. Save the number of ready replicas to `"$HOME"/ready-replicas.txt`.
 
 ## Hint
 
