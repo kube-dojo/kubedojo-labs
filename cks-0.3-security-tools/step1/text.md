@@ -8,9 +8,9 @@ kube-bench checks your cluster against CIS Kubernetes Benchmarks. Run it as a Jo
    ```bash
    kubectl apply -f https://raw.githubusercontent.com/aquasecurity/kube-bench/main/job.yaml
    ```
-2. Wait for the job to complete and save the logs to `/root/kube-bench-results.txt`.
-3. Count the number of `[FAIL]` results and save the count to `/root/kube-bench-fails.txt`.
-4. Count the number of `[PASS]` results and save the count to `/root/kube-bench-passes.txt`.
+2. Wait for the job to complete and save the logs to `"$HOME"/kube-bench-results.txt`.
+3. Count the number of `[FAIL]` results and save the count to `"$HOME"/kube-bench-fails.txt`.
+4. Count the number of `[PASS]` results and save the count to `"$HOME"/kube-bench-passes.txt`.
 
 ## Hint
 

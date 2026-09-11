@@ -9,7 +9,7 @@ Kubernetes audit logging records API requests for security monitoring. Configure
    - Log all requests to pods at the `Request` level
    - Log everything else at `None` level
 2. The file must be a valid Kubernetes audit policy (apiVersion: `audit.k8s.io/v1`, kind: `Policy`).
-3. Save the number of rules in your policy to `/root/audit-rule-count.txt`.
+3. Save the number of rules in your policy to `"$HOME"/audit-rule-count.txt`.
 
 ## Hint
 
