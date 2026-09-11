@@ -1,5 +1,5 @@
 #!/bin/bash
-cp /etc/cni/net.d/*.conflist /root/cni-config-backup.json 2>/dev/null || cp /etc/cni/net.d/*.conf /root/cni-config-backup.json 2>/dev/null
+sudo cp /etc/cni/net.d/*.conflist "$HOME"/cni-config-backup.json 2>/dev/null || sudo cp /etc/cni/net.d/*.conf "$HOME"/cni-config-backup.json 2>/dev/null
 echo "=== Node Pod CIDR ==="
 kubectl get nodes -o jsonpath='{range .items[*]}{.metadata.name}{"\t"}{.spec.podCIDR}{"\n"}{end}'
 echo "=== Cluster CIDR ==="
