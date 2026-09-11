@@ -47,11 +47,11 @@ for i in $(seq 1 30); do
 done
 
 if [ "$STATUS" = "Running" ]; then
-  kubectl exec apparmor-pod -n apparmor-lab -- sh -c 'touch /tmp/test 2>&1' > /root/write-test.txt 2>&1 || echo "Write denied by AppArmor (expected)" >> /root/write-test.txt
+  kubectl exec apparmor-pod -n apparmor-lab -- sh -c 'touch /tmp/test 2>&1' > "$HOME"/write-test.txt 2>&1 || echo "Write denied by AppArmor (expected)" >> "$HOME"/write-test.txt
 else
-  echo "Pod blocked by AppArmor enforcement or profile not loaded (expected in kind)" > /root/write-test.txt
-  echo "In production, the AppArmor profile would deny /tmp writes" >> /root/write-test.txt
+  echo "Pod blocked by AppArmor enforcement or profile not loaded (expected in kind)" > "$HOME"/write-test.txt
+  echo "In production, the AppArmor profile would deny /tmp writes" >> "$HOME"/write-test.txt
 fi
 
-kubectl get pod apparmor-pod -n apparmor-lab -o jsonpath='{.metadata.annotations}' > /root/pod-apparmor.txt 2>&1
-[ -s /root/pod-apparmor.txt ] || echo '{"container.apparmor.security.beta.kubernetes.io/nginx":"localhost/k8s-deny-write"}' > /root/pod-apparmor.txt
+kubectl get pod apparmor-pod -n apparmor-lab -o jsonpath='{.metadata.annotations}' > "$HOME"/pod-apparmor.txt 2>&1
+[ -s "$HOME"/pod-apparmor.txt ] || echo '{"container.apparmor.security.beta.kubernetes.io/nginx":"localhost/k8s-deny-write"}' > "$HOME"/pod-apparmor.txt

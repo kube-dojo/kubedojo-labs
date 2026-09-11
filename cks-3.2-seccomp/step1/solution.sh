@@ -32,10 +32,10 @@ YAML
 kubectl wait --for=condition=Ready pod/seccomp-default -n seccomp-lab --timeout=60s
 kubectl wait --for=condition=Ready pod/seccomp-unconfined -n seccomp-lab --timeout=60s
 
-kubectl exec seccomp-default -n seccomp-lab -- unshare --user whoami > /root/default-unshare.txt 2>&1 || echo "Blocked by seccomp" >> /root/default-unshare.txt
-kubectl exec seccomp-unconfined -n seccomp-lab -- unshare --user whoami > /root/unconfined-unshare.txt 2>&1 || echo "May also fail due to other restrictions" >> /root/unconfined-unshare.txt
+kubectl exec seccomp-default -n seccomp-lab -- unshare --user whoami > "$HOME"/default-unshare.txt 2>&1 || echo "Blocked by seccomp" >> "$HOME"/default-unshare.txt
+kubectl exec seccomp-unconfined -n seccomp-lab -- unshare --user whoami > "$HOME"/unconfined-unshare.txt 2>&1 || echo "May also fail due to other restrictions" >> "$HOME"/unconfined-unshare.txt
 
-cat > /root/seccomp-types.txt << 'TYPES'
+cat > "$HOME"/seccomp-types.txt << 'TYPES'
 RuntimeDefault: Uses the container runtime's default seccomp profile (blocks ~50 dangerous syscalls)
 Unconfined: No seccomp filtering — all syscalls allowed (least secure)
 Localhost: Uses a custom seccomp profile from the node's filesystem (/var/lib/kubelet/seccomp/)

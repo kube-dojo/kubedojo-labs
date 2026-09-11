@@ -1,16 +1,16 @@
 #!/bin/bash
 if command -v iptables &>/dev/null; then
-  iptables -L -n -v > /root/iptables-before.txt 2>&1
+  iptables -L -n -v > "$HOME"/iptables-before.txt 2>&1
 else
   NODE=$(docker ps --filter "name=control-plane" --format "{{.Names}}" 2>/dev/null | head -1)
   if [ -n "$NODE" ]; then
-    docker exec "$NODE" iptables -L -n -v > /root/iptables-before.txt 2>&1 || echo "iptables output from kind node" > /root/iptables-before.txt
+    docker exec "$NODE" iptables -L -n -v > "$HOME"/iptables-before.txt 2>&1 || echo "iptables output from kind node" > "$HOME"/iptables-before.txt
   else
-    echo "iptables not available — rules documented below" > /root/iptables-before.txt
+    echo "iptables not available — rules documented below" > "$HOME"/iptables-before.txt
   fi
 fi
 
-cat > /root/iptables-rules.txt << 'RULES'
+cat > "$HOME"/iptables-rules.txt << 'RULES'
 # Allow established and related connections
 iptables -A INPUT -m state --state ESTABLISHED,RELATED -j ACCEPT
 
@@ -37,7 +37,7 @@ iptables -A INPUT -p tcp --dport 10257 -s 127.0.0.1 -j ACCEPT
 iptables -A INPUT -j DROP
 RULES
 
-cat > /root/firewall-best-practices.txt << 'BEST'
+cat > "$HOME"/firewall-best-practices.txt << 'BEST'
 1. Default deny all inbound traffic, then allow only required ports
 2. Restrict kubelet and etcd ports to cluster-internal CIDR only
 3. Allow API server from management networks and load balancers only
