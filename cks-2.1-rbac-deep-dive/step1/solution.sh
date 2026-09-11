@@ -9,4 +9,4 @@ kubectl create clusterrole node-viewer --verb=get,list,watch --resource=nodes
   kubectl get role log-viewer -n rbac-lab -o yaml
   echo "---"
   kubectl get clusterrole node-viewer -o yaml
-} > /root/roles.yaml
+} > "$HOME"/roles.yaml

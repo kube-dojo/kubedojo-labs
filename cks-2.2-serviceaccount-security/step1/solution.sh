@@ -39,4 +39,4 @@ YAML
 kubectl wait --for=condition=Ready pod/secure-app -n sa-lab --timeout=60s 2>/dev/null || true
 kubectl wait --for=condition=Ready pod/needs-api -n sa-lab --timeout=60s 2>/dev/null || true
 
-kubectl exec secure-app -n sa-lab -- ls /var/run/secrets/kubernetes.io/serviceaccount/token > /root/token-check.txt 2>&1 || echo "No token mounted (expected)" > /root/token-check.txt
+kubectl exec secure-app -n sa-lab -- ls /var/run/secrets/kubernetes.io/serviceaccount/token > "$HOME"/token-check.txt 2>&1 || echo "No token mounted (expected)" > "$HOME"/token-check.txt
