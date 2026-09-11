@@ -1,6 +1,6 @@
 #!/bin/bash
 # Ensure scheduler manifest is in place
-cp /root/kube-scheduler-backup.yaml /etc/kubernetes/manifests/kube-scheduler.yaml 2>/dev/null
+sudo cp "$HOME"/kube-scheduler-backup.yaml /etc/kubernetes/manifests/kube-scheduler.yaml 2>/dev/null
 sleep 15
 # Create test pod if not exists
 kubectl run scheduler-test --image=nginx:1.25 -n practice 2>/dev/null || true
