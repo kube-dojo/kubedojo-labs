@@ -6,7 +6,7 @@
    - Applies to pods with `app=api`
    - Allows egress only to pods with `app=db` on port 80
    - Allows egress to DNS (port 53 UDP) for name resolution
-2. Save the egress policy YAML to `/root/api-egress.yaml`.
+2. Save the egress policy YAML to `"$HOME"/api-egress.yaml`.
 
 ## Hint
 

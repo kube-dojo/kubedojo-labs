@@ -10,7 +10,7 @@
    ```
    kubectl get svc web-nodeport -n svc-lab -o jsonpath='{.spec.ports[0].nodePort}'
    ```
-   Save it to `/root/node-port.txt`.
+   Save it to `"$HOME"/node-port.txt`.
 3. Test access via the node IP and NodePort:
    ```
    curl localhost:<nodeport>

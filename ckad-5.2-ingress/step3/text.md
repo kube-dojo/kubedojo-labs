@@ -7,7 +7,7 @@
    - `backend.example.com` -> `backend` service port 80
    - Set `ingressClassName: nginx`
 
-2. Save the hosts to `/root/ingress-hosts.txt`:
+2. Save the hosts to `"$HOME"/ingress-hosts.txt`:
    ```
    kubectl get ingress host-ingress -n ingress-lab -o jsonpath='{.spec.rules[*].host}'
    ```

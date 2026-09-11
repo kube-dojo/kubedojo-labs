@@ -25,7 +25,7 @@
    ```
    kubectl run dns-test --image=busybox:1.36 --rm -it --restart=Never -n svc-lab -- nslookup web-headless.svc-lab.svc.cluster.local
    ```
-4. Save "None" to `/root/headless-ip.txt`.
+4. Save "None" to `"$HOME"/headless-ip.txt`.
 
 ## Hint
 

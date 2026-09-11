@@ -28,7 +28,7 @@ The setup script installed the NGINX Ingress Controller. Now create a basic Ingr
                port:
                  number: 80
    ```
-3. Save the Ingress class name to `/root/ingress-class.txt`.
+3. Save the Ingress class name to `"$HOME"/ingress-class.txt`.
 
 ## Hint
 
