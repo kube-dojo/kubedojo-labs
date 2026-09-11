@@ -1,5 +1,5 @@
 #!/bin/bash
-cat > /root/secure-ingress.yaml << 'YAML'
+cat > "$HOME"/secure-ingress.yaml << 'YAML'
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
@@ -22,4 +22,4 @@ spec:
             port:
               number: 80
 YAML
-kubectl apply -f /root/secure-ingress.yaml
+kubectl apply -f "$HOME"/secure-ingress.yaml

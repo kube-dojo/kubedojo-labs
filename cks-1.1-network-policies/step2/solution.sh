@@ -25,4 +25,4 @@ spec:
       port: 80
 YAML
 API_IP=$(kubectl get pod api -n backend -o jsonpath='{.status.podIP}')
-kubectl exec web -n frontend -- curl -s -o /dev/null -w '%{http_code}' "http://$API_IP" > /root/netpol-test-2.txt 2>/dev/null || echo "blocked" > /root/netpol-test-2.txt
+kubectl exec web -n frontend -- curl -s -o /dev/null -w '%{http_code}' "http://$API_IP" > "$HOME"/netpol-test-2.txt 2>/dev/null || echo "blocked" > "$HOME"/netpol-test-2.txt

@@ -21,4 +21,4 @@ spec:
   - Egress
 YAML
 API_IP=$(kubectl get pod api -n backend -o jsonpath='{.status.podIP}')
-kubectl exec web -n frontend -- timeout 3 curl -s "$API_IP" > /root/netpol-test-1.txt 2>&1 || echo "Connection blocked" > /root/netpol-test-1.txt
+kubectl exec web -n frontend -- timeout 3 curl -s "$API_IP" > "$HOME"/netpol-test-1.txt 2>&1 || echo "Connection blocked" > "$HOME"/netpol-test-1.txt

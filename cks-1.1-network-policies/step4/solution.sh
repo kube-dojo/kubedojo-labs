@@ -21,8 +21,8 @@ spec:
     - protocol: TCP
       port: 80
 YAML
-kubectl get networkpolicy -n backend -o wide > /root/netpol-summary.txt
-cat > /root/traffic-matrix.txt << 'MATRIX'
+kubectl get networkpolicy -n backend -o wide > "$HOME"/netpol-summary.txt
+cat > "$HOME"/traffic-matrix.txt << 'MATRIX'
 frontend/web -> backend/api : TCP 80
 backend/api -> backend/db : TCP 80
 backend/api -> kube-system/kube-dns : UDP 53

@@ -1,5 +1,5 @@
 #!/bin/bash
-cat > /root/block-metadata.yaml << 'YAML'
+cat > "$HOME"/block-metadata.yaml << 'YAML'
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
@@ -16,4 +16,4 @@ spec:
         except:
         - 169.254.169.254/32
 YAML
-kubectl apply -f /root/block-metadata.yaml
+kubectl apply -f "$HOME"/block-metadata.yaml
