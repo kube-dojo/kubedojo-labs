@@ -6,7 +6,7 @@ Verify that pods in the same namespace can communicate directly via IP and throu
 
 1. Get the IP of `pod-a` and test connectivity from `pod-b`
 2. Create a service for `pod-a` and test service-level connectivity
-3. Save the connectivity test results to `/root/connectivity.txt`
+3. Save the connectivity test results to `"$HOME"/connectivity.txt`
 
 ```bash
 # Get pod-a IP
@@ -22,11 +22,11 @@ kubectl expose pod pod-a -n practice --port=80
 kubectl exec pod-b -n practice -- wget -qO- --timeout=3 http://pod-a.practice.svc.cluster.local
 
 # Save results
-echo "Direct IP test: $POD_A_IP" > /root/connectivity.txt
-kubectl exec pod-b -n practice -- wget -qO- --timeout=3 http://$POD_A_IP >> /root/connectivity.txt 2>&1
-echo "---" >> /root/connectivity.txt
-echo "Service test:" >> /root/connectivity.txt
-kubectl exec pod-b -n practice -- wget -qO- --timeout=3 http://pod-a >> /root/connectivity.txt 2>&1
+echo "Direct IP test: $POD_A_IP" > "$HOME"/connectivity.txt
+kubectl exec pod-b -n practice -- wget -qO- --timeout=3 http://$POD_A_IP >> "$HOME"/connectivity.txt 2>&1
+echo "---" >> "$HOME"/connectivity.txt
+echo "Service test:" >> "$HOME"/connectivity.txt
+kubectl exec pod-b -n practice -- wget -qO- --timeout=3 http://pod-a >> "$HOME"/connectivity.txt 2>&1
 ```
 
 <details>

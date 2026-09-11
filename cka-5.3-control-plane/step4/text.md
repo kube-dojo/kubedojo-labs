@@ -11,7 +11,7 @@ The scheduler is responsible for assigning pods to nodes. When it fails, new pod
 
 ```bash
 # Break the scheduler (move manifest out)
-mv /etc/kubernetes/manifests/kube-scheduler.yaml /root/kube-scheduler-broken.yaml
+mv /etc/kubernetes/manifests/kube-scheduler.yaml "$HOME"/kube-scheduler-broken.yaml
 sleep 10
 
 # Create a test pod — it should stay Pending
@@ -21,7 +21,7 @@ kubectl get pod scheduler-test -n practice
 # Should show Pending
 
 # Fix the scheduler — restore the manifest
-cp /root/kube-scheduler-backup.yaml /etc/kubernetes/manifests/kube-scheduler.yaml
+cp "$HOME"/kube-scheduler-backup.yaml /etc/kubernetes/manifests/kube-scheduler.yaml
 sleep 15
 
 # Verify the pod gets scheduled
@@ -43,6 +43,6 @@ ls /etc/kubernetes/manifests/kube-scheduler.yaml
 kubectl logs -n kube-system kube-scheduler-$(hostname)
 
 # Restore from backup
-cp /root/kube-scheduler-backup.yaml /etc/kubernetes/manifests/kube-scheduler.yaml
+cp "$HOME"/kube-scheduler-backup.yaml /etc/kubernetes/manifests/kube-scheduler.yaml
 ```
 </details>
