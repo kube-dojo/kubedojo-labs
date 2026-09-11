@@ -5,7 +5,7 @@ Kubernetes DNS provides several ways to discover services. You can use short nam
 ### Task
 
 1. From a pod in the `frontend` namespace, resolve the `api` service in the `backend` namespace using the FQDN
-2. Save the DNS resolution results to `/root/dns-results.txt`
+2. Save the DNS resolution results to `"$HOME"/dns-results.txt`
 3. Create a service named `cross-ns-test` in the `frontend` namespace of type ExternalName pointing to `api.backend.svc.cluster.local`
 
 ```bash
@@ -13,7 +13,7 @@ Kubernetes DNS provides several ways to discover services. You can use short nam
 kubectl run dns-test --image=busybox:1.36 --rm -it --restart=Never -n frontend -- nslookup api.backend.svc.cluster.local
 
 # Save results
-kubectl run dns-test2 --image=busybox:1.36 --rm -it --restart=Never -n frontend -- nslookup api.backend.svc.cluster.local > /root/dns-results.txt 2>&1
+kubectl run dns-test2 --image=busybox:1.36 --rm -it --restart=Never -n frontend -- nslookup api.backend.svc.cluster.local > "$HOME"/dns-results.txt 2>&1
 ```
 
 Then create the ExternalName service for cross-namespace shortcut:

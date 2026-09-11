@@ -6,7 +6,7 @@ The Container Network Interface (CNI) is a standard for configuring networking i
 
 1. Identify which CNI plugin is installed on this cluster
 2. List the CNI binary files in `/opt/cni/bin/`
-3. Save the name of the active CNI plugin to `/root/cni-plugin.txt`
+3. Save the name of the active CNI plugin to `"$HOME"/cni-plugin.txt`
 
 ```bash
 # Check CNI configuration directory
@@ -29,7 +29,7 @@ Save the CNI plugin name:
 
 ```bash
 # Determine the plugin name and save it
-echo "weave" > /root/cni-plugin.txt  # or calico, flannel, etc.
+echo "weave" > "$HOME"/cni-plugin.txt  # or calico, flannel, etc.
 ```
 
 <details>
