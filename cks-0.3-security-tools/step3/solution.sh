@@ -1,5 +1,5 @@
 #!/bin/bash
-cat > /root/test-pod.yaml << 'YAML'
+cat > "$HOME"/test-pod.yaml << 'YAML'
 apiVersion: v1
 kind: Pod
 metadata:
@@ -10,7 +10,7 @@ spec:
     image: nginx
 YAML
 
-cat > /root/secure-pod.yaml << 'YAML'
+cat > "$HOME"/secure-pod.yaml << 'YAML'
 apiVersion: v1
 kind: Pod
 metadata:
@@ -30,13 +30,13 @@ YAML
 
 KUBESEC_OK=false
 if command -v kubesec &>/dev/null; then
-  kubesec scan /root/test-pod.yaml > /root/kubesec-results.json 2>/dev/null
-  [ -s /root/kubesec-results.json ] && KUBESEC_OK=true
+  kubesec scan "$HOME"/test-pod.yaml > "$HOME"/kubesec-results.json 2>/dev/null
+  [ -s "$HOME"/kubesec-results.json ] && KUBESEC_OK=true
 fi
 
 if [ "$KUBESEC_OK" = true ]; then
-  kubesec scan /root/secure-pod.yaml > /root/kubesec-secure.json 2>/dev/null
+  kubesec scan "$HOME"/secure-pod.yaml > "$HOME"/kubesec-secure.json 2>/dev/null
 else
-  echo '[{"object":"Pod/test-pod","valid":true,"score":-1,"scoring":{"advise":[{"id":"RunAsNonRoot","reason":"Run as non-root"}]}}]' > /root/kubesec-results.json
-  echo '[{"object":"Pod/secure-pod","valid":true,"score":7,"scoring":{"passed":[{"id":"RunAsNonRoot","reason":"Runs as non-root"}]}}]' > /root/kubesec-secure.json
+  echo '[{"object":"Pod/test-pod","valid":true,"score":-1,"scoring":{"advise":[{"id":"RunAsNonRoot","reason":"Run as non-root"}]}}]' > "$HOME"/kubesec-results.json
+  echo '[{"object":"Pod/secure-pod","valid":true,"score":7,"scoring":{"passed":[{"id":"RunAsNonRoot","reason":"Runs as non-root"}]}}]' > "$HOME"/kubesec-secure.json
 fi

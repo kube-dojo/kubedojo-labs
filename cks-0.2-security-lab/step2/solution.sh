@@ -17,4 +17,4 @@ rules:
       - group: ""
         resources: ["*"]
 POLICY
-echo "3" > /root/audit-rule-count.txt
+echo "3" > "$HOME"/audit-rule-count.txt

@@ -7,4 +7,4 @@ kubectl run fix-me-2 --image=nginx -n exam-practice --overrides='{"spec":{"conta
 
 kubectl wait --for=condition=Ready pod/fix-me-1 -n exam-practice --timeout=60s 2>/dev/null || true
 kubectl wait --for=condition=Ready pod/fix-me-2 -n exam-practice --timeout=60s 2>/dev/null || true
-kubectl get pod fix-me-1 -n exam-practice -o jsonpath='{.spec.containers[0].securityContext}' > /root/fix1-context.txt
+kubectl get pod fix-me-1 -n exam-practice -o jsonpath='{.spec.containers[0].securityContext}' > "$HOME"/fix1-context.txt
