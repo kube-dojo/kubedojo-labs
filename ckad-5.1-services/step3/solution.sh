@@ -13,4 +13,4 @@ spec:
   - port: 80
     targetPort: 80
 YAML
-echo "None" > /root/headless-ip.txt
+echo "None" > "$HOME"/headless-ip.txt

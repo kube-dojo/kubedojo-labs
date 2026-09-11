@@ -10,4 +10,4 @@ spec:
   policyTypes:
   - Ingress
 YAML
-echo "default-deny-ingress" > /root/deny-policy.txt
+echo "default-deny-ingress" > "$HOME"/deny-policy.txt
