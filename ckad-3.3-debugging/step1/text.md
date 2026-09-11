@@ -11,7 +11,7 @@ The pod `crasher` in `debug-lab` is in CrashLoopBackOff. Find and fix the issue.
    ```
    kubectl run crasher --image=busybox:1.36 -n debug-lab -- sh -c "echo running; sleep 3600"
    ```
-5. Save the exit code reason to `/root/crash-reason.txt` (write "exit 1" as the reason).
+5. Save the exit code reason to `"$HOME"/crash-reason.txt` (write "exit 1" as the reason).
 
 ## Hint
 

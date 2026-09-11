@@ -6,15 +6,15 @@
    ```
    kubectl api-versions
    ```
-   Save the output to `/root/api-versions.txt`.
+   Save the output to `"$HOME"/api-versions.txt`.
 
 2. List all API resources with their API group and version:
    ```
    kubectl api-resources -o wide
    ```
-   Save the output to `/root/api-resources.txt`.
+   Save the output to `"$HOME"/api-resources.txt`.
 
-3. Find the preferred API version for Deployments and save it to `/root/deployment-api.txt`. Use:
+3. Find the preferred API version for Deployments and save it to `"$HOME"/deployment-api.txt`. Use:
    ```
    kubectl api-resources | grep -w deployments
    ```

@@ -6,8 +6,8 @@
    ```
    kubectl logs log-generator -n logging-lab -c sidecar --tail=5
    ```
-2. Save the sidecar logs (last 5 lines) to `/root/sidecar-logs.txt`.
-3. List all container names in `log-generator` and save to `/root/container-names.txt`:
+2. Save the sidecar logs (last 5 lines) to `"$HOME"/sidecar-logs.txt`.
+3. List all container names in `log-generator` and save to `"$HOME"/container-names.txt`:
    ```
    kubectl get pod log-generator -n logging-lab -o jsonpath='{.spec.containers[*].name}'
    ```

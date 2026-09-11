@@ -2,7 +2,7 @@
 
 ## Task
 
-1. Apply the manifest at `/root/old-manifest.yaml` to the cluster.
+1. Apply the manifest at `"$HOME"/old-manifest.yaml` to the cluster.
 2. Check the API version used by the deployed resource:
    ```
    kubectl get deployment legacy-app -n api-lab -o yaml | head -5
@@ -11,7 +11,7 @@
    ```
    kubectl explain deployment.spec.strategy
    ```
-4. Save the output of `kubectl explain deployment --api-version=apps/v1` (first 10 lines) to `/root/explain-output.txt`.
+4. Save the output of `kubectl explain deployment --api-version=apps/v1` (first 10 lines) to `"$HOME"/explain-output.txt`.
 
 ## Hint
 

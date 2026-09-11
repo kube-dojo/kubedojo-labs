@@ -7,17 +7,17 @@
    ```
    kubectl exec debug-target -n debug-lab -- nginx -v
    ```
-   Save the nginx version to `/root/nginx-version.txt`.
+   Save the nginx version to `"$HOME"/nginx-version.txt`.
 3. Use `kubectl exec -it` to check the filesystem:
    ```
    kubectl exec debug-target -n debug-lab -- ls /etc/nginx/
    ```
-   Save the output to `/root/nginx-config-list.txt`.
+   Save the output to `"$HOME"/nginx-config-list.txt`.
 4. Check DNS resolution from inside the pod:
    ```
    kubectl exec debug-target -n debug-lab -- cat /etc/resolv.conf
    ```
-   Save the nameserver to `/root/dns-server.txt`.
+   Save the nameserver to `"$HOME"/dns-server.txt`.
 
 ## Hint
 

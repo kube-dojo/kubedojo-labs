@@ -6,9 +6,9 @@
    ```
    kubectl top pods -n monitoring-lab --sort-by=cpu
    ```
-2. The `stress-pod` should be consuming the most CPU. Save its name to `/root/high-cpu-pod.txt`.
+2. The `stress-pod` should be consuming the most CPU. Save its name to `"$HOME"/high-cpu-pod.txt`.
 3. Delete the `stress-pod` to reclaim resources.
-4. Verify it is deleted and save the remaining pod count to `/root/remaining-pods.txt`.
+4. Verify it is deleted and save the remaining pod count to `"$HOME"/remaining-pods.txt`.
 
 ## Hint
 

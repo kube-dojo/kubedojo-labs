@@ -15,7 +15,7 @@ Startup probes protect slow-starting applications. Once the startup probe succee
    - Image: `nginx:1.25`
    - Liveness probe: HTTP GET on `/nonexistent` port 80, `initialDelaySeconds: 1`, `periodSeconds: 3`, `failureThreshold: 3`
 
-3. Wait 15 seconds then check the restart count of `failing-probe`. It should have been restarted. Save the restart count to `/root/restart-count.txt`.
+3. Wait 15 seconds then check the restart count of `failing-probe`. It should have been restarted. Save the restart count to `"$HOME"/restart-count.txt`.
 
 ## Hint
 
