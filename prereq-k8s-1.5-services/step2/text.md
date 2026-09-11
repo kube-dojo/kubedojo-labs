@@ -32,7 +32,7 @@ Kubernetes creates DNS entries for every service. From inside a pod, you could r
 Curl the `web-svc` ClusterIP and save the response to:
 
 ```
-/root/curl-output.txt
+"$HOME"/curl-output.txt
 ```
 
 <details>
@@ -40,6 +40,6 @@ Curl the `web-svc` ClusterIP and save the response to:
 
 ```bash
 CLUSTER_IP=$(kubectl get svc web-svc -o jsonpath='{.spec.clusterIP}')
-curl -s --retry 5 --retry-delay 2 --retry-connrefused $CLUSTER_IP > /root/curl-output.txt
+curl -s --retry 5 --retry-delay 2 --retry-connrefused $CLUSTER_IP > "$HOME"/curl-output.txt
 ```
 </details>

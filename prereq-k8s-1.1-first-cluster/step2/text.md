@@ -32,7 +32,7 @@ kubectl get pods -n kube-system --no-headers | wc -l
 Count the number of pods running in the `kube-system` namespace and save that number to:
 
 ```
-/root/cp-pod-count.txt
+"$HOME"/cp-pod-count.txt
 ```
 
 The file should contain just the number (e.g., `7`).
@@ -41,6 +41,6 @@ The file should contain just the number (e.g., `7`).
 <summary>Hint</summary>
 
 ```bash
-kubectl get pods -n kube-system --no-headers | wc -l | tr -d ' ' > /root/cp-pod-count.txt
+kubectl get pods -n kube-system --no-headers | wc -l | tr -d ' ' > "$HOME"/cp-pod-count.txt
 ```
 </details>
