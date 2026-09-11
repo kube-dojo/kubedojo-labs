@@ -17,8 +17,8 @@ Linux capabilities divide root privileges into distinct units. Containers should
        drop: ["ALL"]
        add: ["NET_BIND_SERVICE"]
    ```
-3. List the default capabilities granted to containers and save to `/root/default-caps.txt`.
-4. Test what capabilities each pod has and save to `/root/caps-comparison.txt`.
+3. List the default capabilities granted to containers and save to `"$HOME"/default-caps.txt`.
+4. Test what capabilities each pod has and save to `"$HOME"/caps-comparison.txt`.
 
 ## Hint
 

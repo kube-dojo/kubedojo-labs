@@ -10,9 +10,9 @@ Prevent pods from accessing host resources like the host network, PID namespace,
    - `hostIPC: false`
 2. Create a pod named `hostnet-pod` in `host-lab` with `hostNetwork: true` (for comparison).
 3. Compare the network interfaces visible in each pod:
-   - Save `isolated-pod` interfaces to `/root/isolated-interfaces.txt`
-   - Save `hostnet-pod` interfaces to `/root/hostnet-interfaces.txt`
-4. Document in `/root/host-namespace-risks.txt` the security risks of each host namespace setting.
+   - Save `isolated-pod` interfaces to `"$HOME"/isolated-interfaces.txt`
+   - Save `hostnet-pod` interfaces to `"$HOME"/hostnet-interfaces.txt`
+4. Document in `"$HOME"/host-namespace-risks.txt` the security risks of each host namespace setting.
 
 ## Hint
 
