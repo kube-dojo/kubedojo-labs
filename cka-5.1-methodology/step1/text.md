@@ -6,7 +6,7 @@ The first step in any troubleshooting workflow is gathering information. `kubect
 
 1. Identify why the pod `broken-app` in the `practice` namespace is not running
 2. Fix the pod so it runs successfully
-3. Save the original error message to `/root/diagnosis.txt`
+3. Save the original error message to `"$HOME"/diagnosis.txt`
 
 ```bash
 # Step 1: Check pod status
@@ -19,7 +19,7 @@ kubectl describe pod broken-app -n practice
 kubectl get events -n practice --sort-by='.lastTimestamp'
 
 # Step 4: Save diagnosis
-kubectl describe pod broken-app -n practice | grep -A5 "Events:" > /root/diagnosis.txt
+kubectl describe pod broken-app -n practice | grep -A5 "Events:" > "$HOME"/diagnosis.txt
 ```
 
 <details>

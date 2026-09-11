@@ -6,7 +6,7 @@ The first step in control plane troubleshooting is checking the health of all co
 
 1. Check control plane pod status in `kube-system`
 2. Verify component health using the API
-3. Save the health report to `/root/cp-health.txt`
+3. Save the health report to `"$HOME"/cp-health.txt`
 
 ```bash
 # Check control plane pods
@@ -24,9 +24,9 @@ for endpoint in healthz livez readyz; do
 done
 
 # Save health report
-kubectl get pods -n kube-system -l tier=control-plane -o wide > /root/cp-health.txt
-echo "---" >> /root/cp-health.txt
-curl -sk https://localhost:6443/healthz >> /root/cp-health.txt
+kubectl get pods -n kube-system -l tier=control-plane -o wide > "$HOME"/cp-health.txt
+echo "---" >> "$HOME"/cp-health.txt
+curl -sk https://localhost:6443/healthz >> "$HOME"/cp-health.txt
 ```
 
 <details>

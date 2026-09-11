@@ -6,7 +6,7 @@ Events are short-lived records of what happened in the cluster. They are essenti
 
 1. List all events in the `practice` namespace sorted by time
 2. Filter events for warnings only
-3. Save the event summary to `/root/events.txt`
+3. Save the event summary to `"$HOME"/events.txt`
 
 ```bash
 # All events in practice namespace, sorted by time
@@ -22,10 +22,10 @@ kubectl get events -n practice --field-selector=involvedObject.name=event-genera
 kubectl get events --all-namespaces --sort-by='.lastTimestamp' | tail -20
 
 # Save event summary
-kubectl get events -n practice --sort-by='.lastTimestamp' -o wide > /root/events.txt
-echo "---" >> /root/events.txt
-echo "=== Warning Events ===" >> /root/events.txt
-kubectl get events -n practice --field-selector=type=Warning >> /root/events.txt 2>&1
+kubectl get events -n practice --sort-by='.lastTimestamp' -o wide > "$HOME"/events.txt
+echo "---" >> "$HOME"/events.txt
+echo "=== Warning Events ===" >> "$HOME"/events.txt
+kubectl get events -n practice --field-selector=type=Warning >> "$HOME"/events.txt 2>&1
 ```
 
 <details>

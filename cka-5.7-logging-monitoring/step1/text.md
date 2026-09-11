@@ -6,7 +6,7 @@ kubectl logs is the primary tool for viewing container output. It supports multi
 
 1. View logs from both containers in the `multi-log` pod
 2. Follow logs in real-time from the `app` container (briefly)
-3. Get logs from the previous hour and save to `/root/app-logs.txt`
+3. Get logs from the previous hour and save to `"$HOME"/app-logs.txt`
 
 ```bash
 # View logs from specific container
@@ -20,7 +20,7 @@ kubectl logs multi-log -n practice -c app -f --tail=5
 kubectl logs multi-log -n practice -c app --since=1h --timestamps
 
 # Save logs
-kubectl logs multi-log -n practice -c app --since=1h --timestamps > /root/app-logs.txt
+kubectl logs multi-log -n practice -c app --since=1h --timestamps > "$HOME"/app-logs.txt
 
 # View logs from all containers simultaneously
 kubectl logs multi-log -n practice --all-containers=true --prefix=true | tail -20

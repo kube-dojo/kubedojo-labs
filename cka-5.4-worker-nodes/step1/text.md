@@ -4,7 +4,7 @@ Kubernetes tracks multiple conditions on each node that indicate its health stat
 
 ### Task
 
-1. Check all node conditions and save them to `/root/node-conditions.txt`
+1. Check all node conditions and save them to `"$HOME"/node-conditions.txt`
 2. Verify all conditions show healthy status
 3. Check node allocatable resources
 
@@ -16,7 +16,7 @@ kubectl describe node | grep -A20 "Conditions:"
 kubectl get nodes -o jsonpath='{range .items[*]}{.metadata.name}{"\n"}{range .status.conditions[*]}  {.type}={.status}{"\n"}{end}{end}'
 
 # Save conditions
-kubectl get nodes -o jsonpath='{range .items[*]}{.metadata.name}{"\n"}{range .status.conditions[*]}  {.type}={.status} - {.message}{"\n"}{end}{end}' > /root/node-conditions.txt
+kubectl get nodes -o jsonpath='{range .items[*]}{.metadata.name}{"\n"}{range .status.conditions[*]}  {.type}={.status} - {.message}{"\n"}{end}{end}' > "$HOME"/node-conditions.txt
 
 # Check allocatable resources
 kubectl describe node | grep -A6 "Allocatable:"

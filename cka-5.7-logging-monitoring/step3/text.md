@@ -6,7 +6,7 @@ Monitoring CPU and memory usage helps identify performance issues and right-size
 
 1. Install the metrics-server (if not already present)
 2. Check node and pod resource usage with `kubectl top`
-3. Save resource usage to `/root/resource-usage.txt`
+3. Save resource usage to `"$HOME"/resource-usage.txt`
 
 ```bash
 # Install metrics-server
@@ -28,14 +28,14 @@ kubectl top pods -n practice
 kubectl top pods --all-namespaces --sort-by=memory | head -10
 
 # Save results
-echo "=== Node Resource Usage ===" > /root/resource-usage.txt
-kubectl top nodes >> /root/resource-usage.txt 2>&1
-echo "" >> /root/resource-usage.txt
-echo "=== Pod Resource Usage (practice) ===" >> /root/resource-usage.txt
-kubectl top pods -n practice >> /root/resource-usage.txt 2>&1
-echo "" >> /root/resource-usage.txt
-echo "=== Top Memory Consumers ===" >> /root/resource-usage.txt
-kubectl top pods --all-namespaces --sort-by=memory >> /root/resource-usage.txt 2>&1
+echo "=== Node Resource Usage ===" > "$HOME"/resource-usage.txt
+kubectl top nodes >> "$HOME"/resource-usage.txt 2>&1
+echo "" >> "$HOME"/resource-usage.txt
+echo "=== Pod Resource Usage (practice) ===" >> "$HOME"/resource-usage.txt
+kubectl top pods -n practice >> "$HOME"/resource-usage.txt 2>&1
+echo "" >> "$HOME"/resource-usage.txt
+echo "=== Top Memory Consumers ===" >> "$HOME"/resource-usage.txt
+kubectl top pods --all-namespaces --sort-by=memory >> "$HOME"/resource-usage.txt 2>&1
 ```
 
 <details>

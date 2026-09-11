@@ -5,7 +5,7 @@ etcd stores all cluster state. Understanding how to check its health and create 
 ### Task
 
 1. Check etcd health using `etcdctl`
-2. Create an etcd snapshot saved to `/root/etcd-backup.db`
+2. Create an etcd snapshot saved to `"$HOME"/etcd-backup.db`
 3. Verify the snapshot
 
 ```bash
@@ -26,10 +26,10 @@ ETCDCTL_API=3 etcdctl \
   --cacert=/etc/kubernetes/pki/etcd/ca.crt \
   --cert=/etc/kubernetes/pki/etcd/healthcheck-client.crt \
   --key=/etc/kubernetes/pki/etcd/healthcheck-client.key \
-  snapshot save /root/etcd-backup.db
+  snapshot save "$HOME"/etcd-backup.db
 
 # Verify snapshot
-ETCDCTL_API=3 etcdctl snapshot status /root/etcd-backup.db --write-table
+ETCDCTL_API=3 etcdctl snapshot status "$HOME"/etcd-backup.db --write-table
 ```
 
 <details>

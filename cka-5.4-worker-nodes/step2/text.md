@@ -7,7 +7,7 @@ The kubelet is the primary node agent. When it fails, the node stops managing po
 1. Check the kubelet service status
 2. View recent kubelet logs
 3. Examine the kubelet configuration
-4. Save kubelet config details to `/root/kubelet-config.txt`
+4. Save kubelet config details to `"$HOME"/kubelet-config.txt`
 
 ```bash
 # Check kubelet status
@@ -23,11 +23,11 @@ ps aux | grep kubelet | grep config
 cat /var/lib/kubelet/config.yaml | head -30
 
 # Save config details
-echo "=== Kubelet Status ===" > /root/kubelet-config.txt
-systemctl is-active kubelet >> /root/kubelet-config.txt
-echo "" >> /root/kubelet-config.txt
-echo "=== Key Config ===" >> /root/kubelet-config.txt
-grep -E "clusterDNS|clusterDomain|staticPodPath|cgroupDriver" /var/lib/kubelet/config.yaml >> /root/kubelet-config.txt
+echo "=== Kubelet Status ===" > "$HOME"/kubelet-config.txt
+systemctl is-active kubelet >> "$HOME"/kubelet-config.txt
+echo "" >> "$HOME"/kubelet-config.txt
+echo "=== Key Config ===" >> "$HOME"/kubelet-config.txt
+grep -E "clusterDNS|clusterDomain|staticPodPath|cgroupDriver" /var/lib/kubelet/config.yaml >> "$HOME"/kubelet-config.txt
 ```
 
 <details>
