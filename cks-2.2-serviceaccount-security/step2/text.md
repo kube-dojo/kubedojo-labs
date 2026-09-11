@@ -8,8 +8,8 @@ Projected tokens are short-lived and audience-scoped, replacing long-lived secre
    - `expirationSeconds: 3600`
    - `audience: api`
    - Mounted at `/var/run/secrets/tokens`
-2. Verify the projected token is mounted and save its path listing to `/root/projected-token.txt`.
-3. Create `/root/token-comparison.txt` explaining the difference between legacy and projected tokens (at least 3 differences).
+2. Verify the projected token is mounted and save its path listing to `"$HOME"/projected-token.txt`.
+3. Create `"$HOME"/token-comparison.txt` explaining the difference between legacy and projected tokens (at least 3 differences).
 
 ## Hint
 

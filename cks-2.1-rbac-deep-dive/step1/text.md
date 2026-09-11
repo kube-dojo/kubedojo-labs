@@ -13,7 +13,7 @@ Design roles that grant the minimum permissions required for each use case.
    - `get` on `pods/log`
 3. Create a ClusterRole named `node-viewer` that allows:
    - `get`, `list`, `watch` on `nodes`
-4. Save all three role YAML definitions to `/root/roles.yaml`.
+4. Save all three role YAML definitions to `"$HOME"/roles.yaml`.
 
 ## Hint
 
