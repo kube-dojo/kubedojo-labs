@@ -12,12 +12,12 @@ FALCO_OUTPUT=false
   journalctl -u falco --no-pager 2>/dev/null | tail -30
   echo "---"
   cat /var/log/falco/falco.log 2>/dev/null | tail -20
-} > /root/falco-detections.txt 2>&1
+} > "$HOME"/falco-detections.txt 2>&1
 
-[ -s /root/falco-detections.txt ] && grep -qv "^---$" /root/falco-detections.txt && FALCO_OUTPUT=true
+[ -s "$HOME"/falco-detections.txt ] && grep -qv "^---$" "$HOME"/falco-detections.txt && FALCO_OUTPUT=true
 
 if [ "$FALCO_OUTPUT" = false ]; then
-  cat > /root/falco-detections.txt << 'DETECTIONS'
+  cat > "$HOME"/falco-detections.txt << 'DETECTIONS'
 Falco not running in kind cluster — expected detections based on custom rules:
 
 1. WARNING: Shell spawned in container (container=test-pod command=cat /etc/shadow)
@@ -37,7 +37,7 @@ syslog, or be forwarded to a SIEM via Falcosidekick.
 DETECTIONS
 fi
 
-cat > /root/incident-response.txt << 'IR'
+cat > "$HOME"/incident-response.txt << 'IR'
 === Incident Response Plan ===
 
 Event: Shell exec into container

@@ -1,5 +1,5 @@
 #!/bin/bash
-cat > /root/audit-analyzer.sh << 'ANALYZERSCRIPT'
+cat > "$HOME"/audit-analyzer.sh << 'ANALYZERSCRIPT'
 #!/bin/bash
 LOG="/var/log/kubernetes/audit/audit.log"
 NODE=$(docker ps --filter "name=control-plane" --format "{{.Names}}" 2>/dev/null | head -1)
@@ -48,10 +48,10 @@ else
   kubectl get events -A --sort-by=.lastTimestamp 2>/dev/null | tail -10 || echo "  No events found"
 fi
 ANALYZERSCRIPT
-chmod +x /root/audit-analyzer.sh
-/root/audit-analyzer.sh > /root/audit-analysis.txt 2>&1
+chmod +x "$HOME"/audit-analyzer.sh
+"$HOME"/audit-analyzer.sh > "$HOME"/audit-analysis.txt 2>&1
 
-cat > /root/suspicious-patterns.txt << 'PATTERNS'
+cat > "$HOME"/suspicious-patterns.txt << 'PATTERNS'
 Suspicious Audit Patterns:
 
 1. Secret enumeration — many list/get requests on secrets from a single user

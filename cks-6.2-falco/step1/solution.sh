@@ -14,9 +14,9 @@ fi
 mkdir -p /etc/falco
 
 if [ "$FALCO_INSTALLED" = true ]; then
-  systemctl status falco > /root/falco-status.txt 2>&1
+  systemctl status falco > "$HOME"/falco-status.txt 2>&1
 else
-  cat > /root/falco-status.txt << 'STATUS'
+  cat > "$HOME"/falco-status.txt << 'STATUS'
 Falco not installed (kind cluster — no kernel module support).
 In production, Falco would run as:
   - A DaemonSet with kernel module or eBPF probe
@@ -25,7 +25,7 @@ In production, Falco would run as:
 STATUS
 fi
 
-cat > /root/falco-rules-paths.txt << 'PATHS'
+cat > "$HOME"/falco-rules-paths.txt << 'PATHS'
 /etc/falco/falco_rules.yaml — Default rules (do not edit)
 /etc/falco/falco_rules.local.yaml — Custom rules (add your rules here)
 /etc/falco/falco.yaml — Falco configuration
@@ -33,9 +33,9 @@ cat > /root/falco-rules-paths.txt << 'PATHS'
 PATHS
 
 if [ -f /etc/falco/falco_rules.yaml ]; then
-  head -50 /etc/falco/falco_rules.yaml > /root/default-rules-sample.txt
+  head -50 /etc/falco/falco_rules.yaml > "$HOME"/default-rules-sample.txt
 else
-  cat > /root/default-rules-sample.txt << 'SAMPLE'
+  cat > "$HOME"/default-rules-sample.txt << 'SAMPLE'
 # Falco Default Rules (sample — Falco not installed in kind)
 # These detect common security threats:
 - rule: Terminal shell in container

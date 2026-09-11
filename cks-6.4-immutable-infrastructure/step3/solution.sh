@@ -1,5 +1,5 @@
 #!/bin/bash
-cat > /root/immutability-audit.sh << 'SCRIPT'
+cat > "$HOME"/immutability-audit.sh << 'SCRIPT'
 #!/bin/bash
 echo "=== Immutability Audit Report ==="
 echo "Date: $(date)"
@@ -25,10 +25,10 @@ for pod in data['items']:
 print(f'\n=== Summary: {compliant} compliant, {non_compliant} non-compliant ===')
 " 2>/dev/null || echo "Could not parse pod data"
 SCRIPT
-chmod +x /root/immutability-audit.sh
-/root/immutability-audit.sh > /root/immutability-report.txt
+chmod +x "$HOME"/immutability-audit.sh
+"$HOME"/immutability-audit.sh > "$HOME"/immutability-report.txt
 
-cat > /root/immutability-best-practices.txt << 'BEST'
+cat > "$HOME"/immutability-best-practices.txt << 'BEST'
 1. Default readOnlyRootFilesystem: true for all containers — use emptyDir for writable paths
 2. Use distroless or scratch base images — no shell means no interactive compromise
 3. Enforce immutability with PodSecurity admission and custom policies (OPA/Kyverno)

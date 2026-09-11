@@ -5,7 +5,7 @@ kubectl label namespace immutable-enforced \
   pod-security.kubernetes.io/warn=restricted --overwrite
 
 # Test non-compliant pod (should fail)
-kubectl run non-compliant --image=nginx -n immutable-enforced > /root/enforce-test.txt 2>&1 || true
+kubectl run non-compliant --image=nginx -n immutable-enforced > "$HOME"/enforce-test.txt 2>&1 || true
 
 # Create compliant pod
 cat <<YAML | kubectl apply -f -
@@ -32,7 +32,7 @@ spec:
 YAML
 kubectl wait --for=condition=Ready pod/compliant-pod -n immutable-enforced --timeout=120s 2>/dev/null || true
 
-cat > /root/immutability-patterns.txt << 'PATTERNS'
+cat > "$HOME"/immutability-patterns.txt << 'PATTERNS'
 What makes a container immutable:
 - readOnlyRootFilesystem: true — prevents all filesystem writes
 - No shell or package manager in the image (distroless)

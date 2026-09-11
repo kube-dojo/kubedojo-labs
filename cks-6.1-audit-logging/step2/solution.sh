@@ -127,15 +127,15 @@ sleep 5
 
 # --- Collect audit log sample ---
 if [ "$TARGET" = "local" ] && [ -f /var/log/kubernetes/audit/audit.log ]; then
-  head -20 /var/log/kubernetes/audit/audit.log > /root/audit-sample.txt 2>/dev/null
+  head -20 /var/log/kubernetes/audit/audit.log > "$HOME"/audit-sample.txt 2>/dev/null
 elif [ "$TARGET" = "kind" ] && [ -n "$NODE" ]; then
-  docker exec "$NODE" cat /var/log/kubernetes/audit/audit.log 2>/dev/null | head -20 > /root/audit-sample.txt 2>/dev/null
+  docker exec "$NODE" cat /var/log/kubernetes/audit/audit.log 2>/dev/null | head -20 > "$HOME"/audit-sample.txt 2>/dev/null
 fi
 
 # Fallback: if no real audit log (manifest edit failed or was rolled back), write
 # a documented example so the verify can still pass and the learner sees the format.
-if [ ! -s /root/audit-sample.txt ]; then
-  cat > /root/audit-sample.txt << 'SAMPLE'
+if [ ! -s "$HOME"/audit-sample.txt ]; then
+  cat > "$HOME"/audit-sample.txt << 'SAMPLE'
 Audit logging configuration was applied to the API server manifest with these flags:
   --audit-policy-file=/etc/kubernetes/audit/policy.yaml
   --audit-log-path=/var/log/kubernetes/audit/audit.log
