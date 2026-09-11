@@ -11,7 +11,7 @@ The kubelet has its own CIS benchmark checks. Fix common configuration issues.
    - `readOnlyPort: 0` (disable read-only port)
    - `protectKernelDefaults: true`
 3. Restart the kubelet after changes: `systemctl restart kubelet`
-4. Verify the kubelet is running and save its status to `/root/kubelet-status.txt`.
+4. Verify the kubelet is running and save its status to `"$HOME"/kubelet-status.txt`.
 
 ## Hint
 

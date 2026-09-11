@@ -4,8 +4,8 @@ Verify the NetworkPolicy is effective and document the security control.
 
 ## Task
 
-1. Test metadata access from `test-pod` again and save to `/root/metadata-test-after.txt`.
-2. Create `/root/metadata-controls.txt` documenting:
+1. Test metadata access from `test-pod` again and save to `"$HOME"/metadata-test-after.txt`.
+2. Create `"$HOME"/metadata-controls.txt` documenting:
    - The NetworkPolicy name and namespace
    - What IP is blocked
    - Why this control is important (one sentence)

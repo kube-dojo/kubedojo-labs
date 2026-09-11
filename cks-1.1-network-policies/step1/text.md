@@ -6,7 +6,7 @@ The first step in network security is to deny all traffic by default, then allow
 
 1. Create a NetworkPolicy named `deny-all-ingress` in the `backend` namespace that denies all ingress traffic to all pods.
 2. Create a NetworkPolicy named `deny-all-egress` in the `backend` namespace that denies all egress traffic from all pods.
-3. Verify that traffic from `frontend/web` to `backend/api` is blocked by running a test and saving the result to `/root/netpol-test-1.txt` (should show connection refused or timeout).
+3. Verify that traffic from `frontend/web` to `backend/api` is blocked by running a test and saving the result to `"$HOME"/netpol-test-1.txt` (should show connection refused or timeout).
 
 ## Hint
 

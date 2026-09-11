@@ -8,8 +8,8 @@ Create a complete network security posture for a three-tier application.
    - Applies to pods with label `app=db`
    - Allows ingress only from pods with label `app=api` on TCP port 80
    - Denies all egress
-2. Save a summary of all NetworkPolicies in the `backend` namespace to `/root/netpol-summary.txt`.
-3. Create `/root/traffic-matrix.txt` documenting the allowed traffic flows:
+2. Save a summary of all NetworkPolicies in the `backend` namespace to `"$HOME"/netpol-summary.txt`.
+3. Create `"$HOME"/traffic-matrix.txt` documenting the allowed traffic flows:
    - One line per allowed flow in format: `source -> destination : port`
 
 ## Hint
