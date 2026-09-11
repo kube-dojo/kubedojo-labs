@@ -2,20 +2,20 @@
 
 ## Task
 
-1. Export the `legacy-app` deployment to `/root/migrated-manifest.yaml`:
+1. Export the `legacy-app` deployment to `"$HOME"/migrated-manifest.yaml`:
    ```
-   kubectl get deployment legacy-app -n api-lab -o yaml > /root/migrated-manifest.yaml
+   kubectl get deployment legacy-app -n api-lab -o yaml > "$HOME"/migrated-manifest.yaml
    ```
 2. Clean up the exported YAML by removing unnecessary fields (resourceVersion, uid, creationTimestamp, status, managedFields). You can do this manually or with:
    ```
-   kubectl get deployment legacy-app -n api-lab -o yaml | kubectl neat > /root/clean-manifest.yaml
+   kubectl get deployment legacy-app -n api-lab -o yaml | kubectl neat > "$HOME"/clean-manifest.yaml
    ```
    If `kubectl neat` is not available, simply ensure the apiVersion is `apps/v1`.
 3. Verify the manifest is valid by doing a dry-run apply:
    ```
-   kubectl apply -f /root/migrated-manifest.yaml --dry-run=server
+   kubectl apply -f "$HOME"/migrated-manifest.yaml --dry-run=server
    ```
-4. Save "apps/v1" to `/root/final-api-version.txt` to confirm the correct API version.
+4. Save "apps/v1" to `"$HOME"/final-api-version.txt` to confirm the correct API version.
 
 ## Hint
 

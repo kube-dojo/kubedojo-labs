@@ -6,11 +6,11 @@
    ```
    command: ["sh", "-c", "while true; do echo \"INFO: all good\"; echo \"ERROR: something failed\"; echo \"WARN: check this\"; sleep 3; done"]
    ```
-2. Wait for it to run, then extract only ERROR lines and save to `/root/error-logs.txt`:
+2. Wait for it to run, then extract only ERROR lines and save to `"$HOME"/error-logs.txt`:
    ```
-   kubectl logs search-app -n logging-lab | grep ERROR > /root/error-logs.txt
+   kubectl logs search-app -n logging-lab | grep ERROR > "$HOME"/error-logs.txt
    ```
-3. Count the ERROR lines and save the count to `/root/error-count.txt`.
+3. Count the ERROR lines and save the count to `"$HOME"/error-count.txt`.
 
 ## Hint
 
