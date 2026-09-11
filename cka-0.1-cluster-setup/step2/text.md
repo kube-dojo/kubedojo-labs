@@ -12,7 +12,7 @@ The Kubernetes control plane runs as pods in the `kube-system` namespace. Key co
 
 1. List all pods in the `kube-system` namespace.
 2. Find the API server pod name.
-3. Save the full pod name to `/root/apiserver-pod.txt`.
+3. Save the full pod name to `$HOME/apiserver-pod.txt`.
 
 ## Hint
 

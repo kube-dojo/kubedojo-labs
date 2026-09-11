@@ -18,7 +18,7 @@ The `--dry-run=client -o yaml` flags tell kubectl to generate the YAML without a
 
 ## Task
 
-Generate a Deployment YAML for nginx with 2 replicas and save it to `/root/nginx-deploy.yaml`.
+Generate a Deployment YAML for nginx with 2 replicas and save it to `$HOME/nginx-deploy.yaml`.
 
 The YAML must contain:
 - `replicas: 2`
@@ -28,6 +28,6 @@ The YAML must contain:
 <summary>Hint</summary>
 
 ```bash
-kubectl create deployment nginx --image=nginx --replicas=2 --dry-run=client -o yaml > /root/nginx-deploy.yaml
+kubectl create deployment nginx --image=nginx --replicas=2 --dry-run=client -o yaml > "$HOME"/nginx-deploy.yaml
 ```
 </details>
