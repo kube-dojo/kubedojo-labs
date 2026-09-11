@@ -12,16 +12,16 @@ done
 
 # Read kernel version with retry (exec can fail briefly after Ready)
 for i in $(seq 1 5); do
-  kubectl exec standard-pod -n sandbox-lab -- cat /proc/version > /root/standard-kernel.txt 2>/dev/null && break
+  kubectl exec standard-pod -n sandbox-lab -- cat /proc/version > "$HOME"/standard-kernel.txt 2>/dev/null && break
   sleep 2
 done
 
 # Fallback if exec still fails
-if [ ! -s /root/standard-kernel.txt ]; then
-  uname -a > /root/standard-kernel.txt 2>/dev/null || echo "Linux kernel (shared with host — no sandbox isolation)" > /root/standard-kernel.txt
+if [ ! -s "$HOME"/standard-kernel.txt ]; then
+  uname -a > "$HOME"/standard-kernel.txt 2>/dev/null || echo "Linux kernel (shared with host — no sandbox isolation)" > "$HOME"/standard-kernel.txt
 fi
 
-cat > /root/isolation-matrix.txt << 'MATRIX'
+cat > "$HOME"/isolation-matrix.txt << 'MATRIX'
 | Feature            | runc (default) | gVisor (runsc)    | Kata Containers     |
 |--------------------|----------------|-------------------|---------------------|
 | Kernel shared      | Yes            | No (user-space)   | No (VM kernel)      |
@@ -32,7 +32,7 @@ cat > /root/isolation-matrix.txt << 'MATRIX'
 | Use case           | Trusted apps   | Untrusted code    | Max isolation       |
 MATRIX
 
-cat > /root/sandbox-decision.txt << 'DECISION'
+cat > "$HOME"/sandbox-decision.txt << 'DECISION'
 Multi-tenant SaaS platform:
   Recommendation: gVisor or Kata Containers
   Reason: Untrusted tenant code needs kernel-level isolation to prevent container escapes

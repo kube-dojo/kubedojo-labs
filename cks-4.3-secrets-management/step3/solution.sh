@@ -7,9 +7,9 @@ kubectl create rolebinding secret-reader-binding --role=secret-reader --servicea
   echo "Can get secrets: $(kubectl auth can-i get secrets -n secrets-lab --as=system:serviceaccount:secrets-lab:app-sa 2>&1)"
   echo "Can list secrets: $(kubectl auth can-i list secrets -n secrets-lab --as=system:serviceaccount:secrets-lab:app-sa 2>&1)"
   echo "Can create secrets: $(kubectl auth can-i create secrets -n secrets-lab --as=system:serviceaccount:secrets-lab:app-sa 2>&1)"
-} > /root/secret-rbac-test.txt
+} > "$HOME"/secret-rbac-test.txt
 
-cat > /root/secrets-best-practices.txt << 'BEST'
+cat > "$HOME"/secrets-best-practices.txt << 'BEST'
 1. Enable encryption at rest for secrets in etcd
 2. Use RBAC to restrict get/list/watch on secrets to only necessary ServiceAccounts
 3. Avoid storing secrets in environment variables — use volume mounts instead
