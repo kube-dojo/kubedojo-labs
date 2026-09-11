@@ -40,7 +40,7 @@ YAML
   kubectl wait --for=condition=Ready pod/sysctl-pod -n kernel-lab --timeout=60s 2>/dev/null || true
 fi
 
-cat > /root/safe-sysctls.txt << 'SAFE'
+cat > "$HOME"/safe-sysctls.txt << 'SAFE'
 kernel.shm_rmid_forced
 net.ipv4.ip_local_port_range
 net.ipv4.tcp_syncookies
@@ -48,7 +48,7 @@ net.ipv4.ping_group_range
 net.ipv4.ip_unprivileged_port_start
 SAFE
 
-cat > /root/unsafe-sysctls.txt << 'UNSAFE'
+cat > "$HOME"/unsafe-sysctls.txt << 'UNSAFE'
 kernel.msg* (IPC namespace — may affect other pods)
 kernel.sem (IPC namespace)
 kernel.shm* (IPC namespace)
@@ -62,14 +62,14 @@ if command -v sysctl &>/dev/null; then
     echo "net.ipv4.ip_forward = $(sysctl -n net.ipv4.ip_forward 2>/dev/null || echo 'N/A')"
     echo "kernel.panic = $(sysctl -n kernel.panic 2>/dev/null || echo 'N/A')"
     echo "net.ipv4.conf.all.send_redirects = $(sysctl -n net.ipv4.conf.all.send_redirects 2>/dev/null || echo 'N/A')"
-  } > /root/node-sysctls.txt
+  } > "$HOME"/node-sysctls.txt
 else
   # Try reading from kind node
   NODE=$(docker ps --filter "name=control-plane" --format "{{.Names}}" 2>/dev/null | head -1)
   if [ -n "$NODE" ]; then
-    docker exec "$NODE" sysctl net.ipv4.ip_forward kernel.panic net.ipv4.conf.all.send_redirects > /root/node-sysctls.txt 2>&1
+    docker exec "$NODE" sysctl net.ipv4.ip_forward kernel.panic net.ipv4.conf.all.send_redirects > "$HOME"/node-sysctls.txt 2>&1
   else
-    cat > /root/node-sysctls.txt << 'DEFAULTS'
+    cat > "$HOME"/node-sysctls.txt << 'DEFAULTS'
 net.ipv4.ip_forward = 1
 kernel.panic = 10
 net.ipv4.conf.all.send_redirects = 1

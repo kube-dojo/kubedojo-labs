@@ -1,5 +1,5 @@
 #!/bin/bash
-cat > /root/hardened-pod.yaml << 'YAML'
+cat > "$HOME"/hardened-pod.yaml << 'YAML'
 apiVersion: v1
 kind: Pod
 metadata:
@@ -34,10 +34,10 @@ spec:
   - name: tmp
     emptyDir: {}
 YAML
-kubectl apply -f /root/hardened-pod.yaml
+kubectl apply -f "$HOME"/hardened-pod.yaml
 kubectl wait --for=condition=Ready pod/hardened-complete -n kernel-lab --timeout=60s 2>&1 || true
 
-cat > /root/hardening-checklist.txt << 'CHECKLIST'
+cat > "$HOME"/hardening-checklist.txt << 'CHECKLIST'
 1. runAsNonRoot: true — prevents running as root
 2. runAsUser: 1000 — explicit non-root user
 3. readOnlyRootFilesystem: true — prevents filesystem writes

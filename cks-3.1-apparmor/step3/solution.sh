@@ -17,7 +17,7 @@ profile k8s-nginx flags=(attach_disconnected,mediate_deleted) {
   /usr/sbin/nginx ix,
 
   deny /tmp/** w,
-  deny /root/** rw,
+  deny "$HOME"/** rw,
 }
 PROFILE
 
@@ -61,10 +61,10 @@ kubectl wait --for=condition=Ready pod/nginx-hardened -n apparmor-lab --timeout=
 
 POD_IP=$(kubectl get pod nginx-hardened -n apparmor-lab -o jsonpath='{.status.podIP}' 2>/dev/null)
 if [ -n "$POD_IP" ]; then
-  kubectl run curl-test --image=curlimages/curl --rm --restart=Never -- curl -s "http://$POD_IP" > /root/nginx-test.txt 2>&1 || true
+  kubectl run curl-test --image=curlimages/curl --rm --restart=Never -- curl -s "http://$POD_IP" > "$HOME"/nginx-test.txt 2>&1 || true
   kubectl wait --for=condition=Ready pod/curl-test --timeout=30s 2>/dev/null || true
   sleep 3
-  kubectl logs curl-test > /root/nginx-test.txt 2>&1 || true
+  kubectl logs curl-test > "$HOME"/nginx-test.txt 2>&1 || true
   kubectl delete pod curl-test --grace-period=0 --force 2>/dev/null || true
 fi
-[ -s /root/nginx-test.txt ] || echo "Nginx hardened pod created with k8s-nginx AppArmor profile" > /root/nginx-test.txt
+[ -s "$HOME"/nginx-test.txt ] || echo "Nginx hardened pod created with k8s-nginx AppArmor profile" > "$HOME"/nginx-test.txt

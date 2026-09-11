@@ -46,5 +46,5 @@ for i in $(seq 1 30); do
   sleep 2
 done
 
-kubectl get pod nginx-strict-seccomp -n seccomp-lab -o wide > /root/strict-pod-status.txt 2>&1
-[ -s /root/strict-pod-status.txt ] || echo "Pod created with Localhost seccomp profile (may be pending if profile not on node)" > /root/strict-pod-status.txt
+kubectl get pod nginx-strict-seccomp -n seccomp-lab -o wide > "$HOME"/strict-pod-status.txt 2>&1
+[ -s "$HOME"/strict-pod-status.txt ] || echo "Pod created with Localhost seccomp profile (may be pending if profile not on node)" > "$HOME"/strict-pod-status.txt

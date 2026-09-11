@@ -30,7 +30,7 @@ YAML
 kubectl wait --for=condition=Ready pod/no-caps -n kernel-lab --timeout=60s 2>&1 || true
 kubectl wait --for=condition=Ready pod/net-caps -n kernel-lab --timeout=60s 2>&1 || true
 
-cat > /root/default-caps.txt << 'CAPS'
+cat > "$HOME"/default-caps.txt << 'CAPS'
 Default Docker/containerd capabilities:
 CHOWN, DAC_OVERRIDE, FSETID, FOWNER, MKNOD, NET_RAW, SETGID, SETUID,
 SETFCAP, SETPCAP, NET_BIND_SERVICE, SYS_CHROOT, KILL, AUDIT_WRITE
@@ -42,4 +42,4 @@ CAPS
   echo ""
   echo "=== net-caps pod ==="
   kubectl exec net-caps -n kernel-lab -- cat /proc/1/status 2>/dev/null | grep Cap || echo "Cannot read capabilities"
-} > /root/caps-comparison.txt
+} > "$HOME"/caps-comparison.txt

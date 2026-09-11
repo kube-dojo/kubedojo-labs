@@ -34,7 +34,7 @@ for i in $(seq 1 30); do
   sleep 2
 done
 
-cat > /root/seccomp-best-practices.txt << 'BEST'
+cat > "$HOME"/seccomp-best-practices.txt << 'BEST'
 1. Use RuntimeDefault as the minimum baseline for all pods
 2. Create custom Localhost profiles for sensitive workloads with minimal syscall allow-lists
 3. Use audit mode (SCMP_ACT_LOG) to discover required syscalls before enforcing
