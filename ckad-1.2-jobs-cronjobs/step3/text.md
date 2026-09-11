@@ -9,7 +9,7 @@ CronJobs create Jobs on a repeating schedule using cron syntax.
    - Command: `sh -c "echo Report generated at $(date)"`
    - Schedule: `*/1 * * * *` (every minute)
    - `successfulJobsHistoryLimit: 3`
-2. Save the schedule of the CronJob to `/root/cron-schedule.txt`.
+2. Save the schedule of the CronJob to `"$HOME"/cron-schedule.txt`.
 3. Manually trigger the CronJob by creating a Job from it:
    ```
    kubectl create job reporter-manual --from=cronjob/reporter -n jobs-lab

@@ -13,7 +13,7 @@ Now use the PVC you created to persist data in a pod.
    kubectl exec pvc-pod -n volumes-lab -- cat /data/output.txt
    ```
 
-3. Save the output to `/root/persistent-output.txt`.
+3. Save the output to `"$HOME"/persistent-output.txt`.
 
 ## Hint
 

@@ -10,7 +10,7 @@ Jobs can run multiple pods in parallel and require a specific number of successf
    - `completions: 4`
    - `parallelism: 2`
 2. Wait for all 4 completions.
-3. Save the total number of succeeded pods to `/root/parallel-count.txt`.
+3. Save the total number of succeeded pods to `"$HOME"/parallel-count.txt`.
 
 ## Hint
 
