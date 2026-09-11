@@ -9,7 +9,7 @@ Recreate kills all existing pods before creating new ones. Use this when your ap
    - Replicas: 3
    - Strategy: `Recreate`
 2. Update the image to `httpd:2.4.59`.
-3. Save the strategy type to `/root/recreate-strategy.txt`.
+3. Save the strategy type to `"$HOME"/recreate-strategy.txt`.
 
 ## Hint
 

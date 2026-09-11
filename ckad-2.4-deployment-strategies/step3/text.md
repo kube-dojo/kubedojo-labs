@@ -11,7 +11,7 @@ Blue-green deployments run two versions simultaneously and switch traffic by upd
    ```
    kubectl patch svc myapp-svc -n strategy-lab -p '{"spec":{"selector":{"version":"green"}}}'
    ```
-5. Save the current service selector version to `/root/active-version.txt`.
+5. Save the current service selector version to `"$HOME"/active-version.txt`.
 
 ## Hint
 

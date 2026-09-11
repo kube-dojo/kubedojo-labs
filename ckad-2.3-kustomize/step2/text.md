@@ -2,7 +2,7 @@
 
 ## Task
 
-1. Create `/root/kustomize/overlays/staging/kustomization.yaml`:
+1. Create `"$HOME"/kustomize/overlays/staging/kustomization.yaml`:
    ```yaml
    resources:
    - ../../base
@@ -18,7 +18,7 @@
          value: 2
    ```
 
-2. Create `/root/kustomize/overlays/production/kustomization.yaml`:
+2. Create `"$HOME"/kustomize/overlays/production/kustomization.yaml`:
    ```yaml
    resources:
    - ../../base
@@ -35,8 +35,8 @@
    ```
 
 3. Build both overlays and save outputs:
-   - `kubectl kustomize /root/kustomize/overlays/staging/ > /root/staging-output.yaml`
-   - `kubectl kustomize /root/kustomize/overlays/production/ > /root/production-output.yaml`
+   - `kubectl kustomize "$HOME"/kustomize/overlays/staging/ > "$HOME"/staging-output.yaml`
+   - `kubectl kustomize "$HOME"/kustomize/overlays/production/ > "$HOME"/production-output.yaml`
 
 ## Hint
 

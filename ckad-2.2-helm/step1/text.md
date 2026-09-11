@@ -12,7 +12,7 @@
    ```
    helm install web-app bitnami/nginx -n helm-lab
    ```
-4. List Helm releases in `helm-lab` and save the output to `/root/helm-releases.txt`.
+4. List Helm releases in `helm-lab` and save the output to `"$HOME"/helm-releases.txt`.
 
 ## Hint
 

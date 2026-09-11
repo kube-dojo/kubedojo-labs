@@ -2,8 +2,8 @@
 
 ## Task
 
-1. Create directory `/root/kustomize/base/`.
-2. Create `/root/kustomize/base/deployment.yaml`:
+1. Create directory `"$HOME"/kustomize/base/`.
+2. Create `"$HOME"/kustomize/base/deployment.yaml`:
    ```yaml
    apiVersion: apps/v1
    kind: Deployment
@@ -25,7 +25,7 @@
            ports:
            - containerPort: 80
    ```
-3. Create `/root/kustomize/base/service.yaml`:
+3. Create `"$HOME"/kustomize/base/service.yaml`:
    ```yaml
    apiVersion: v1
    kind: Service
@@ -38,13 +38,13 @@
      - port: 80
        targetPort: 80
    ```
-4. Create `/root/kustomize/base/kustomization.yaml`:
+4. Create `"$HOME"/kustomize/base/kustomization.yaml`:
    ```yaml
    resources:
    - deployment.yaml
    - service.yaml
    ```
-5. Build and verify: `kubectl kustomize /root/kustomize/base/` — save output to `/root/base-output.yaml`.
+5. Build and verify: `kubectl kustomize "$HOME"/kustomize/base/` — save output to `"$HOME"/base-output.yaml`.
 
 ## Hint
 

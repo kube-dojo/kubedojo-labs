@@ -6,7 +6,7 @@
 2. Record the change by annotating: `kubectl annotate deployment webapp -n deploy-lab kubernetes.io/change-cause="Update to nginx 1.25"`.
 3. Wait for the rollout to complete.
 4. Verify the new image is `nginx:1.25`.
-5. Save the rollout status output to `/root/rollout-status.txt` using `kubectl rollout status deployment/webapp -n deploy-lab`.
+5. Save the rollout status output to `"$HOME"/rollout-status.txt` using `kubectl rollout status deployment/webapp -n deploy-lab`.
 
 ## Hint
 
