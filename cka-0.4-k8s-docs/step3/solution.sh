@@ -1,4 +1,4 @@
 #!/bin/bash
-kubectl create deployment nginx --image=nginx --replicas=2 --dry-run=client -o yaml > /root/nginx-deploy.yaml
-echo "Generated /root/nginx-deploy.yaml:"
-cat /root/nginx-deploy.yaml
+kubectl create deployment nginx --image=nginx --replicas=2 --dry-run=client -o yaml > "$HOME"/nginx-deploy.yaml
+echo "Generated $HOME/nginx-deploy.yaml:"
+cat "$HOME"/nginx-deploy.yaml

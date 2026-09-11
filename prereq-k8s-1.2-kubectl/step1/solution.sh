@@ -1,2 +1,2 @@
 #!/bin/bash
-kubectl get pods -n kube-system > /root/kube-system-pods.txt
+kubectl get pods -n kube-system > "$HOME"/kube-system-pods.txt
