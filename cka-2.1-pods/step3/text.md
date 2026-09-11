@@ -12,7 +12,7 @@ Create a pod named `resource-pod` in the `practice` namespace with:
 
 ```bash
 # You can use --dry-run to generate a base YAML and edit it
-kubectl run resource-pod --image=nginx:1.25 -n practice --dry-run=client -o yaml > /root/resource-pod.yaml
+kubectl run resource-pod --image=nginx:1.25 -n practice --dry-run=client -o yaml > $HOME/resource-pod.yaml
 ```
 
 <details>

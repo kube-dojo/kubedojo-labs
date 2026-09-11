@@ -18,18 +18,18 @@ The VPA adjusts CPU and memory requests/limits for containers based on actual us
 
 3. Save the resource usage output to a file:
    ```bash
-   kubectl top pods -n practice > /root/resource-usage.txt 2>&1 || \
-     echo "Metrics not yet available — this is expected in some lab environments" > /root/resource-usage.txt
+   kubectl top pods -n practice > $HOME/resource-usage.txt 2>&1 || \
+     echo "Metrics not yet available — this is expected in some lab environments" > $HOME/resource-usage.txt
    ```
 
 4. Also check node resource usage:
    ```bash
-   kubectl top nodes >> /root/resource-usage.txt 2>&1 || true
+   kubectl top nodes >> $HOME/resource-usage.txt 2>&1 || true
    ```
 
 5. Review the file:
    ```bash
-   cat /root/resource-usage.txt
+   cat $HOME/resource-usage.txt
    ```
 
 <details>
