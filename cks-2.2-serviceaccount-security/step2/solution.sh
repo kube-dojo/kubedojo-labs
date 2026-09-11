@@ -26,9 +26,9 @@ spec:
 YAML
 
 kubectl wait --for=condition=Ready pod/projected-token-pod -n sa-lab --timeout=60s 2>/dev/null || true
-kubectl exec projected-token-pod -n sa-lab -- ls -la /var/run/secrets/tokens/ > /root/projected-token.txt 2>&1 || echo "Projected token volume mounted (token file present)" > /root/projected-token.txt
+kubectl exec projected-token-pod -n sa-lab -- ls -la /var/run/secrets/tokens/ > "$HOME"/projected-token.txt 2>&1 || echo "Projected token volume mounted (token file present)" > "$HOME"/projected-token.txt
 
-cat > /root/token-comparison.txt << 'COMPARE'
+cat > "$HOME"/token-comparison.txt << 'COMPARE'
 1. Lifetime: Legacy tokens are long-lived (no expiry); projected tokens expire (e.g., 1 hour)
 2. Audience: Legacy tokens have no audience; projected tokens are audience-scoped
 3. Storage: Legacy tokens are stored in Secrets; projected tokens are generated on-demand by kubelet
