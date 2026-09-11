@@ -9,8 +9,8 @@ Trigger security events and practice responding to them.
    - Exec into the pod: `kubectl exec -it test-pod -n falco-lab -- bash`
    - Read `/etc/shadow` inside the container
    - Write to `/etc/` directory
-3. Check Falco logs for detections: `journalctl -u falco --no-pager | tail -30` (or `/var/log/falco/falco.log`). Save to `/root/falco-detections.txt`.
-4. Create `/root/incident-response.txt` documenting:
+3. Check Falco logs for detections: `journalctl -u falco --no-pager | tail -30` (or `/var/log/falco/falco.log`). Save to `$HOME/falco-detections.txt`.
+4. Create `$HOME/incident-response.txt` documenting:
    - What events were detected
    - How to respond to each event type
    - How to investigate further

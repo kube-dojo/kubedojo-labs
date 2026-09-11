@@ -10,9 +10,9 @@ Configure containers with read-only root filesystems and minimal writable direct
    - `allowPrivilegeEscalation: false`
    - Drop ALL capabilities, add NET_BIND_SERVICE
    - emptyDir volumes for `/var/cache/nginx`, `/var/run`, `/tmp`
-2. Verify nginx starts and serves traffic. Save test result to `/root/immutable-test.txt`.
-3. Verify that writing to the root filesystem fails. Save error to `/root/write-denied.txt`.
-4. Verify that writing to the emptyDir volume `/tmp` succeeds. Save result to `/root/tmp-write.txt`.
+2. Verify nginx starts and serves traffic. Save test result to `$HOME/immutable-test.txt`.
+3. Verify that writing to the root filesystem fails. Save error to `$HOME/write-denied.txt`.
+4. Verify that writing to the emptyDir volume `/tmp` succeeds. Save result to `$HOME/tmp-write.txt`.
 
 ## Hint
 

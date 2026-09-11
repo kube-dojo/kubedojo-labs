@@ -10,7 +10,7 @@ Create custom rules to detect Kubernetes-specific security events.
    - Detect when a process writes to `/etc/` inside a container
    - Detect when a container runs as root (UID 0)
 2. Each rule needs: `rule`, `desc`, `condition`, `output`, and `priority`.
-3. Save a copy to `/root/custom-rules.yaml`.
+3. Save a copy to `$HOME/custom-rules.yaml`.
 
 ## Hint
 

@@ -12,7 +12,7 @@ Design an audit policy that captures security-relevant events without overwhelmi
    - Log pod creation/deletion at `Request` level
    - Log all other resources at `Metadata` level
 2. Validate the policy has the correct apiVersion (`audit.k8s.io/v1`) and kind (`Policy`).
-3. Save a count of rules to `/root/audit-rule-count.txt`.
+3. Save a count of rules to `$HOME/audit-rule-count.txt`.
 
 ## Hint
 
