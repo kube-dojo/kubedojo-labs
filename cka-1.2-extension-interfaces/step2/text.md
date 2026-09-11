@@ -9,7 +9,7 @@ The CNI plugin provides pod networking. Common plugins include Calico, Flannel, 
 
 ## Task
 
-Identify the CNI plugin used by the cluster and save the name to `/root/cni-plugin.txt`.
+Identify the CNI plugin used by the cluster and save the name to `$HOME/cni-plugin.txt`.
 
 Check both `/etc/cni/net.d/` directory and CNI-related pods in `kube-system`.
 
@@ -18,6 +18,6 @@ Check both `/etc/cni/net.d/` directory and CNI-related pods in `kube-system`.
 
 Run `ls /etc/cni/net.d/` to see CNI config files. 
 ```bash
-ls /etc/cni/net.d/ | head -1 > /root/cni-plugin.txt
+ls /etc/cni/net.d/ | head -1 > "$HOME"/cni-plugin.txt
 ```
 </details>

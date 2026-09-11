@@ -11,10 +11,10 @@ kubectl delete -k <dir>              # Delete resources
 
 ## Task
 
-Apply the production overlay to the cluster using `kubectl apply -k /root/overlays/prod/`.
+Apply the production overlay to the cluster using `kubectl apply -k "$HOME"/overlays/prod/`.
 
 Verify that a deployment named `prod-myapp` exists in the cluster.
 
 ## Hint
 
-Run `kubectl apply -k /root/overlays/prod/` and then `kubectl get deployment prod-myapp`.
+Run `kubectl apply -k "$HOME"/overlays/prod/` and then `kubectl get deployment prod-myapp`.

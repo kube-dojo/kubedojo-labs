@@ -12,12 +12,12 @@ The kubelet watches this directory and ensures these pods are always running.
 
 ## Task
 
-List the YAML files in `/etc/kubernetes/manifests/` and save the list to `/root/static-pods.txt`.
+List the YAML files in `/etc/kubernetes/manifests/` and save the list to `$HOME/static-pods.txt`.
 
 <details>
 <summary>Hint</summary>
 
 ```bash
-ls /etc/kubernetes/manifests/ > /root/static-pods.txt
+ls /etc/kubernetes/manifests/ > "$HOME"/static-pods.txt
 ```
 </details>

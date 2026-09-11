@@ -9,7 +9,7 @@ The CSI allows storage vendors to provide drivers for Kubernetes without modifyi
 
 ## Task
 
-List all storage classes in the cluster and save the output to `/root/storage-classes.txt`.
+List all storage classes in the cluster and save the output to `$HOME/storage-classes.txt`.
 
 If no storage classes exist, save the text "no storage classes found" to the file.
 
@@ -17,6 +17,6 @@ If no storage classes exist, save the text "no storage classes found" to the fil
 <summary>Hint</summary>
 
 ```bash
-kubectl get storageclass > /root/storage-classes.txt
+kubectl get storageclass > "$HOME"/storage-classes.txt
 ```
 </details>

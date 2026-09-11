@@ -14,7 +14,7 @@ Before upgrading a cluster, you should always run `kubeadm upgrade plan` to see:
 
 ## Task
 
-Run `kubeadm upgrade plan` and save the output to `/root/upgrade-plan.txt`.
+Run `kubeadm upgrade plan` and save the output to `$HOME/upgrade-plan.txt`.
 
 This is a read-only operation and will not modify your cluster.
 
@@ -22,6 +22,6 @@ This is a read-only operation and will not modify your cluster.
 <summary>Hint</summary>
 
 ```bash
-kubeadm upgrade plan > /root/upgrade-plan.txt 2>&1
+kubeadm upgrade plan > "$HOME"/upgrade-plan.txt 2>&1
 ```
 </details>

@@ -12,12 +12,12 @@ kubectl auth can-i '*' '*'                                     # Am I a cluster 
 
 ## Task
 
-Check if the `default` ServiceAccount in the `rbac-test` namespace can get pods, and save the result (`yes` or `no`) to `/root/can-i-result.txt`.
+Check if the `default` ServiceAccount in the `rbac-test` namespace can get pods, and save the result (`yes` or `no`) to `$HOME/can-i-result.txt`.
 
 <details>
 <summary>Hint</summary>
 
 ```bash
-kubectl auth can-i get pods --as=system:serviceaccount:rbac-test:default -n rbac-test > /root/can-i-result.txt
+kubectl auth can-i get pods --as=system:serviceaccount:rbac-test:default -n rbac-test > "$HOME"/can-i-result.txt
 ```
 </details>

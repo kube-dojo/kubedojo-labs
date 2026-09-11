@@ -16,13 +16,13 @@ overlays/
 
 ## Task
 
-Create a production overlay in `/root/overlays/prod/` that:
+Create a production overlay in `$HOME/overlays/prod/` that:
 
 1. References the base at `../../base`
 2. Adds `namePrefix: prod-`
 3. Patches the deployment to use `replicas: 3`
 
-Verify with `kubectl kustomize /root/overlays/prod/` — the output should show `prod-myapp` with 3 replicas.
+Verify with `kubectl kustomize "$HOME"/overlays/prod/` — the output should show `prod-myapp` with 3 replicas.
 
 <details>
 <summary>Hint</summary>

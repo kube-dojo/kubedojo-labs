@@ -11,7 +11,7 @@ kubectl explain <resource>            # Explore custom resource fields
 
 ## Task
 
-List all CRDs in the cluster and save the count (number of CRDs) to `/root/crd-count.txt`.
+List all CRDs in the cluster and save the count (number of CRDs) to `$HOME/crd-count.txt`.
 
 If there are no CRDs, save `0`.
 
@@ -19,6 +19,6 @@ If there are no CRDs, save `0`.
 <summary>Hint</summary>
 
 ```bash
-kubectl get crd --no-headers 2>/dev/null | wc -l > /root/crd-count.txt
+kubectl get crd --no-headers 2>/dev/null | wc -l > "$HOME"/crd-count.txt
 ```
 </details>
