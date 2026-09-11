@@ -4,15 +4,15 @@ Review which admission controllers are enabled and their security impact.
 
 ## Task
 
-1. List the currently enabled admission plugins from the API server manifest. Save to `/root/enabled-plugins.txt`.
-2. Create `/root/security-plugins.txt` documenting these security-relevant admission controllers:
+1. List the currently enabled admission plugins from the API server manifest. Save to `"$HOME"/enabled-plugins.txt`.
+2. Create `"$HOME"/security-plugins.txt` documenting these security-relevant admission controllers:
    - AlwaysPullImages
    - DenyServiceExternalIPs
    - NodeRestriction
    - PodSecurity
    - ServiceAccount
-3. Check if `AlwaysPullImages` is enabled. Save "enabled" or "disabled" to `/root/always-pull-status.txt`.
-4. Explain in `/root/admission-flow.txt` the order: Authentication -> Authorization -> Mutating Admission -> Validating Admission -> Persistence.
+3. Check if `AlwaysPullImages` is enabled. Save "enabled" or "disabled" to `"$HOME"/always-pull-status.txt`.
+4. Explain in `"$HOME"/admission-flow.txt` the order: Authentication -> Authorization -> Mutating Admission -> Validating Admission -> Persistence.
 
 ## Hint
 

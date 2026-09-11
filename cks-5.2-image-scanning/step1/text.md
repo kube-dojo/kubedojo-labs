@@ -4,10 +4,10 @@ Use trivy to scan container images and identify vulnerabilities.
 
 ## Task
 
-1. Scan `nginx:1.19` and save the full report to `/root/scan-nginx-old.txt`.
-2. Scan `nginx:latest` and save to `/root/scan-nginx-new.txt`.
-3. Scan only for CRITICAL and HIGH severity: `trivy image --severity CRITICAL,HIGH nginx:1.19`. Save to `/root/scan-critical.txt`.
-4. Generate a JSON report: `trivy image -f json nginx:1.19 > /root/scan-report.json`.
+1. Scan `nginx:1.19` and save the full report to `"$HOME"/scan-nginx-old.txt`.
+2. Scan `nginx:latest` and save to `"$HOME"/scan-nginx-new.txt`.
+3. Scan only for CRITICAL and HIGH severity: `trivy image --severity CRITICAL,HIGH nginx:1.19`. Save to `"$HOME"/scan-critical.txt`.
+4. Generate a JSON report: `trivy image -f json nginx:1.19 > "$HOME"/scan-report.json`.
 
 ## Hint
 

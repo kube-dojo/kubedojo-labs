@@ -9,13 +9,13 @@ Tags are mutable — the same tag can point to different images over time. Diges
    crictl pull nginx:latest
    crictl images | grep nginx
    ```
-   Save the image digest to `/root/nginx-digest.txt`.
+   Save the image digest to `"$HOME"/nginx-digest.txt`.
 2. Create a pod named `pinned-pod` in `image-lab` using the digest instead of the tag:
    ```
    image: nginx@sha256:<digest>
    ```
-3. Verify the pod is using the digest by inspecting its spec. Save to `/root/pinned-image.txt`.
-4. Create `/root/image-tag-risks.txt` documenting why tags are risky (at least 3 reasons).
+3. Verify the pod is using the digest by inspecting its spec. Save to `"$HOME"/pinned-image.txt`.
+4. Create `"$HOME"/image-tag-risks.txt` documenting why tags are risky (at least 3 reasons).
 
 ## Hint
 
