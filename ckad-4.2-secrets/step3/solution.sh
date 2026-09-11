@@ -20,4 +20,4 @@ spec:
       secretName: db-creds
 YAML
 kubectl wait --for=condition=Ready pod/secret-vol-pod -n secrets-lab --timeout=60s
-kubectl exec secret-vol-pod -n secrets-lab -- cat /etc/secrets/username > /root/mounted-username.txt
+kubectl exec secret-vol-pod -n secrets-lab -- cat /etc/secrets/username > "$HOME"/mounted-username.txt

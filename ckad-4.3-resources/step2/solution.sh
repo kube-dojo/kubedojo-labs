@@ -17,4 +17,4 @@ spec:
 YAML
 kubectl run auto-limits --image=nginx:1.25 -n resources-lab
 kubectl wait --for=condition=Ready pod/auto-limits -n resources-lab --timeout=60s
-kubectl get pod auto-limits -n resources-lab -o jsonpath='{.spec.containers[0].resources.limits.cpu}' > /root/auto-cpu-limit.txt
+kubectl get pod auto-limits -n resources-lab -o jsonpath='{.spec.containers[0].resources.limits.cpu}' > "$HOME"/auto-cpu-limit.txt

@@ -19,4 +19,4 @@ spec:
       name: file-config
 YAML
 kubectl wait --for=condition=Ready pod/vol-pod -n cm-lab --timeout=60s
-kubectl exec vol-pod -n cm-lab -- cat /etc/config/app.properties > /root/mounted-config.txt
+kubectl exec vol-pod -n cm-lab -- cat /etc/config/app.properties > "$HOME"/mounted-config.txt

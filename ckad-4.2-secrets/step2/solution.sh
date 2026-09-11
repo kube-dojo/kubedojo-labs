@@ -23,4 +23,4 @@ spec:
           key: password
 YAML
 kubectl wait --for=condition=Ready pod/secret-env-pod -n secrets-lab --timeout=60s
-kubectl exec secret-env-pod -n secrets-lab -- printenv DB_USER > /root/db-user.txt
+kubectl exec secret-env-pod -n secrets-lab -- printenv DB_USER > "$HOME"/db-user.txt

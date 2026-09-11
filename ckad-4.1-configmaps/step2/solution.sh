@@ -15,4 +15,4 @@ spec:
         name: app-config
 YAML
 kubectl wait --for=condition=Ready pod/env-pod -n cm-lab --timeout=60s
-kubectl exec env-pod -n cm-lab -- printenv APP_ENV > /root/app-env-value.txt
+kubectl exec env-pod -n cm-lab -- printenv APP_ENV > "$HOME"/app-env-value.txt

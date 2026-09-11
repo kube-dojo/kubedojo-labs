@@ -16,4 +16,4 @@ spec:
     command: ["sh", "-c", "id; sleep 3600"]
 YAML
 kubectl wait --for=condition=Ready pod/user-pod -n security-lab --timeout=60s
-kubectl logs user-pod -n security-lab > /root/user-id.txt
+kubectl logs user-pod -n security-lab > "$HOME"/user-id.txt

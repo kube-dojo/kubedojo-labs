@@ -28,4 +28,4 @@ spec:
         memory: "128Mi"
 YAML
 kubectl wait --for=condition=Ready pod/quota-pod -n quota-lab --timeout=60s
-kubectl get resourcequota compute-quota -n quota-lab -o jsonpath='{.status.used.requests\.cpu}' > /root/used-cpu.txt
+kubectl get resourcequota compute-quota -n quota-lab -o jsonpath='{.status.used.requests\.cpu}' > "$HOME"/used-cpu.txt
