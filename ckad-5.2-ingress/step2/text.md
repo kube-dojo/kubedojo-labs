@@ -8,8 +8,8 @@
    - Use `pathType: Prefix` for both
    - Set `ingressClassName: nginx`
 
-2. Save the Ingress YAML to `/root/path-ingress.yaml`.
-3. Save the number of paths configured to `/root/path-count.txt`.
+2. Save the Ingress YAML to `"$HOME"/path-ingress.yaml`.
+3. Save the number of paths configured to `"$HOME"/path-count.txt`.
 
 ## Hint
 

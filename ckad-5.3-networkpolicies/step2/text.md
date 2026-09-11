@@ -10,7 +10,7 @@ Now allow the `web` pod to receive traffic only from pods with label `tier=front
 2. Delete the `default-deny-ingress` policy first to start clean, then create both:
    - Default deny (recreate it)
    - The new allow policy
-3. Save the number of NetworkPolicies to `/root/netpol-count.txt`.
+3. Save the number of NetworkPolicies to `"$HOME"/netpol-count.txt`.
 
 ## Hint
 

@@ -21,7 +21,7 @@ A default-deny policy blocks all traffic to pods in a namespace unless explicitl
    kubectl run test-deny --image=busybox:1.36 --rm -it --restart=Never -n netpol-lab -- wget -qO- --timeout=3 web.netpol-lab.svc.cluster.local
    ```
    This should time out.
-3. Save the policy name to `/root/deny-policy.txt`.
+3. Save the policy name to `"$HOME"/deny-policy.txt`.
 
 ## Hint
 

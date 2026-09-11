@@ -10,7 +10,7 @@
    ```
    kubectl describe networkpolicy db-policy -n netpol-lab
    ```
-3. Save the total number of NetworkPolicies in the namespace to `/root/total-policies.txt`.
+3. Save the total number of NetworkPolicies in the namespace to `"$HOME"/total-policies.txt`.
 
 ## Hint
 
