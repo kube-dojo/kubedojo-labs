@@ -22,4 +22,4 @@ spec:
       port: 80
   egress: []
 YAML
-kubectl get networkpolicies -n netpol-lab --no-headers | wc -l | tr -d ' ' > /root/total-policies.txt
+kubectl get networkpolicies -n netpol-lab --no-headers | wc -l | tr -d ' ' > "$HOME"/total-policies.txt

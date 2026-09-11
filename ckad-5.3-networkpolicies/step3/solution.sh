@@ -1,5 +1,5 @@
 #!/bin/bash
-cat <<YAML | tee /root/api-egress.yaml | kubectl apply -f -
+cat <<YAML | tee "$HOME"/api-egress.yaml | kubectl apply -f -
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:

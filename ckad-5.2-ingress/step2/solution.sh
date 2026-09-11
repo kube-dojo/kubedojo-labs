@@ -1,5 +1,5 @@
 #!/bin/bash
-cat <<YAML | tee /root/path-ingress.yaml | kubectl apply -f -
+cat <<YAML | tee "$HOME"/path-ingress.yaml | kubectl apply -f -
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
@@ -25,4 +25,4 @@ spec:
             port:
               number: 80
 YAML
-echo "2" > /root/path-count.txt
+echo "2" > "$HOME"/path-count.txt

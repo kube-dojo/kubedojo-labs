@@ -31,4 +31,4 @@ spec:
     - protocol: TCP
       port: 80
 YAML
-kubectl get networkpolicies -n netpol-lab --no-headers | wc -l | tr -d ' ' > /root/netpol-count.txt
+kubectl get networkpolicies -n netpol-lab --no-headers | wc -l | tr -d ' ' > "$HOME"/netpol-count.txt

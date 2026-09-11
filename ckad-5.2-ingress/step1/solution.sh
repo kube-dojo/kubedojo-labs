@@ -27,4 +27,4 @@ spec:
             port:
               number: 80
 YAML
-echo "nginx" > /root/ingress-class.txt
+echo "nginx" > "$HOME"/ingress-class.txt

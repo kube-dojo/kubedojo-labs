@@ -29,4 +29,4 @@ spec:
             port:
               number: 80
 YAML
-kubectl get ingress host-ingress -n ingress-lab -o jsonpath='{.spec.rules[*].host}' > /root/ingress-hosts.txt
+kubectl get ingress host-ingress -n ingress-lab -o jsonpath='{.spec.rules[*].host}' > "$HOME"/ingress-hosts.txt
