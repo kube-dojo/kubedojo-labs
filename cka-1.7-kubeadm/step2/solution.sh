@@ -1,4 +1,4 @@
 #!/bin/bash
-kubeadm certs check-expiration > /root/cert-expiry.txt 2>&1
+sudo kubeadm certs check-expiration > "$HOME"/cert-expiry.txt 2>&1
 echo "Certificate expiration dates:"
-cat /root/cert-expiry.txt
+cat "$HOME"/cert-expiry.txt

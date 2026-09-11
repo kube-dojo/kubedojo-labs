@@ -1,5 +1,5 @@
 #!/bin/bash
-cat > /root/daily-backup.yaml << 'EOF'
+cat > "$HOME"/daily-backup.yaml << 'EOF'
 apiVersion: kubedojo.io/v1
 kind: Backup
 metadata:
@@ -11,7 +11,7 @@ spec:
   retention: 7
 EOF
 
-kubectl apply -f /root/daily-backup.yaml
+kubectl apply -f "$HOME"/daily-backup.yaml
 echo ""
 echo "Backup resources:"
 kubectl get backups.kubedojo.io

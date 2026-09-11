@@ -1,5 +1,5 @@
 #!/bin/bash
-kubectl apply -k /root/overlays/prod/
+kubectl apply -k "$HOME"/overlays/prod/
 
 # Wait for deployments to roll out
 for deploy in $(kubectl get deployments -o name 2>/dev/null); do

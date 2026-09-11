@@ -1,4 +1,4 @@
 #!/bin/bash
-kubectl get pods -n kube-system | grep -E 'scheduler|controller-manager' > /root/cp-health.txt
+kubectl get pods -n kube-system | grep -E 'scheduler|controller-manager' > "$HOME"/cp-health.txt
 echo "Control plane health:"
-cat /root/cp-health.txt
+cat "$HOME"/cp-health.txt

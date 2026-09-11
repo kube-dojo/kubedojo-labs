@@ -1,4 +1,4 @@
 #!/bin/bash
-ls /etc/kubernetes/manifests/ > /root/static-pods.txt
+sudo ls /etc/kubernetes/manifests/ > "$HOME"/static-pods.txt
 echo "Static pod manifests:"
-cat /root/static-pods.txt
+cat "$HOME"/static-pods.txt

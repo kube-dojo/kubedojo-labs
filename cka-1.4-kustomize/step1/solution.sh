@@ -1,5 +1,5 @@
 #!/bin/bash
-cat > /root/base/deployment.yaml << 'EOF'
+cat > "$HOME"/base/deployment.yaml << 'EOF'
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -21,7 +21,7 @@ spec:
         - containerPort: 80
 EOF
 
-cat > /root/base/service.yaml << 'EOF'
+cat > "$HOME"/base/service.yaml << 'EOF'
 apiVersion: v1
 kind: Service
 metadata:
@@ -35,11 +35,11 @@ spec:
     targetPort: 80
 EOF
 
-cat > /root/base/kustomization.yaml << 'EOF'
+cat > "$HOME"/base/kustomization.yaml << 'EOF'
 resources:
   - deployment.yaml
   - service.yaml
 EOF
 
 echo "Base kustomization output:"
-kubectl kustomize /root/base/
+kubectl kustomize "$HOME"/base/

@@ -1,5 +1,5 @@
 #!/bin/bash
-cat > /root/overlays/prod/replica-patch.yaml << 'EOF'
+cat > "$HOME"/overlays/prod/replica-patch.yaml << 'EOF'
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -8,7 +8,7 @@ spec:
   replicas: 3
 EOF
 
-cat > /root/overlays/prod/kustomization.yaml << 'EOF'
+cat > "$HOME"/overlays/prod/kustomization.yaml << 'EOF'
 resources:
   - ../../base
 namePrefix: prod-
@@ -17,4 +17,4 @@ patches:
 EOF
 
 echo "Prod overlay output:"
-kubectl kustomize /root/overlays/prod/
+kubectl kustomize "$HOME"/overlays/prod/

@@ -1,4 +1,4 @@
 #!/bin/bash
-kubeadm upgrade plan > /root/upgrade-plan.txt 2>&1
+sudo kubeadm upgrade plan > "$HOME"/upgrade-plan.txt 2>&1
 echo "Upgrade plan:"
-cat /root/upgrade-plan.txt
+cat "$HOME"/upgrade-plan.txt
