@@ -11,7 +11,7 @@ Add security-focused annotations to the Ingress resource.
      - `X-Frame-Options: DENY`
      - `X-Content-Type-Options: nosniff`
      - `X-XSS-Protection: 1; mode=block`
-2. Save the updated Ingress YAML to `/root/secure-ingress-final.yaml`.
+2. Save the updated Ingress YAML to `"$HOME"/secure-ingress-final.yaml`.
 
 ## Hint
 

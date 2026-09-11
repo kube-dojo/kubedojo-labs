@@ -8,7 +8,7 @@ Create a NetworkPolicy that blocks egress to the metadata endpoint IP.
    - Applies to all pods (`podSelector: {}`)
    - Allows all egress EXCEPT to `169.254.169.254/32`
    - Use `ipBlock` with `except` to block the metadata IP
-2. Save the NetworkPolicy YAML to `/root/block-metadata.yaml`.
+2. Save the NetworkPolicy YAML to `"$HOME"/block-metadata.yaml`.
 
 ## Hint
 

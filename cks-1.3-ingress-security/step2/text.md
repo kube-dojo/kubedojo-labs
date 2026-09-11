@@ -9,7 +9,7 @@ Create an Ingress resource that terminates TLS using the secret you created.
    - TLS using `tls-secret`
    - Route to `web-app` service on port 80
    - IngressClassName: `nginx` (or omit if no controller is installed)
-2. Save the Ingress YAML to `/root/secure-ingress.yaml`.
+2. Save the Ingress YAML to `"$HOME"/secure-ingress.yaml`.
 
 ## Hint
 

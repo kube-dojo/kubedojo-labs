@@ -10,7 +10,7 @@ Limiting egress traffic prevents compromised pods from communicating with extern
      - Pods with label `app=db` in the same namespace (TCP port 80)
      - DNS (UDP port 53) to the cluster DNS CIDR
    - Denies all other egress
-2. Save the cluster DNS service IP to `/root/dns-ip.txt`.
+2. Save the cluster DNS service IP to `"$HOME"/dns-ip.txt`.
 
 ## Hint
 
