@@ -24,4 +24,4 @@ YAML
 kubectl rollout status deployment/recreate-app -n strategy-lab --timeout=60s
 kubectl set image deployment/recreate-app httpd=httpd:2.4.59 -n strategy-lab
 kubectl rollout status deployment/recreate-app -n strategy-lab --timeout=60s
-kubectl get deployment recreate-app -n strategy-lab -o jsonpath='{.spec.strategy.type}' > /root/recreate-strategy.txt
+kubectl get deployment recreate-app -n strategy-lab -o jsonpath='{.spec.strategy.type}' > "$HOME"/recreate-strategy.txt
