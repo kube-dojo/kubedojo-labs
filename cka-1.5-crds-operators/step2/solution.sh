@@ -1,5 +1,5 @@
 #!/bin/bash
-cat > /root/backup-crd.yaml << 'EOF'
+cat > "$HOME"/backup-crd.yaml << 'EOF'
 apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
@@ -32,7 +32,7 @@ spec:
                 type: integer
 EOF
 
-kubectl apply -f /root/backup-crd.yaml
+kubectl apply -f "$HOME"/backup-crd.yaml
 kubectl wait --for=condition=Established crd/backups.kubedojo.io --timeout=60s 2>/dev/null || true
 echo ""
 echo "CRD created:"

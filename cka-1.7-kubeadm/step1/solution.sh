@@ -1,7 +1,7 @@
 #!/bin/bash
-kubectl config view -o jsonpath='{.clusters[0].name}' > /root/cluster-name.txt
+kubectl config view -o jsonpath='{.clusters[0].name}' > "$HOME"/cluster-name.txt
 echo "Cluster name:"
-cat /root/cluster-name.txt
+cat "$HOME"/cluster-name.txt
 echo ""
 echo ""
 echo "Full kubeadm config:"
