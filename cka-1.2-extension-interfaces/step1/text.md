@@ -9,13 +9,13 @@ The CRI defines how the kubelet communicates with the container runtime. Modern 
 
 ## Task
 
-Identify which container runtime the cluster uses and save the name (e.g., `containerd` or `cri-o`) to `/root/container-runtime.txt`.
+Identify which container runtime the cluster uses and save the name (e.g., `containerd` or `cri-o`) to `$HOME/container-runtime.txt`.
 
 <details>
 <summary>Hint</summary>
 
 Run `kubectl get nodes -o wide` and look at the CONTAINER-RUNTIME column.
 ```bash
-kubectl get nodes -o wide | awk 'NR>1 {print $9}' | head -1 > /root/container-runtime.txt
+kubectl get nodes -o wide | awk 'NR>1 {print $9}' | head -1 > "$HOME"/container-runtime.txt
 ```
 </details>

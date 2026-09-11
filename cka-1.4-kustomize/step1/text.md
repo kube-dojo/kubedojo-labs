@@ -14,13 +14,13 @@ base/
 
 ## Task
 
-Create the following files in `/root/base/`:
+Create the following files in `$HOME/base/`:
 
 1. **deployment.yaml** — a Deployment named `myapp` with 1 replica, using image `nginx:1.27`
 2. **service.yaml** — a ClusterIP Service named `myapp` on port 80 targeting port 80
 3. **kustomization.yaml** — listing both resources
 
-Verify with `kubectl kustomize /root/base/` which should produce valid combined YAML.
+Verify with `kubectl kustomize "$HOME"/base/` which should produce valid combined YAML.
 
 <details>
 <summary>Hint</summary>

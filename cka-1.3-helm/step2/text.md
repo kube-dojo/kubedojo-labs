@@ -14,7 +14,7 @@ helm search hub <keyword>      # Search Artifact Hub
 
 1. Add the Bitnami repository: `https://charts.bitnami.com/bitnami`
 2. Update the repository cache.
-3. Search for the nginx chart and save the full chart name to `/root/nginx-chart.txt`.
+3. Search for the nginx chart and save the full chart name to `$HOME/nginx-chart.txt`.
 
 The chart name should be in the format `bitnami/nginx`.
 
@@ -24,6 +24,6 @@ The chart name should be in the format `bitnami/nginx`.
 ```bash
 helm repo add bitnami https://charts.bitnami.com/bitnami
 helm repo update
-helm search repo bitnami/nginx | grep bitnami/nginx | awk '{print $1}' | head -1 > /root/nginx-chart.txt
+helm search repo bitnami/nginx | grep bitnami/nginx | awk '{print $1}' | head -1 > "$HOME"/nginx-chart.txt
 ```
 </details>

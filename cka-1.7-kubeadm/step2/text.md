@@ -12,12 +12,12 @@ Certificates are stored in `/etc/kubernetes/pki/`.
 
 ## Task
 
-Run `kubeadm certs check-expiration` and save the output to `/root/cert-expiry.txt`.
+Run `kubeadm certs check-expiration` and save the output to `$HOME/cert-expiry.txt`.
 
 <details>
 <summary>Hint</summary>
 
 ```bash
-kubeadm certs check-expiration > /root/cert-expiry.txt 2>&1
+kubeadm certs check-expiration > "$HOME"/cert-expiry.txt 2>&1
 ```
 </details>
