@@ -44,7 +44,7 @@ kubectl get node $NODE -o jsonpath='{.status.addresses[0].address}'
 Get the **InternalIP** of the node using jsonpath and save it to:
 
 ```
-/root/node-ip.txt
+"$HOME"/node-ip.txt
 ```
 
 <details>
@@ -54,13 +54,13 @@ The InternalIP is in `.status.addresses`. You need the one where `type` is `Inte
 
 ```bash
 NODE=$(kubectl get nodes -o jsonpath='{.items[0].metadata.name}')
-kubectl get node $NODE -o jsonpath='{.status.addresses[?(@.type=="InternalIP")].address}' > /root/node-ip.txt
+kubectl get node $NODE -o jsonpath='{.status.addresses[?(@.type=="InternalIP")].address}' > "$HOME"/node-ip.txt
 ```
 
 Or if you know it's the first address:
 
 ```bash
 NODE=$(kubectl get nodes -o jsonpath='{.items[0].metadata.name}')
-kubectl get node $NODE -o jsonpath='{.status.addresses[0].address}' > /root/node-ip.txt
+kubectl get node $NODE -o jsonpath='{.status.addresses[0].address}' > "$HOME"/node-ip.txt
 ```
 </details>

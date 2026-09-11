@@ -47,13 +47,13 @@ This is like having the Kubernetes API documentation right in your terminal.
 Generate a Pod manifest for a pod named `nginx` using the `nginx:1.25` image with `--dry-run=client -o yaml` and save it to:
 
 ```
-/root/nginx-pod.yaml
+"$HOME"/nginx-pod.yaml
 ```
 
 <details>
 <summary>Hint</summary>
 
 ```bash
-kubectl run nginx --image=nginx:1.25 --dry-run=client -o yaml > /root/nginx-pod.yaml
+kubectl run nginx --image=nginx:1.25 --dry-run=client -o yaml > "$HOME"/nginx-pod.yaml
 ```
 </details>

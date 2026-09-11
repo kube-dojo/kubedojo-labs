@@ -41,7 +41,7 @@ kubectl get pods,svc,nodes
 List all pods in the `kube-system` namespace and save the output to:
 
 ```
-/root/kube-system-pods.txt
+"$HOME"/kube-system-pods.txt
 ```
 
 Use the default `kubectl get pods` output (no special formatting needed).
@@ -50,6 +50,6 @@ Use the default `kubectl get pods` output (no special formatting needed).
 <summary>Hint</summary>
 
 ```bash
-kubectl get pods -n kube-system > /root/kube-system-pods.txt
+kubectl get pods -n kube-system > "$HOME"/kube-system-pods.txt
 ```
 </details>

@@ -42,13 +42,13 @@ kubectl get pod web -o jsonpath='{.status.podIP}'
 Get the IP address of the `web` pod and save it to:
 
 ```
-/root/web-pod-ip.txt
+"$HOME"/web-pod-ip.txt
 ```
 
 <details>
 <summary>Hint</summary>
 
 ```bash
-kubectl get pod web -o jsonpath='{.status.podIP}' > /root/web-pod-ip.txt
+kubectl get pod web -o jsonpath='{.status.podIP}' > "$HOME"/web-pod-ip.txt
 ```
 </details>

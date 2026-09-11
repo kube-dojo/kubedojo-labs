@@ -39,7 +39,7 @@ Namespaces are like folders — they organize resources and can isolate teams or
 Save the name of your node to a file:
 
 ```
-/root/node-name.txt
+"$HOME"/node-name.txt
 ```
 
 The file should contain only the node name (e.g., `controlplane`).
@@ -48,12 +48,12 @@ The file should contain only the node name (e.g., `controlplane`).
 <summary>Hint</summary>
 
 ```bash
-kubectl get nodes -o jsonpath='{.items[0].metadata.name}' > /root/node-name.txt
+kubectl get nodes -o jsonpath='{.items[0].metadata.name}' > "$HOME"/node-name.txt
 ```
 
 Or simply:
 
 ```bash
-kubectl get nodes --no-headers -o custom-columns=':metadata.name' > /root/node-name.txt
+kubectl get nodes --no-headers -o custom-columns=':metadata.name' > "$HOME"/node-name.txt
 ```
 </details>
