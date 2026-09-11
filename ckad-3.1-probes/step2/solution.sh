@@ -41,4 +41,4 @@ spec:
 YAML
 kubectl rollout status deployment/ready-app -n probes-lab --timeout=60s
 sleep 5
-kubectl get endpoints ready-svc -n probes-lab -o jsonpath='{.subsets[0].addresses}' | python3 -c "import sys,json; print(len(json.load(sys.stdin)))" > /root/ready-endpoints.txt 2>/dev/null || echo "3" > /root/ready-endpoints.txt
+kubectl get endpoints ready-svc -n probes-lab -o jsonpath='{.subsets[0].addresses}' | python3 -c "import sys,json; print(len(json.load(sys.stdin)))" > "$HOME"/ready-endpoints.txt 2>/dev/null || echo "3" > "$HOME"/ready-endpoints.txt
