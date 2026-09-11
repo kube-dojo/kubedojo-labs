@@ -12,7 +12,7 @@ Create a DaemonSet named `log-collector` in the `practice` namespace with:
 
 ```bash
 # There is no kubectl create daemonset shortcut, so write the YAML manually
-cat > /root/daemonset.yaml << 'EOF'
+cat > $HOME/daemonset.yaml << 'EOF'
 apiVersion: apps/v1
 kind: DaemonSet
 metadata:
@@ -40,7 +40,7 @@ EOF
 
 Apply and verify:
 ```bash
-kubectl apply -f /root/daemonset.yaml
+kubectl apply -f $HOME/daemonset.yaml
 kubectl get daemonset log-collector -n practice
 ```
 

@@ -12,10 +12,10 @@ Create a PriorityClass named `high-priority` with:
 
 ```bash
 # PriorityClasses are cluster-scoped (no namespace)
-cat > /root/priority.yaml << 'EOF'
+cat > $HOME/priority.yaml << 'EOF'
 # Write your PriorityClass YAML here
 EOF
-kubectl apply -f /root/priority.yaml
+kubectl apply -f $HOME/priority.yaml
 ```
 
 Verify:

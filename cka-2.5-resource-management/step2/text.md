@@ -12,10 +12,10 @@ Create a LimitRange named `default-limits` in the `quota-test` namespace with:
 
 ```bash
 # LimitRanges cannot be created imperatively, use YAML
-cat > /root/limitrange.yaml << 'EOF'
+cat > $HOME/limitrange.yaml << 'EOF'
 # Write your LimitRange YAML here
 EOF
-kubectl apply -f /root/limitrange.yaml
+kubectl apply -f $HOME/limitrange.yaml
 ```
 
 Verify:

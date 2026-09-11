@@ -18,7 +18,7 @@ Create a pod named `sidecar-pod` in the `practice` namespace with:
 
 ```bash
 # Start by generating a base pod YAML
-kubectl run sidecar-pod --image=nginx:1.25 --namespace=practice --dry-run=client -o yaml > /root/sidecar-pod.yaml
+kubectl run sidecar-pod --image=nginx:1.25 --namespace=practice --dry-run=client -o yaml > $HOME/sidecar-pod.yaml
 ```
 
 Edit the YAML to add the second container and shared volume, then apply it.
