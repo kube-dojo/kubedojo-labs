@@ -19,7 +19,7 @@ The ImagePolicyWebhook admission controller validates images against an external
          defaultAllow: false
    ```
 2. Create a kubeconfig file at `/etc/kubernetes/admission/image-policy-kubeconfig.yaml` pointing to a webhook server (use a placeholder URL `https://image-policy.example.com:8443/validate`).
-3. Save both files and document in `/root/image-policy-notes.txt`:
+3. Save both files and document in `"$HOME"/image-policy-notes.txt`:
    - What `defaultAllow: false` means (deny if webhook is unreachable)
    - The security risk of `defaultAllow: true`
 
