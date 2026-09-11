@@ -14,7 +14,7 @@ kubectl label namespace psa-restricted pod-security.kubernetes.io/enforce=restri
   kubectl get namespace psa-baseline --show-labels
   echo "=== psa-restricted ==="
   kubectl get namespace psa-restricted --show-labels
-} > /root/psa-labels.txt
+} > "$HOME"/psa-labels.txt
 
 {
   echo "=== Privileged pod in psa-privileged ==="
@@ -23,7 +23,7 @@ kubectl label namespace psa-restricted pod-security.kubernetes.io/enforce=restri
   kubectl run priv-test --image=nginx -n psa-baseline --overrides='{"spec":{"containers":[{"name":"nginx","image":"nginx","securityContext":{"privileged":true}}]}}' 2>&1 && echo "SUCCESS" || echo "FAILED"
   echo "=== Privileged pod in psa-restricted ==="
   kubectl run priv-test --image=nginx -n psa-restricted --overrides='{"spec":{"containers":[{"name":"nginx","image":"nginx","securityContext":{"privileged":true}}]}}' 2>&1 && echo "SUCCESS" || echo "FAILED"
-} > /root/psa-deployment-test.txt
+} > "$HOME"/psa-deployment-test.txt
 
 # Wait for pods that succeeded
 kubectl wait --for=condition=Ready pod/priv-test -n psa-privileged --timeout=60s 2>/dev/null || true

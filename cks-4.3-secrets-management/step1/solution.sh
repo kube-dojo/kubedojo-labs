@@ -11,21 +11,21 @@ if command -v etcdctl &>/dev/null && [ -f /etc/kubernetes/pki/etcd/ca.crt ]; the
     --endpoints=https://127.0.0.1:2379 \
     --cacert=/etc/kubernetes/pki/etcd/ca.crt \
     --cert=/etc/kubernetes/pki/etcd/server.crt \
-    --key=/etc/kubernetes/pki/etcd/server.key 2>/dev/null | hexdump -C | head -20 > /root/etcd-secret-raw.txt 2>&1
-  [ -s /root/etcd-secret-raw.txt ] && ETCD_OK=true
+    --key=/etc/kubernetes/pki/etcd/server.key 2>/dev/null | hexdump -C | head -20 > "$HOME"/etcd-secret-raw.txt 2>&1
+  [ -s "$HOME"/etcd-secret-raw.txt ] && ETCD_OK=true
 fi
 
 if [ "$ETCD_OK" = false ]; then
   # Try via kind node
   NODE=$(docker ps --filter "name=control-plane" --format "{{.Names}}" 2>/dev/null | head -1)
   if [ -n "$NODE" ]; then
-    docker exec "$NODE" sh -c 'ETCDCTL_API=3 etcdctl get /registry/secrets/secrets-lab/app-secret --endpoints=https://127.0.0.1:2379 --cacert=/etc/kubernetes/pki/etcd/ca.crt --cert=/etc/kubernetes/pki/etcd/server.crt --key=/etc/kubernetes/pki/etcd/server.key 2>/dev/null | head -20' > /root/etcd-secret-raw.txt 2>&1
-    [ -s /root/etcd-secret-raw.txt ] && ETCD_OK=true
+    docker exec "$NODE" sh -c 'ETCDCTL_API=3 etcdctl get /registry/secrets/secrets-lab/app-secret --endpoints=https://127.0.0.1:2379 --cacert=/etc/kubernetes/pki/etcd/ca.crt --cert=/etc/kubernetes/pki/etcd/server.crt --key=/etc/kubernetes/pki/etcd/server.key 2>/dev/null | head -20' > "$HOME"/etcd-secret-raw.txt 2>&1
+    [ -s "$HOME"/etcd-secret-raw.txt ] && ETCD_OK=true
   fi
 fi
 
 if [ "$ETCD_OK" = false ]; then
-  cat > /root/etcd-secret-raw.txt << 'SIMULATED'
+  cat > "$HOME"/etcd-secret-raw.txt << 'SIMULATED'
 etcdctl not available — simulated raw secret output:
 The secret value is stored in etcd as base64-encoded plaintext by default.
 Without encryption at rest enabled, anyone with etcd access can read all secrets.

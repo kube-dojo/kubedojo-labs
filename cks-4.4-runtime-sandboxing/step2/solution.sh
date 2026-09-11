@@ -13,7 +13,7 @@ metadata:
 handler: kata-qemu
 YAML
 
-cat > /root/sandboxed-pod.yaml << 'YAML'
+cat > "$HOME"/sandboxed-pod.yaml << 'YAML'
 apiVersion: v1
 kind: Pod
 metadata:
@@ -29,4 +29,4 @@ spec:
       runAsUser: 1000
 YAML
 
-kubectl get runtimeclass -o yaml > /root/runtimeclasses.yaml
+kubectl get runtimeclass -o yaml > "$HOME"/runtimeclasses.yaml

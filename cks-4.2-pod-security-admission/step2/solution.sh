@@ -21,11 +21,11 @@ spec:
         drop: ["ALL"]
 YAML
 kubectl wait --for=condition=Ready pod/restricted-ok -n psa-restricted --timeout=60s
-kubectl get pod restricted-ok -n psa-restricted -o wide > /root/restricted-ok.txt
+kubectl get pod restricted-ok -n psa-restricted -o wide > "$HOME"/restricted-ok.txt
 
-kubectl run restricted-fail --image=nginx -n psa-restricted > /root/restricted-fail.txt 2>&1 || true
+kubectl run restricted-fail --image=nginx -n psa-restricted > "$HOME"/restricted-fail.txt 2>&1 || true
 
-cat > /root/restricted-requirements.txt << 'REQS'
+cat > "$HOME"/restricted-requirements.txt << 'REQS'
 Pod Security Standards — Restricted Level Requirements:
 1. runAsNonRoot must be true (or runAsUser > 0)
 2. seccompProfile must be RuntimeDefault or Localhost

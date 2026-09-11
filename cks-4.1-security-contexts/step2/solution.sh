@@ -28,6 +28,6 @@ spec:
 YAML
 kubectl wait --for=condition=Ready pod/readonly-pod -n secctx-lab --timeout=60s
 POD_IP=$(kubectl get pod readonly-pod -n secctx-lab -o jsonpath='{.status.podIP}')
-echo "Pod IP: $POD_IP" > /root/readonly-test.txt
-kubectl exec readonly-pod -n secctx-lab -- curl -s localhost >> /root/readonly-test.txt 2>&1 || echo "curl not available" >> /root/readonly-test.txt
-kubectl exec readonly-pod -n secctx-lab -- sh -c 'touch /etc/test 2>&1' > /root/readonly-write-test.txt 2>&1 || echo "Write denied (expected)" >> /root/readonly-write-test.txt
+echo "Pod IP: $POD_IP" > "$HOME"/readonly-test.txt
+kubectl exec readonly-pod -n secctx-lab -- curl -s localhost >> "$HOME"/readonly-test.txt 2>&1 || echo "curl not available" >> "$HOME"/readonly-test.txt
+kubectl exec readonly-pod -n secctx-lab -- sh -c 'touch /etc/test 2>&1' > "$HOME"/readonly-write-test.txt 2>&1 || echo "Write denied (expected)" >> "$HOME"/readonly-write-test.txt

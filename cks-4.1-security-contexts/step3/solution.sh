@@ -17,9 +17,9 @@ spec:
         add: ["NET_BIND_SERVICE"]
 YAML
 kubectl wait --for=condition=Ready pod/no-escalation -n secctx-lab --timeout=60s
-kubectl exec no-escalation -n secctx-lab -- cat /proc/1/status 2>/dev/null | grep Cap > /root/pod-caps.txt || echo "Cannot read caps" > /root/pod-caps.txt
+kubectl exec no-escalation -n secctx-lab -- cat /proc/1/status 2>/dev/null | grep Cap > "$HOME"/pod-caps.txt || echo "Cannot read caps" > "$HOME"/pod-caps.txt
 
-cat > /root/escalation-risks.txt << 'RISKS'
+cat > "$HOME"/escalation-risks.txt << 'RISKS'
 allowPrivilegeEscalation: false prevents:
 - setuid/setgid binaries from gaining elevated privileges
 - ptrace-based privilege escalation

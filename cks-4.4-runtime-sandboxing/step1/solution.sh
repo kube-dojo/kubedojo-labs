@@ -1,8 +1,8 @@
 #!/bin/bash
-kubectl get nodes -o jsonpath='{.items[0].status.nodeInfo.containerRuntimeVersion}' > /root/current-runtime.txt
-kubectl get runtimeclass > /root/existing-runtimeclasses.txt 2>&1 || echo "No RuntimeClass resources found" > /root/existing-runtimeclasses.txt
+kubectl get nodes -o jsonpath='{.items[0].status.nodeInfo.containerRuntimeVersion}' > "$HOME"/current-runtime.txt
+kubectl get runtimeclass > "$HOME"/existing-runtimeclasses.txt 2>&1 || echo "No RuntimeClass resources found" > "$HOME"/existing-runtimeclasses.txt
 
-cat > /root/runtime-comparison.txt << 'COMPARE'
+cat > "$HOME"/runtime-comparison.txt << 'COMPARE'
 runc (default):
 - Shares host kernel directly
 - Best performance, lowest overhead
