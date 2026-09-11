@@ -1,5 +1,5 @@
 #!/bin/bash
-cat > /root/security-checklist.txt << 'CHECKLIST'
+cat > "$HOME"/security-checklist.txt << 'CHECKLIST'
 === Container Security ===
 [ ] runAsNonRoot: true is set
 [ ] runAsUser specifies a non-zero UID
@@ -25,7 +25,7 @@ cat > /root/security-checklist.txt << 'CHECKLIST'
 [ ] CPU and memory requests are set
 CHECKLIST
 
-cat > /root/quick-audit.sh << 'SCRIPT'
+cat > "$HOME"/quick-audit.sh << 'SCRIPT'
 #!/bin/bash
 FILE=$1
 if [ -z "$FILE" ]; then
@@ -44,9 +44,9 @@ grep -q "hostPath" "$FILE" && echo "FAIL: hostPath volume found" || echo "PASS: 
 grep -q "limits:" "$FILE" && echo "PASS: Resource limits set" || echo "WARN: No resource limits"
 echo ""
 SCRIPT
-chmod +x /root/quick-audit.sh
+chmod +x "$HOME"/quick-audit.sh
 
 {
-  /root/quick-audit.sh /root/antipatterns.yaml
-  /root/quick-audit.sh /root/antipatterns-fixed.yaml
-} > /root/audit-results.txt
+  "$HOME"/quick-audit.sh "$HOME"/antipatterns.yaml
+  "$HOME"/quick-audit.sh "$HOME"/antipatterns-fixed.yaml
+} > "$HOME"/audit-results.txt

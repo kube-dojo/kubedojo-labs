@@ -1,5 +1,5 @@
 #!/bin/bash
-cat > /root/pod-insecure.yaml << 'YAML'
+cat > "$HOME"/pod-insecure.yaml << 'YAML'
 apiVersion: v1
 kind: Pod
 metadata:
@@ -10,7 +10,7 @@ spec:
     image: nginx
 YAML
 
-cat > /root/pod-baseline.yaml << 'YAML'
+cat > "$HOME"/pod-baseline.yaml << 'YAML'
 apiVersion: v1
 kind: Pod
 metadata:
@@ -24,7 +24,7 @@ spec:
       runAsUser: 1000
 YAML
 
-cat > /root/pod-hardened.yaml << 'YAML'
+cat > "$HOME"/pod-hardened.yaml << 'YAML'
 apiVersion: v1
 kind: Pod
 metadata:
@@ -54,21 +54,21 @@ YAML
 
 KUBESEC_OK=false
 if command -v kubesec &>/dev/null; then
-  kubesec scan /root/pod-insecure.yaml > /root/kubesec-insecure.json 2>&1
-  [ -s /root/kubesec-insecure.json ] && KUBESEC_OK=true
+  kubesec scan "$HOME"/pod-insecure.yaml > "$HOME"/kubesec-insecure.json 2>&1
+  [ -s "$HOME"/kubesec-insecure.json ] && KUBESEC_OK=true
 fi
 
 if [ "$KUBESEC_OK" = true ]; then
-  kubesec scan /root/pod-baseline.yaml > /root/kubesec-baseline.json 2>&1
-  kubesec scan /root/pod-hardened.yaml > /root/kubesec-hardened.json 2>&1
+  kubesec scan "$HOME"/pod-baseline.yaml > "$HOME"/kubesec-baseline.json 2>&1
+  kubesec scan "$HOME"/pod-hardened.yaml > "$HOME"/kubesec-hardened.json 2>&1
 else
-  echo '[{"object":"Pod/insecure","valid":true,"score":-1,"scoring":{"advise":[{"id":"RunAsNonRoot","reason":"Force the running image to run as a non-root user"},{"id":"ReadOnlyRootFilesystem","reason":"Set readOnlyRootFilesystem to true"}],"critical":[{"id":"CapSysAdmin","reason":"Drop all capabilities"}]}}]' > /root/kubesec-insecure.json
-  echo '[{"object":"Pod/baseline","valid":true,"score":3,"scoring":{"passed":[{"id":"RunAsNonRoot","reason":"Runs as non-root"}],"advise":[{"id":"ReadOnlyRootFilesystem","reason":"Not set"}]}}]' > /root/kubesec-baseline.json
-  echo '[{"object":"Pod/hardened","valid":true,"score":9,"scoring":{"passed":[{"id":"RunAsNonRoot","reason":"Runs as non-root"},{"id":"ReadOnlyRootFilesystem","reason":"ReadOnly filesystem"},{"id":"CapDropAll","reason":"All capabilities dropped"},{"id":"LimitsMemory","reason":"Memory limits set"}]}}]' > /root/kubesec-hardened.json
+  echo '[{"object":"Pod/insecure","valid":true,"score":-1,"scoring":{"advise":[{"id":"RunAsNonRoot","reason":"Force the running image to run as a non-root user"},{"id":"ReadOnlyRootFilesystem","reason":"Set readOnlyRootFilesystem to true"}],"critical":[{"id":"CapSysAdmin","reason":"Drop all capabilities"}]}}]' > "$HOME"/kubesec-insecure.json
+  echo '[{"object":"Pod/baseline","valid":true,"score":3,"scoring":{"passed":[{"id":"RunAsNonRoot","reason":"Runs as non-root"}],"advise":[{"id":"ReadOnlyRootFilesystem","reason":"Not set"}]}}]' > "$HOME"/kubesec-baseline.json
+  echo '[{"object":"Pod/hardened","valid":true,"score":9,"scoring":{"passed":[{"id":"RunAsNonRoot","reason":"Runs as non-root"},{"id":"ReadOnlyRootFilesystem","reason":"ReadOnly filesystem"},{"id":"CapDropAll","reason":"All capabilities dropped"},{"id":"LimitsMemory","reason":"Memory limits set"}]}}]' > "$HOME"/kubesec-hardened.json
 fi
 
 {
-  echo "Insecure: $(cat /root/kubesec-insecure.json | python3 -c 'import json,sys; print(json.load(sys.stdin)[0]["score"])' 2>/dev/null || echo '-1')"
-  echo "Baseline: $(cat /root/kubesec-baseline.json | python3 -c 'import json,sys; print(json.load(sys.stdin)[0]["score"])' 2>/dev/null || echo '3')"
-  echo "Hardened: $(cat /root/kubesec-hardened.json | python3 -c 'import json,sys; print(json.load(sys.stdin)[0]["score"])' 2>/dev/null || echo '9')"
-} > /root/kubesec-scores.txt
+  echo "Insecure: $(cat "$HOME"/kubesec-insecure.json | python3 -c 'import json,sys; print(json.load(sys.stdin)[0]["score"])' 2>/dev/null || echo '-1')"
+  echo "Baseline: $(cat "$HOME"/kubesec-baseline.json | python3 -c 'import json,sys; print(json.load(sys.stdin)[0]["score"])' 2>/dev/null || echo '3')"
+  echo "Hardened: $(cat "$HOME"/kubesec-hardened.json | python3 -c 'import json,sys; print(json.load(sys.stdin)[0]["score"])' 2>/dev/null || echo '9')"
+} > "$HOME"/kubesec-scores.txt

@@ -1,5 +1,5 @@
 #!/bin/bash
-cat > /root/antipatterns.yaml << 'YAML'
+cat > "$HOME"/antipatterns.yaml << 'YAML'
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -31,7 +31,7 @@ spec:
           path: /
 YAML
 
-cat > /root/antipatterns-list.txt << 'LIST'
+cat > "$HOME"/antipatterns-list.txt << 'LIST'
 1. privileged: true — gives container full host access, can escape container
 2. hostNetwork: true — container shares host network, can sniff traffic
 3. hostPID: true — container sees all host processes, can send signals
@@ -43,7 +43,7 @@ cat > /root/antipatterns-list.txt << 'LIST'
 9. No readOnlyRootFilesystem — attacker can modify container filesystem
 LIST
 
-cat > /root/antipatterns-fixed.yaml << 'YAML'
+cat > "$HOME"/antipatterns-fixed.yaml << 'YAML'
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -92,15 +92,15 @@ YAML
 
 KUBESEC_OK=false
 if command -v kubesec &>/dev/null; then
-  AP_SCORE=$(kubesec scan /root/antipatterns.yaml 2>/dev/null | python3 -c 'import json,sys; print(json.load(sys.stdin)[0]["score"])' 2>/dev/null)
-  FX_SCORE=$(kubesec scan /root/antipatterns-fixed.yaml 2>/dev/null | python3 -c 'import json,sys; print(json.load(sys.stdin)[0]["score"])' 2>/dev/null)
+  AP_SCORE=$(kubesec scan "$HOME"/antipatterns.yaml 2>/dev/null | python3 -c 'import json,sys; print(json.load(sys.stdin)[0]["score"])' 2>/dev/null)
+  FX_SCORE=$(kubesec scan "$HOME"/antipatterns-fixed.yaml 2>/dev/null | python3 -c 'import json,sys; print(json.load(sys.stdin)[0]["score"])' 2>/dev/null)
   [ -n "$AP_SCORE" ] && KUBESEC_OK=true
 fi
 
 if [ "$KUBESEC_OK" = true ]; then
-  echo "Anti-pattern score: $AP_SCORE" > /root/antipattern-scores.txt
-  echo "Fixed score: $FX_SCORE" >> /root/antipattern-scores.txt
+  echo "Anti-pattern score: $AP_SCORE" > "$HOME"/antipattern-scores.txt
+  echo "Fixed score: $FX_SCORE" >> "$HOME"/antipattern-scores.txt
 else
-  echo "Anti-pattern score: -30 (kubesec simulated — privileged, hostNetwork, hostPID, hostPath)" > /root/antipattern-scores.txt
-  echo "Fixed score: 8 (kubesec simulated — runAsNonRoot, readOnly, dropAll, limits)" >> /root/antipattern-scores.txt
+  echo "Anti-pattern score: -30 (kubesec simulated — privileged, hostNetwork, hostPID, hostPath)" > "$HOME"/antipattern-scores.txt
+  echo "Fixed score: 8 (kubesec simulated — runAsNonRoot, readOnly, dropAll, limits)" >> "$HOME"/antipattern-scores.txt
 fi

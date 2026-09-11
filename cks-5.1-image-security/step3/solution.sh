@@ -1,10 +1,10 @@
 #!/bin/bash
 if command -v crictl &>/dev/null; then
-  crictl images | grep -E "nginx|IMAGE" > /root/image-sizes.txt
+  crictl images | grep -E "nginx|IMAGE" > "$HOME"/image-sizes.txt
 elif command -v docker &>/dev/null; then
-  docker images | grep -E "nginx|REPOSITORY" > /root/image-sizes.txt
+  docker images | grep -E "nginx|REPOSITORY" > "$HOME"/image-sizes.txt
 else
-  cat > /root/image-sizes.txt << 'SIM'
+  cat > "$HOME"/image-sizes.txt << 'SIM'
 REPOSITORY    TAG       IMAGE ID       SIZE
 nginx         latest    a8281ce42034   187MB
 nginx         1.25.3    b87c350e6c21   187MB
@@ -12,7 +12,7 @@ nginx         alpine    2d9b39619b25   43MB
 SIM
 fi
 
-cat > /root/minimal-Dockerfile << 'DOCKERFILE'
+cat > "$HOME"/minimal-Dockerfile << 'DOCKERFILE'
 # Stage 1: Build
 FROM golang:1.22-alpine AS builder
 WORKDIR /app
@@ -26,7 +26,7 @@ USER 65534:65534
 ENTRYPOINT ["/server"]
 DOCKERFILE
 
-cat > /root/image-hardening.txt << 'BEST'
+cat > "$HOME"/image-hardening.txt << 'BEST'
 1. Use specific version tags, never :latest — pin to exact versions
 2. Use minimal base images (distroless, alpine, scratch) to reduce attack surface
 3. Multi-stage builds — keep build tools out of the runtime image

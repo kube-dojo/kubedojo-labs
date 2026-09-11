@@ -1,5 +1,5 @@
 #!/bin/bash
-cat > /root/image-policy.yaml << 'YAML'
+cat > "$HOME"/image-policy.yaml << 'YAML'
 # Example OPA Gatekeeper ConstraintTemplate for image registry restriction
 apiVersion: templates.gatekeeper.sh/v1
 kind: ConstraintTemplate
@@ -29,7 +29,7 @@ spec:
         }
 YAML
 
-cat > /root/check-images.sh << 'SCRIPT'
+cat > "$HOME"/check-images.sh << 'SCRIPT'
 #!/bin/bash
 APPROVED="docker.io/library/ registry.k8s.io/ quay.io/"
 IMAGES=$(kubectl get pods -A -o jsonpath='{range .items[*]}{.spec.containers[*].image}{"\n"}{end}' | sort -u)
@@ -57,10 +57,10 @@ else
   echo "RESULT: COMPLIANT"
 fi
 SCRIPT
-chmod +x /root/check-images.sh
-/root/check-images.sh > /root/image-compliance.txt
+chmod +x "$HOME"/check-images.sh
+"$HOME"/check-images.sh > "$HOME"/image-compliance.txt
 
-cat > /root/approved-registries.txt << 'REGS'
+cat > "$HOME"/approved-registries.txt << 'REGS'
 registry.k8s.io/ — Official Kubernetes images
 docker.io/library/ — Docker Official Images
 gcr.io/google-containers/ — Google container images
