@@ -6,7 +6,7 @@ Imperative commands let you create resources in seconds instead of writing YAML 
 
 1. Using a single imperative command, create a pod named `web` with image `nginx:1.25` in the `ckad-practice` namespace.
 2. Using a single imperative command, create a deployment named `api` with image `httpd:2.4` and 3 replicas in the `ckad-practice` namespace.
-3. Using `--dry-run=client -o yaml`, generate a pod manifest for a pod named `generator` with image `busybox:1.36` that runs `sleep 3600` and save it to `/root/generator.yaml`. Then apply it to the `ckad-practice` namespace.
+3. Using `--dry-run=client -o yaml`, generate a pod manifest for a pod named `generator` with image `busybox:1.36` that runs `sleep 3600` and save it to `$HOME/generator.yaml`. Then apply it to the `ckad-practice` namespace.
 
 ## Hint
 

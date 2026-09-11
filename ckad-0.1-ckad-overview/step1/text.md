@@ -5,15 +5,15 @@ In the CKAD exam you have access to kubectl, a terminal, and the Kubernetes docs
 ## Task
 
 1. Verify kubectl autocompletion is enabled by typing `kubectl ` then pressing Tab — it should show subcommands.
-2. Create the file `/root/.vimrc` with the following content to make YAML editing easier:
+2. Create the file `$HOME/.vimrc` with the following content to make YAML editing easier:
    ```
    set tabstop=2
    set shiftwidth=2
    set expandtab
    ```
-3. Set the environment variable `KUBE_EDITOR=vim` and export it by adding it to `/root/.bashrc`.
-4. Verify your setup by saving the output of `kubectl config current-context` to `/root/current-context.txt`.
+3. Set the environment variable `KUBE_EDITOR=vim` and export it by adding it to `$HOME/.bashrc`.
+4. Verify your setup by saving the output of `kubectl config current-context` to `$HOME/current-context.txt`.
 
 ## Hint
 
-Use `echo 'export KUBE_EDITOR=vim' >> /root/.bashrc` to persist the editor setting.
+Use `echo 'export KUBE_EDITOR=vim' >> $HOME/.bashrc` to persist the editor setting.

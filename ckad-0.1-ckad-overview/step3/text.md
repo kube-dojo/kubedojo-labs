@@ -11,7 +11,7 @@ Complete all of the following in under 5 minutes:
 3. Create a deployment `task2` with image `nginx:1.25` and 2 replicas in `exam-sim`.
 4. Create a ConfigMap `task3` with key `ENV=production` in `exam-sim`.
 5. Create a service `task4` of type ClusterIP that exposes deployment `task2` on port 80 in `exam-sim`.
-6. Save the ClusterIP of service `task4` to `/root/task4-ip.txt`.
+6. Save the ClusterIP of service `task4` to `$HOME/task4-ip.txt`.
 
 ## Hint
 
