@@ -33,4 +33,4 @@ for i in $(seq 1 30); do
   [ "$STATUS" = "Bound" ] && break
   sleep 2
 done
-kubectl get pvc pvc-data -n volumes-lab -o jsonpath='{.status.phase}' > /root/pvc-status.txt
+kubectl get pvc pvc-data -n volumes-lab -o jsonpath='{.status.phase}' > "$HOME"/pvc-status.txt

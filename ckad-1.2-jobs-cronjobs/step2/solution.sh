@@ -17,4 +17,4 @@ spec:
       restartPolicy: Never
 YAML
 kubectl wait --for=condition=complete job/parallel-job -n jobs-lab --timeout=120s
-kubectl get job parallel-job -n jobs-lab -o jsonpath='{.status.succeeded}' > /root/parallel-count.txt
+kubectl get job parallel-job -n jobs-lab -o jsonpath='{.status.succeeded}' > "$HOME"/parallel-count.txt

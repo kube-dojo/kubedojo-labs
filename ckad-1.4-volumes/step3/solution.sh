@@ -19,4 +19,4 @@ spec:
       claimName: pvc-data
 YAML
 kubectl wait --for=condition=Ready pod/pvc-pod -n volumes-lab --timeout=60s
-kubectl exec pvc-pod -n volumes-lab -- cat /data/output.txt > /root/persistent-output.txt
+kubectl exec pvc-pod -n volumes-lab -- cat /data/output.txt > "$HOME"/persistent-output.txt
