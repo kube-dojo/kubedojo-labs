@@ -18,7 +18,7 @@ Create a restrictive custom seccomp profile that only allows specific syscalls.
    }
    ```
 2. Create a pod named `nginx-strict-seccomp` in `seccomp-lab` using this Localhost profile.
-3. Verify the pod runs successfully and save its status to `/root/strict-pod-status.txt`.
+3. Verify the pod runs successfully and save its status to `"$HOME"/strict-pod-status.txt`.
 
 ## Hint
 

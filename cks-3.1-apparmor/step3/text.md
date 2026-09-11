@@ -11,7 +11,7 @@ Create a tailored AppArmor profile that allows nginx to function while restricti
    - Denies executing other binaries
 2. Load the profile.
 3. Create a pod named `nginx-hardened` in `apparmor-lab` using this profile.
-4. Verify nginx starts and serves traffic. Save the test to `/root/nginx-test.txt`.
+4. Verify nginx starts and serves traffic. Save the test to `"$HOME"/nginx-test.txt`.
 
 ## Hint
 

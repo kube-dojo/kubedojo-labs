@@ -12,8 +12,8 @@ Combine multiple hardening techniques for a fully secured pod.
    - RuntimeDefault seccomp profile
    - Image: `nginx` (you may need a tmpfs for nginx to work)
 2. Add a volume for `/var/cache/nginx` and `/var/run` as `emptyDir` so nginx can start.
-3. Save the full pod YAML to `/root/hardened-pod.yaml`.
-4. Create `/root/hardening-checklist.txt` listing all system hardening controls applied.
+3. Save the full pod YAML to `"$HOME"/hardened-pod.yaml`.
+4. Create `"$HOME"/hardening-checklist.txt` listing all system hardening controls applied.
 
 ## Hint
 
