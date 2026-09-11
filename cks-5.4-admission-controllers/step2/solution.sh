@@ -35,7 +35,7 @@ contexts:
 current-context: default
 YAML
 
-cat > /root/image-policy-notes.txt << 'NOTES'
+cat > "$HOME"/image-policy-notes.txt << 'NOTES'
 defaultAllow: false means:
   - If the webhook is unreachable, all image pulls are DENIED
   - This is the secure choice — fail closed

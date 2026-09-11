@@ -28,7 +28,7 @@ if [ -z "$DIGEST" ]; then
   DIGEST="sha256:a8281ce42034b078dc7d5be1c7e4b8c4d29fdb227f1afb63b8ad47a45dc80e5a"
 fi
 
-echo "$DIGEST" > /root/nginx-digest.txt
+echo "$DIGEST" > "$HOME"/nginx-digest.txt
 
 cat <<YAML | kubectl apply -f -
 apiVersion: v1
@@ -42,10 +42,10 @@ spec:
     image: nginx@${DIGEST}
 YAML
 kubectl wait --for=condition=Ready pod/pinned-pod -n image-lab --timeout=120s 2>&1 || true
-kubectl get pod pinned-pod -n image-lab -o jsonpath='{.spec.containers[0].image}' > /root/pinned-image.txt 2>&1
-[ -s /root/pinned-image.txt ] || echo "nginx@$DIGEST" > /root/pinned-image.txt
+kubectl get pod pinned-pod -n image-lab -o jsonpath='{.spec.containers[0].image}' > "$HOME"/pinned-image.txt 2>&1
+[ -s "$HOME"/pinned-image.txt ] || echo "nginx@$DIGEST" > "$HOME"/pinned-image.txt
 
-cat > /root/image-tag-risks.txt << 'RISKS'
+cat > "$HOME"/image-tag-risks.txt << 'RISKS'
 1. Tags are mutable — the same tag can point to a different image after a rebuild
 2. latest tag does not guarantee the newest version and may be cached
 3. An attacker who compromises a registry can replace a tagged image with malware

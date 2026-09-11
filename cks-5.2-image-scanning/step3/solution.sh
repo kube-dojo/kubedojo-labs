@@ -1,5 +1,5 @@
 #!/bin/bash
-cat > /root/cluster-scan.sh << 'SCANSCRIPT'
+cat > "$HOME"/cluster-scan.sh << 'SCANSCRIPT'
 #!/bin/bash
 echo "=== Cluster-Wide Image Vulnerability Scan ==="
 echo "Date: $(date)"
@@ -26,10 +26,10 @@ while IFS= read -r img; do
 done <<< "$IMAGES"
 echo "=== Summary: $VULN/$TOTAL images with CRITICAL/HIGH CVEs ==="
 SCANSCRIPT
-chmod +x /root/cluster-scan.sh
-/root/cluster-scan.sh > /root/cluster-scan-results.txt 2>&1
+chmod +x "$HOME"/cluster-scan.sh
+"$HOME"/cluster-scan.sh > "$HOME"/cluster-scan-results.txt 2>&1
 
-cat > /root/scanning-best-practices.txt << 'BEST'
+cat > "$HOME"/scanning-best-practices.txt << 'BEST'
 1. Scan images in CI/CD before pushing to registry — shift left
 2. Scan running cluster images regularly (weekly minimum)
 3. Block deployments with CRITICAL unfixed CVEs via admission webhook

@@ -7,7 +7,7 @@ kubectl label namespace psa-test-ns pod-security.kubernetes.io/enforce=restricte
   echo ""
   echo "Attempting compliant pod:"
   kubectl run test-ok --image=busybox -n psa-test-ns --overrides='{"spec":{"securityContext":{"runAsNonRoot":true,"runAsUser":1000,"seccompProfile":{"type":"RuntimeDefault"}},"containers":[{"name":"busybox","image":"busybox","command":["sleep","60"],"securityContext":{"allowPrivilegeEscalation":false,"capabilities":{"drop":["ALL"]}}}]}}' 2>&1
-} > /root/psa-test.txt
+} > "$HOME"/psa-test.txt
 kubectl wait --for=condition=Ready pod/test-ok -n psa-test-ns --timeout=60s 2>/dev/null || true
 
 {
@@ -17,9 +17,9 @@ kubectl wait --for=condition=Ready pod/test-ok -n psa-test-ns --timeout=60s 2>/d
   echo "- Cannot modify other nodes or their pods"
   NODE_NAME=$(kubectl get nodes -o name | head -1)
   echo "Current node: $NODE_NAME"
-} > /root/node-restriction-test.txt
+} > "$HOME"/node-restriction-test.txt
 
-cat > /root/admission-best-practices.txt << 'BEST'
+cat > "$HOME"/admission-best-practices.txt << 'BEST'
 1. Enable PodSecurity admission and set restricted as the default for all namespaces
 2. Enable NodeRestriction to limit kubelet permissions to its own node
 3. Use ImagePolicyWebhook with defaultAllow: false (fail closed) for image validation
