@@ -15,7 +15,7 @@ PersistentVolumes (PVs) represent storage in the cluster. PersistentVolumeClaims
    - AccessMode: `ReadWriteOnce`
    - storageClassName: `manual`
 
-3. Verify the PVC is Bound and save its status to `/root/pvc-status.txt`.
+3. Verify the PVC is Bound and save its status to `"$HOME"/pvc-status.txt`.
 
 ## Hint
 

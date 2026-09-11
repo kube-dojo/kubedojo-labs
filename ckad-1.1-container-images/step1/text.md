@@ -6,7 +6,7 @@ Kubernetes supports three image pull policies: `Always`, `IfNotPresent`, and `Ne
 
 1. Create a pod named `always-pull` in the `images-lab` namespace with image `nginx:1.25` and `imagePullPolicy: Always`.
 2. Create a pod named `ifnotpresent-pull` in the `images-lab` namespace with image `nginx:1.25` and `imagePullPolicy: IfNotPresent`.
-3. Save the imagePullPolicy of the `always-pull` pod to `/root/pull-policy.txt`.
+3. Save the imagePullPolicy of the `always-pull` pod to `"$HOME"/pull-policy.txt`.
 
 ## Hint
 
