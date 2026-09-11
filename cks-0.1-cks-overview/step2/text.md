@@ -4,9 +4,9 @@ Understanding which Kubernetes components relate to each CKS domain helps you na
 
 ## Task
 
-1. Inspect the kube-apiserver manifest and list all flags starting with `--` that relate to security (authentication, authorization, admission, audit, encryption). Save at least 5 such flags to `/root/security-flags.txt` (one per line, flag name only without values).
-2. Check if RBAC is enabled by examining the API server's `--authorization-mode` flag. Save the authorization modes to `/root/auth-modes.txt`.
-3. Check the kubelet configuration at `/var/lib/kubelet/config.yaml` for authentication and authorization settings. Save the `authentication.webhook.enabled` value to `/root/kubelet-auth.txt`.
+1. Inspect the kube-apiserver manifest and list all flags starting with `--` that relate to security (authentication, authorization, admission, audit, encryption). Save at least 5 such flags to `"$HOME"/security-flags.txt` (one per line, flag name only without values).
+2. Check if RBAC is enabled by examining the API server's `--authorization-mode` flag. Save the authorization modes to `"$HOME"/auth-modes.txt`.
+3. Check the kubelet configuration at `/var/lib/kubelet/config.yaml` for authentication and authorization settings. Save the `authentication.webhook.enabled` value to `"$HOME"/kubelet-auth.txt`.
 
 ## Hint
 
