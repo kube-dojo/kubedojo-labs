@@ -3,7 +3,7 @@ MANIFEST="/etc/kubernetes/manifests/kube-apiserver.yaml"
 
 # In kind clusters, the manifest is inside the container node
 if [ -f "$MANIFEST" ]; then
-  cp "$MANIFEST" /root/kube-apiserver-backup.yaml
+  cp "$MANIFEST" "$HOME"/kube-apiserver-backup.yaml
   mkdir -p /var/log/kubernetes
 
   # Add flags if not present
@@ -21,15 +21,15 @@ if [ -f "$MANIFEST" ]; then
   sleep 10
   for i in $(seq 1 60); do
     if kubectl get nodes &>/dev/null; then
-      kubectl get nodes > /root/apiserver-status.txt
+      kubectl get nodes > "$HOME"/apiserver-status.txt
       break
     fi
     sleep 2
   done
 else
   # Kind cluster: manifest is inside the node container
-  echo "[INFO] API server manifest not directly accessible (kind cluster)" > /root/kube-apiserver-backup.yaml
-  cat > /root/apiserver-hardening.txt << 'HARDENING'
+  echo "[INFO] API server manifest not directly accessible (kind cluster)" > "$HOME"/kube-apiserver-backup.yaml
+  cat > "$HOME"/apiserver-hardening.txt << 'HARDENING'
 Flags to add to kube-apiserver for CIS compliance:
 --profiling=false
 --audit-log-path=/var/log/kubernetes/audit.log
@@ -41,7 +41,7 @@ HARDENING
   # Try to modify via docker exec into kind node
   NODE=$(docker ps --filter "name=control-plane" --format "{{.Names}}" 2>/dev/null | head -1)
   if [ -n "$NODE" ]; then
-    docker exec "$NODE" cp /etc/kubernetes/manifests/kube-apiserver.yaml /root/kube-apiserver-backup.yaml 2>/dev/null
+    docker exec "$NODE" cp /etc/kubernetes/manifests/kube-apiserver.yaml "$HOME"/kube-apiserver-backup.yaml 2>/dev/null
     docker exec "$NODE" sh -c 'grep -q "profiling" /etc/kubernetes/manifests/kube-apiserver.yaml || sed -i "/- --tls-private-key-file/a\\    - --profiling=false" /etc/kubernetes/manifests/kube-apiserver.yaml' 2>/dev/null
     # Wait for API server to recover
     for i in $(seq 1 60); do
@@ -49,5 +49,5 @@ HARDENING
       sleep 2
     done
   fi
-  kubectl get nodes > /root/apiserver-status.txt 2>&1 || echo "API server healthy (flags documented)" > /root/apiserver-status.txt
+  kubectl get nodes > "$HOME"/apiserver-status.txt 2>&1 || echo "API server healthy (flags documented)" > "$HOME"/apiserver-status.txt
 fi

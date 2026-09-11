@@ -1,6 +1,6 @@
 #!/bin/bash
 DNS_IP=$(kubectl get svc kube-dns -n kube-system -o jsonpath='{.spec.clusterIP}')
-echo "$DNS_IP" > /root/dns-ip.txt
+echo "$DNS_IP" > "$HOME"/dns-ip.txt
 
 cat <<YAML | kubectl apply -f -
 apiVersion: networking.k8s.io/v1
