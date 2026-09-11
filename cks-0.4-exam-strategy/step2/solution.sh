@@ -12,4 +12,4 @@ spec:
   policyTypes:
   - Ingress
 YAML
-kubectl auth can-i list pods -n exam-practice --as=system:serviceaccount:exam-practice:exam-sa > /root/rbac-check.txt
+kubectl auth can-i list pods -n exam-practice --as=system:serviceaccount:exam-practice:exam-sa > "$HOME"/rbac-check.txt

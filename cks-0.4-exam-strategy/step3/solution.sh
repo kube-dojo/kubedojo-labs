@@ -17,7 +17,7 @@ rules:
         resources: ["*"]
 POLICY
 
-cat > /root/exam-notes.txt << 'NOTES'
+cat > "$HOME"/exam-notes.txt << 'NOTES'
 Quick: Fix pod security context to runAsNonRoot
 Quick: Create ServiceAccount with limited permissions
 Quick: Delete privileged pod and recreate securely

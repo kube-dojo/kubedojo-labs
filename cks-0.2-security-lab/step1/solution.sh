@@ -8,9 +8,9 @@ else
 fi
 
 if [ "$TRIVY_OK" = true ] && command -v trivy &>/dev/null; then
-  trivy --version > /root/trivy-version.txt 2>&1
+  trivy --version > "$HOME"/trivy-version.txt 2>&1
 else
-  echo "trivy 0.50.0 (simulated — installation unavailable in this environment)" > /root/trivy-version.txt
+  echo "trivy 0.50.0 (simulated — installation unavailable in this environment)" > "$HOME"/trivy-version.txt
   # Create a stub so verify passes command -v check
   cat > /usr/local/bin/trivy << 'STUB'
 #!/bin/bash
@@ -28,9 +28,9 @@ else
 fi
 
 if [ "$KUBESEC_OK" = true ] && command -v kubesec &>/dev/null; then
-  kubesec version > /root/kubesec-version.txt 2>&1
+  kubesec version > "$HOME"/kubesec-version.txt 2>&1
 else
-  echo "kubesec 2.14.0 (simulated — installation unavailable in this environment)" > /root/kubesec-version.txt
+  echo "kubesec 2.14.0 (simulated — installation unavailable in this environment)" > "$HOME"/kubesec-version.txt
   cat > /usr/local/bin/kubesec << 'STUB'
 #!/bin/bash
 if [ "$1" = "version" ]; then
