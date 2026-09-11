@@ -4,7 +4,7 @@ Enable encryption at rest to protect secrets stored in etcd.
 
 ## Task
 
-1. Generate an encryption key: `head -c 32 /dev/urandom | base64` and save to `/root/encryption-key.txt`.
+1. Generate an encryption key: `head -c 32 /dev/urandom | base64` and save to `"$HOME"/encryption-key.txt`.
 2. Create an EncryptionConfiguration at `/etc/kubernetes/enc/encryption-config.yaml`:
    ```yaml
    apiVersion: apiserver.config.k8s.io/v1
@@ -20,7 +20,7 @@ Enable encryption at rest to protect secrets stored in etcd.
          - identity: {}
    ```
 3. The `identity` provider as fallback allows reading existing unencrypted secrets.
-4. Save the EncryptionConfiguration to `/root/encryption-config.yaml` (copy, do not apply to API server in this lab to avoid disruption).
+4. Save the EncryptionConfiguration to `"$HOME"/encryption-config.yaml` (copy, do not apply to API server in this lab to avoid disruption).
 
 ## Hint
 

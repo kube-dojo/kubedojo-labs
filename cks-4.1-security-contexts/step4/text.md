@@ -9,8 +9,8 @@ Apply different security contexts to containers within the same pod.
    - Container `app` (busybox, sleep 3600): `runAsUser: 1000`, drop ALL caps, readOnlyRootFilesystem: true
    - Container `sidecar` (busybox, sleep 3600): `runAsUser: 1001`, drop ALL caps, readOnlyRootFilesystem: true
    - Shared emptyDir volume at `/data`
-2. Verify both containers run as different UIDs. Save the `id` output from each to `/root/multi-ids.txt`.
-3. Verify both containers can read/write to the shared `/data` volume (fsGroup makes it writable). Save to `/root/shared-volume-test.txt`.
+2. Verify both containers run as different UIDs. Save the `id` output from each to `"$HOME"/multi-ids.txt`.
+3. Verify both containers can read/write to the shared `/data` volume (fsGroup makes it writable). Save to `"$HOME"/shared-volume-test.txt`.
 
 ## Hint
 

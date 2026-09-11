@@ -4,8 +4,8 @@ Understand the security vs. performance tradeoffs of different runtime options.
 
 ## Task
 
-1. Create a pod named `standard-pod` in `sandbox-lab` using the default runtime (no runtimeClassName). Examine its kernel access by reading `/proc/version` inside the container. Save to `/root/standard-kernel.txt`.
-2. Create `/root/isolation-matrix.txt` documenting:
+1. Create a pod named `standard-pod` in `sandbox-lab` using the default runtime (no runtimeClassName). Examine its kernel access by reading `/proc/version` inside the container. Save to `"$HOME"/standard-kernel.txt`.
+2. Create `"$HOME"/isolation-matrix.txt` documenting:
    | Feature | runc | gVisor | Kata |
    |---------|------|--------|------|
    - Kernel shared?
@@ -13,7 +13,7 @@ Understand the security vs. performance tradeoffs of different runtime options.
    - Performance overhead
    - Memory overhead
    - Use case
-3. Create `/root/sandbox-decision.txt` with recommendations for:
+3. Create `"$HOME"/sandbox-decision.txt` with recommendations for:
    - Multi-tenant SaaS platform
    - Internal trusted microservices
    - Running untrusted user code
