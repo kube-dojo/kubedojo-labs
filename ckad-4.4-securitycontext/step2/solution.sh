@@ -23,4 +23,4 @@ spec:
     emptyDir: {}
 YAML
 kubectl wait --for=condition=Ready pod/cap-pod -n security-lab --timeout=60s
-kubectl get pod cap-pod -n security-lab -o jsonpath='{.spec.containers[0].securityContext.readOnlyRootFilesystem}' > /root/readonly-fs.txt
+kubectl get pod cap-pod -n security-lab -o jsonpath='{.spec.containers[0].securityContext.readOnlyRootFilesystem}' > "$HOME"/readonly-fs.txt

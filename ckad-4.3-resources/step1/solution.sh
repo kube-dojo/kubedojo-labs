@@ -18,4 +18,4 @@ spec:
         memory: "128Mi"
 YAML
 kubectl wait --for=condition=Ready pod/resource-pod -n resources-lab --timeout=60s
-kubectl get pod resource-pod -n resources-lab -o jsonpath='{.spec.containers[0].resources.limits.cpu}' > /root/cpu-limit.txt
+kubectl get pod resource-pod -n resources-lab -o jsonpath='{.spec.containers[0].resources.limits.cpu}' > "$HOME"/cpu-limit.txt

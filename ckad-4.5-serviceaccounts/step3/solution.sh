@@ -14,4 +14,4 @@ spec:
     command: ["sleep", "3600"]
 YAML
 kubectl wait --for=condition=Ready pod/no-token-pod -n sa-lab --timeout=60s
-echo "false" > /root/automount-value.txt
+echo "false" > "$HOME"/automount-value.txt

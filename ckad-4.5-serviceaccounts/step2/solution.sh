@@ -13,4 +13,4 @@ spec:
     command: ["sleep", "3600"]
 YAML
 kubectl wait --for=condition=Ready pod/sa-pod -n sa-lab --timeout=60s
-kubectl get pod sa-pod -n sa-lab -o jsonpath='{.spec.serviceAccountName}' > /root/pod-sa.txt
+kubectl get pod sa-pod -n sa-lab -o jsonpath='{.spec.serviceAccountName}' > "$HOME"/pod-sa.txt

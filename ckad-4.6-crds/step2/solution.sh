@@ -20,4 +20,4 @@ spec:
   target: "staging-db"
   retention: 30
 YAML
-kubectl get backupjobs -n crd-lab > /root/backupjobs-list.txt
+kubectl get backupjobs -n crd-lab > "$HOME"/backupjobs-list.txt
