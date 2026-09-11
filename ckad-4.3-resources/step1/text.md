@@ -9,7 +9,7 @@
    ```
    kubectl get pod resource-pod -n resources-lab -o jsonpath='{.spec.containers[0].resources}'
    ```
-3. Save the CPU limit to `/root/cpu-limit.txt`.
+3. Save the CPU limit to `$HOME/cpu-limit.txt`.
 
 ## Hint
 

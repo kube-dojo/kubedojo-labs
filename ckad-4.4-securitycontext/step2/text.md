@@ -11,7 +11,7 @@
    ```
    kubectl get pod cap-pod -n security-lab -o jsonpath='{.spec.containers[0].securityContext.capabilities}'
    ```
-3. Save the readOnlyRootFilesystem value to `/root/readonly-fs.txt`.
+3. Save the readOnlyRootFilesystem value to `$HOME/readonly-fs.txt`.
 
 ## Hint
 

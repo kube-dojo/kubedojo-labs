@@ -10,7 +10,7 @@
    kubectl exec no-token-pod -n sa-lab -- ls /var/run/secrets/kubernetes.io/serviceaccount/ 2>&1
    ```
    This should fail or show nothing.
-3. Save "false" to `/root/automount-value.txt`.
+3. Save "false" to `$HOME/automount-value.txt`.
 
 ## Hint
 

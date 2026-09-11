@@ -10,12 +10,12 @@
    ```
    kubectl get secret db-creds -n secrets-lab -o jsonpath='{.data.password}' | base64 -d
    ```
-   Save the decoded password to `/root/decoded-password.txt`.
+   Save the decoded password to `$HOME/decoded-password.txt`.
 3. Check the Secret type:
    ```
    kubectl get secret db-creds -n secrets-lab -o jsonpath='{.type}'
    ```
-   Save to `/root/secret-type.txt`.
+   Save to `$HOME/secret-type.txt`.
 
 ## Hint
 

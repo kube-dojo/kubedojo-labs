@@ -9,8 +9,8 @@
 
    Note: nginx normally needs root, but we set the user anyway to demonstrate the securityContext (the pod may not start nginx correctly, but the security settings are what matter).
 
-2. Save the `runAsNonRoot` value to `/root/nonroot-value.txt`.
-3. Save the `allowPrivilegeEscalation` value to `/root/priv-escalation.txt`.
+2. Save the `runAsNonRoot` value to `$HOME/nonroot-value.txt`.
+3. Save the `allowPrivilegeEscalation` value to `$HOME/priv-escalation.txt`.
 
 ## Hint
 

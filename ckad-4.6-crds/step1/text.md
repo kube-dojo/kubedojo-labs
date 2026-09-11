@@ -39,7 +39,7 @@
    ```
    kubectl get crd backupjobs.stable.example.com
    ```
-3. Save the CRD name to `/root/crd-name.txt`.
+3. Save the CRD name to `$HOME/crd-name.txt`.
 
 ## Hint
 

@@ -10,7 +10,7 @@
    ```
    kubectl logs user-pod -n security-lab
    ```
-3. Save the output of `id` command to `/root/user-id.txt`.
+3. Save the output of `id` command to `$HOME/user-id.txt`.
 
 ## Hint
 

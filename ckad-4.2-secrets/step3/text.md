@@ -9,7 +9,7 @@
    kubectl exec secret-vol-pod -n secrets-lab -- ls /etc/secrets/
    kubectl exec secret-vol-pod -n secrets-lab -- cat /etc/secrets/username
    ```
-3. Save the username from the mounted file to `/root/mounted-username.txt`.
+3. Save the username from the mounted file to `$HOME/mounted-username.txt`.
 
 ## Hint
 

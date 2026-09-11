@@ -8,7 +8,7 @@
    ```
    kubectl exec vol-pod -n cm-lab -- cat /etc/config/app.properties
    ```
-3. Save the contents of the mounted file to `/root/mounted-config.txt`.
+3. Save the contents of the mounted file to `$HOME/mounted-config.txt`.
 
 ## Hint
 

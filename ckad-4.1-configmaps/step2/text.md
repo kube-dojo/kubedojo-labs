@@ -8,7 +8,7 @@
    ```
    kubectl exec env-pod -n cm-lab -- env | grep APP_ENV
    ```
-3. Save the value of `APP_ENV` to `/root/app-env-value.txt`.
+3. Save the value of `APP_ENV` to `$HOME/app-env-value.txt`.
 
 ## Hint
 

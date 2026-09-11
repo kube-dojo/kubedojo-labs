@@ -9,7 +9,7 @@ ResourceQuotas limit total resource consumption in a namespace.
    - Memory requests: 1Gi (total)
    - Pods: 5
 2. Create a pod named `quota-pod` in `quota-lab` with CPU request `200m` and memory request `128Mi`.
-3. Save the used CPU requests to `/root/used-cpu.txt`:
+3. Save the used CPU requests to `$HOME/used-cpu.txt`:
    ```
    kubectl get resourcequota compute-quota -n quota-lab -o jsonpath='{.status.used.requests\.cpu}'
    ```

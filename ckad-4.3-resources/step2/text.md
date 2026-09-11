@@ -13,7 +13,7 @@ LimitRanges set default, min, and max resource constraints for a namespace.
    ```
 2. Create a pod named `auto-limits` in `resources-lab` with image `nginx:1.25` WITHOUT specifying any resources.
 3. Verify the pod got default resources from the LimitRange.
-4. Save the auto-assigned CPU limit to `/root/auto-cpu-limit.txt`.
+4. Save the auto-assigned CPU limit to `$HOME/auto-cpu-limit.txt`.
 
 ## Hint
 
