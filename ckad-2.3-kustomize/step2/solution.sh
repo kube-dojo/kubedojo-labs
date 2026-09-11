@@ -1,8 +1,8 @@
 #!/bin/bash
-mkdir -p /root/kustomize/overlays/staging
-mkdir -p /root/kustomize/overlays/production
+mkdir -p "$HOME"/kustomize/overlays/staging
+mkdir -p "$HOME"/kustomize/overlays/production
 
-cat > /root/kustomize/overlays/staging/kustomization.yaml << 'YAML'
+cat > "$HOME"/kustomize/overlays/staging/kustomization.yaml << 'YAML'
 resources:
 - ../../base
 namespace: staging
@@ -17,7 +17,7 @@ patches:
       value: 2
 YAML
 
-cat > /root/kustomize/overlays/production/kustomization.yaml << 'YAML'
+cat > "$HOME"/kustomize/overlays/production/kustomization.yaml << 'YAML'
 resources:
 - ../../base
 namespace: production
@@ -32,5 +32,5 @@ patches:
       value: 5
 YAML
 
-kubectl kustomize /root/kustomize/overlays/staging/ > /root/staging-output.yaml
-kubectl kustomize /root/kustomize/overlays/production/ > /root/production-output.yaml
+kubectl kustomize "$HOME"/kustomize/overlays/staging/ > "$HOME"/staging-output.yaml
+kubectl kustomize "$HOME"/kustomize/overlays/production/ > "$HOME"/production-output.yaml

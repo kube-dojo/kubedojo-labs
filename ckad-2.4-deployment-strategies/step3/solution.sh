@@ -62,4 +62,4 @@ YAML
 kubectl rollout status deployment/blue-app -n strategy-lab --timeout=60s
 kubectl rollout status deployment/green-app -n strategy-lab --timeout=60s
 kubectl patch svc myapp-svc -n strategy-lab -p '{"spec":{"selector":{"version":"green"}}}'
-kubectl get svc myapp-svc -n strategy-lab -o jsonpath='{.spec.selector.version}' > /root/active-version.txt
+kubectl get svc myapp-svc -n strategy-lab -o jsonpath='{.spec.selector.version}' > "$HOME"/active-version.txt

@@ -29,4 +29,4 @@ YAML
 kubectl rollout status deployment/rolling-app -n strategy-lab --timeout=60s
 kubectl set image deployment/rolling-app nginx=nginx:1.25 -n strategy-lab
 kubectl rollout status deployment/rolling-app -n strategy-lab --timeout=60s
-kubectl get deployment rolling-app -n strategy-lab -o jsonpath='{.spec.strategy.type}' > /root/strategy-type.txt
+kubectl get deployment rolling-app -n strategy-lab -o jsonpath='{.spec.strategy.type}' > "$HOME"/strategy-type.txt
