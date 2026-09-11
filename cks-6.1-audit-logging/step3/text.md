@@ -5,13 +5,13 @@ Parse and analyze audit logs to identify suspicious activity.
 ## Task
 
 1. If audit logs exist at `/var/log/kubernetes/audit/audit.log`, analyze them. Otherwise, create sample audit events by performing various kubectl operations and work with whatever logs are available.
-2. Create a script `/root/audit-analyzer.sh` that parses audit logs (JSON format, one per line) and reports:
+2. Create a script `$HOME/audit-analyzer.sh` that parses audit logs (JSON format, one per line) and reports:
    - Total number of events
    - Events by verb (create, delete, get, list, etc.)
    - Events involving secrets
    - Events from non-system users
-3. Run the script and save output to `/root/audit-analysis.txt`.
-4. Create `/root/suspicious-patterns.txt` listing audit patterns that indicate security incidents.
+3. Run the script and save output to `$HOME/audit-analysis.txt`.
+4. Create `$HOME/suspicious-patterns.txt` listing audit patterns that indicate security incidents.
 
 ## Hint
 

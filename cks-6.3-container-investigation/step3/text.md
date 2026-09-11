@@ -6,13 +6,13 @@ After collecting evidence, contain the threat and prevent recurrence.
 
 1. Immediately isolate the pod by applying a deny-all NetworkPolicy to the `investigation` namespace.
 2. Delete the compromised pod: `kubectl delete pod suspicious-pod -n investigation`.
-3. Create a hardened replacement deployment at `/root/remediated-deployment.yaml` with:
+3. Create a hardened replacement deployment at `$HOME/remediated-deployment.yaml` with:
    - runAsNonRoot: true, runAsUser: 1000
    - readOnlyRootFilesystem: true
    - Drop ALL capabilities
    - RuntimeDefault seccomp
 4. Apply the remediated deployment.
-5. Create `/root/incident-report.txt` with the complete incident report.
+5. Create `$HOME/incident-report.txt` with the complete incident report.
 
 ## Hint
 

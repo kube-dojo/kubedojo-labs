@@ -5,9 +5,9 @@ Use Pod Security Admission and labels to enforce immutable containers.
 ## Task
 
 1. Create a namespace `immutable-enforced` with PodSecurity restricted enforcement.
-2. Try to create a pod WITHOUT readOnlyRootFilesystem in the enforced namespace. Save the error to `/root/enforce-test.txt`.
+2. Try to create a pod WITHOUT readOnlyRootFilesystem in the enforced namespace. Save the error to `$HOME/enforce-test.txt`.
 3. Create a compliant immutable pod in the enforced namespace and verify it starts.
-4. Create `/root/immutability-patterns.txt` documenting:
+4. Create `$HOME/immutability-patterns.txt` documenting:
    - What makes a container immutable
    - How to handle applications that need write access
    - Patterns: read-only root + emptyDir, read-only root + configMap

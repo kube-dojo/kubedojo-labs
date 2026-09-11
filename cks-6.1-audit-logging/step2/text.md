@@ -12,7 +12,7 @@ Configure the API server to use the audit policy and write logs to a file.
    - `--audit-log-maxsize=50`
 2. Add volume mounts for the audit policy and log directory.
 3. Wait for the API server to restart and verify it is healthy.
-4. Trigger some audit events by creating and deleting resources, then verify the audit log exists and contains entries. Save the first 20 lines to `/root/audit-sample.txt`.
+4. Trigger some audit events by creating and deleting resources, then verify the audit log exists and contains entries. Save the first 20 lines to `$HOME/audit-sample.txt`.
 
 **WARNING**: Edit carefully — mistakes will break the API server. Use the backup from setup.
 
