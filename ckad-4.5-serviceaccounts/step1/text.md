@@ -11,7 +11,7 @@
    kubectl create serviceaccount app-sa -n sa-lab
    ```
 3. Describe the ServiceAccount to see its details.
-4. Save the ServiceAccount name to `/root/sa-name.txt`.
+4. Save the ServiceAccount name to `$HOME/sa-name.txt`.
 
 ## Hint
 

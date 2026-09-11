@@ -11,7 +11,7 @@
    ```
    kubectl exec sa-pod -n sa-lab -- ls /var/run/secrets/kubernetes.io/serviceaccount/
    ```
-4. Save the ServiceAccount name from the pod spec to `/root/pod-sa.txt`.
+4. Save the ServiceAccount name from the pod spec to `$HOME/pod-sa.txt`.
 
 ## Hint
 

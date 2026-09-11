@@ -16,7 +16,7 @@
    ```
 2. Create another BackupJob named `weekly-backup` in `crd-lab` with schedule `0 3 * * 0`, target `staging-db`, retention 30.
 3. List all BackupJobs: `kubectl get backupjobs -n crd-lab` (or `kubectl get bj -n crd-lab`).
-4. Save the list to `/root/backupjobs-list.txt`.
+4. Save the list to `$HOME/backupjobs-list.txt`.
 
 ## Hint
 

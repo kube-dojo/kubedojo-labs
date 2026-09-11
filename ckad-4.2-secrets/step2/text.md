@@ -9,7 +9,7 @@
    ```
    kubectl exec secret-env-pod -n secrets-lab -- printenv DB_USER
    ```
-3. Save the DB_USER value to `/root/db-user.txt`.
+3. Save the DB_USER value to `$HOME/db-user.txt`.
 
 ## Hint
 
