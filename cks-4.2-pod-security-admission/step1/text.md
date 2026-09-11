@@ -9,8 +9,8 @@ Label namespaces to enforce Pod Security Standards.
    - `psa-privileged`: enforce privileged
    - `psa-baseline`: enforce baseline
    - `psa-restricted`: enforce restricted
-3. Save the labels of each namespace to `/root/psa-labels.txt`.
-4. Try deploying a privileged pod in each namespace and record which succeed/fail in `/root/psa-deployment-test.txt`.
+3. Save the labels of each namespace to `"$HOME"/psa-labels.txt`.
+4. Try deploying a privileged pod in each namespace and record which succeed/fail in `"$HOME"/psa-deployment-test.txt`.
 
 ## Hint
 

@@ -13,13 +13,13 @@ Create RuntimeClass objects that pods can reference.
    handler: runsc
    ```
 2. Create a RuntimeClass named `kata` with handler `kata-qemu`.
-3. Create a pod YAML at `/root/sandboxed-pod.yaml` that references the `gvisor` RuntimeClass:
+3. Create a pod YAML at `"$HOME"/sandboxed-pod.yaml` that references the `gvisor` RuntimeClass:
    ```yaml
    spec:
      runtimeClassName: gvisor
    ```
    (Do not apply — gVisor is not installed)
-4. Save all RuntimeClass definitions to `/root/runtimeclasses.yaml`.
+4. Save all RuntimeClass definitions to `"$HOME"/runtimeclasses.yaml`.
 
 ## Hint
 

@@ -15,7 +15,7 @@ Understand the different types of secrets and how they are stored.
      --cert=/etc/kubernetes/pki/etcd/server.crt \
      --key=/etc/kubernetes/pki/etcd/server.key | hexdump -C | head -20
    ```
-   Save the output to `/root/etcd-secret-raw.txt`.
+   Save the output to `"$HOME"/etcd-secret-raw.txt`.
 
 ## Hint
 

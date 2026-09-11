@@ -8,8 +8,8 @@ Prevent containers from writing to the root filesystem to limit the impact of co
    - `readOnlyRootFilesystem: true`
    - Image: `nginx`
    - emptyDir volumes for `/var/cache/nginx`, `/var/run`, and `/tmp`
-2. Verify nginx starts and can serve traffic. Save the pod IP and a curl test to `/root/readonly-test.txt`.
-3. Verify that writing to `/etc/` fails inside the container. Save the error to `/root/readonly-write-test.txt`.
+2. Verify nginx starts and can serve traffic. Save the pod IP and a curl test to `"$HOME"/readonly-test.txt`.
+3. Verify that writing to `/etc/` fails inside the container. Save the error to `"$HOME"/readonly-write-test.txt`.
 
 ## Hint
 
