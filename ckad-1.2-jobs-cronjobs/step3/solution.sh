@@ -18,6 +18,6 @@ spec:
             command: ["sh", "-c", "echo Report generated at $(date)"]
           restartPolicy: Never
 YAML
-kubectl get cronjob reporter -n jobs-lab -o jsonpath='{.spec.schedule}' > /root/cron-schedule.txt
+kubectl get cronjob reporter -n jobs-lab -o jsonpath='{.spec.schedule}' > "$HOME"/cron-schedule.txt
 kubectl create job reporter-manual --from=cronjob/reporter -n jobs-lab
 kubectl wait --for=condition=complete job/reporter-manual -n jobs-lab --timeout=60s

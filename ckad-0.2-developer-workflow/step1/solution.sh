@@ -1,8 +1,8 @@
 #!/bin/bash
-kubectl run frontend --image=nginx:1.25 --dry-run=client -o yaml > /root/frontend.yaml
+kubectl run frontend --image=nginx:1.25 --dry-run=client -o yaml > "$HOME"/frontend.yaml
 
 # Add label and port
-cat > /root/frontend.yaml << 'YAML'
+cat > "$HOME"/frontend.yaml << 'YAML'
 apiVersion: v1
 kind: Pod
 metadata:
@@ -18,5 +18,5 @@ spec:
     - containerPort: 80
 YAML
 
-kubectl apply -f /root/frontend.yaml -n dev-workflow
+kubectl apply -f "$HOME"/frontend.yaml -n dev-workflow
 kubectl wait --for=condition=Ready pod/frontend -n dev-workflow --timeout=120s 2>/dev/null || true

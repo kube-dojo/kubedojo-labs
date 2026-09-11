@@ -1,11 +1,11 @@
 #!/bin/bash
-cat > /root/.vimrc << 'VIMRC'
+cat > "$HOME"/.vimrc << 'VIMRC'
 set tabstop=2
 set shiftwidth=2
 set expandtab
 VIMRC
 
-echo 'export KUBE_EDITOR=vim' >> /root/.bashrc
-source /root/.bashrc
+echo 'export KUBE_EDITOR=vim' >> "$HOME"/.bashrc
+source "$HOME"/.bashrc
 
-kubectl config current-context > /root/current-context.txt
+kubectl config current-context > "$HOME"/current-context.txt
