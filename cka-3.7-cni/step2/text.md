@@ -4,13 +4,13 @@ CNI plugins are configured through JSON files in `/etc/cni/net.d/`. The kubelet 
 
 ### Task
 
-1. Copy the current CNI configuration to `/root/cni-config-backup.json`
+1. Copy the current CNI configuration to `"$HOME"/cni-config-backup.json`
 2. Examine the pod CIDR range configured on the node
 3. Verify the cluster CIDR by inspecting the kube-controller-manager configuration
 
 ```bash
 # Backup the CNI config
-cp /etc/cni/net.d/*.conflist /root/cni-config-backup.json 2>/dev/null || cp /etc/cni/net.d/*.conf /root/cni-config-backup.json
+cp /etc/cni/net.d/*.conflist "$HOME"/cni-config-backup.json 2>/dev/null || cp /etc/cni/net.d/*.conf "$HOME"/cni-config-backup.json
 
 # Check the node's pod CIDR
 kubectl get nodes -o jsonpath='{range .items[*]}{.metadata.name}{"\t"}{.spec.podCIDR}{"\n"}{end}'

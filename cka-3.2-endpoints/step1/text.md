@@ -6,7 +6,7 @@ When you create a service with a selector, Kubernetes automatically creates Endp
 
 1. Inspect the existing `web` service and its EndpointSlices in the `practice` namespace
 2. Scale the deployment to **5** replicas and observe the EndpointSlice update
-3. Create a label on the file `/root/endpoint-count.txt` containing the number of endpoints after scaling
+3. Create a label on the file `"$HOME"/endpoint-count.txt` containing the number of endpoints after scaling
 
 ```bash
 # View the service
@@ -27,7 +27,7 @@ kubectl wait --for=condition=Ready pod -l app=web -n practice --timeout=60s
 
 # Count endpoints and save to file
 ENDPOINT_COUNT=$(kubectl get endpointslices -n practice -l kubernetes.io/service-name=web -o jsonpath='{.items[0].endpoints[*].addresses[*]}' | wc -w)
-echo "$ENDPOINT_COUNT" > /root/endpoint-count.txt
+echo "$ENDPOINT_COUNT" > "$HOME"/endpoint-count.txt
 ```
 
 <details>

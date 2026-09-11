@@ -6,17 +6,17 @@ In Kubernetes, every pod gets its own IP address, and pods can communicate direc
 
 1. Get the IP addresses of all `web` deployment pods
 2. From the `client` pod, curl each web pod's IP directly
-3. Save the list of pod IPs to `/root/pod-ips.txt`
+3. Save the list of pod IPs to `"$HOME"/pod-ips.txt`
 
 ```bash
 # Get pod IPs
 kubectl get pods -n practice -l app=web -o wide
 
 # Save IPs to file
-kubectl get pods -n practice -l app=web -o jsonpath='{range .items[*]}{.status.podIP}{"\n"}{end}' > /root/pod-ips.txt
+kubectl get pods -n practice -l app=web -o jsonpath='{range .items[*]}{.status.podIP}{"\n"}{end}' > "$HOME"/pod-ips.txt
 
 # Test direct pod-to-pod communication
-for ip in $(cat /root/pod-ips.txt); do
+for ip in $(cat "$HOME"/pod-ips.txt); do
   echo "Testing $ip..."
   kubectl exec client -n practice -- wget -qO- --timeout=3 http://$ip
 done
