@@ -48,4 +48,4 @@ cat > /etc/falco/falco_rules.local.yaml << 'RULES'
   tags: [cks, privilege]
 RULES
 
-cp /etc/falco/falco_rules.local.yaml /root/custom-rules.yaml
+cp /etc/falco/falco_rules.local.yaml "$HOME"/custom-rules.yaml

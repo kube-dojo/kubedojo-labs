@@ -17,7 +17,7 @@ YAML
 kubectl delete pod suspicious-pod -n investigation --grace-period=0 --force 2>/dev/null || true
 
 # Create remediated deployment
-cat > /root/remediated-deployment.yaml << 'YAML'
+cat > "$HOME"/remediated-deployment.yaml << 'YAML'
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -57,10 +57,10 @@ spec:
       - name: run
         emptyDir: {}
 YAML
-kubectl apply -f /root/remediated-deployment.yaml
+kubectl apply -f "$HOME"/remediated-deployment.yaml
 kubectl rollout status deployment/secure-app -n investigation --timeout=120s 2>/dev/null || true
 
-cat > /root/incident-report.txt << 'REPORT'
+cat > "$HOME"/incident-report.txt << 'REPORT'
 === SECURITY INCIDENT REPORT ===
 
 Severity: HIGH

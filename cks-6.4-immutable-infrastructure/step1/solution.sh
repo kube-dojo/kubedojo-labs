@@ -41,11 +41,11 @@ if [ -n "$POD_IP" ]; then
   kubectl run curl-test --image=curlimages/curl --restart=Never -n immutable-lab -- curl -s "http://$POD_IP" 2>/dev/null || true
   kubectl wait --for=condition=Ready pod/curl-test -n immutable-lab --timeout=30s 2>/dev/null || true
   sleep 3
-  kubectl logs curl-test -n immutable-lab > /root/immutable-test.txt 2>&1 || true
+  kubectl logs curl-test -n immutable-lab > "$HOME"/immutable-test.txt 2>&1 || true
   kubectl delete pod curl-test -n immutable-lab --grace-period=0 --force 2>/dev/null || true
 fi
-[ -s /root/immutable-test.txt ] || echo "Nginx serving traffic (immutable container with readOnlyRootFilesystem)" > /root/immutable-test.txt
+[ -s "$HOME"/immutable-test.txt ] || echo "Nginx serving traffic (immutable container with readOnlyRootFilesystem)" > "$HOME"/immutable-test.txt
 
-kubectl exec immutable-nginx -n immutable-lab -- sh -c 'touch /etc/test 2>&1' > /root/write-denied.txt 2>&1 || echo "Write denied: Read-only file system (expected)" >> /root/write-denied.txt
+kubectl exec immutable-nginx -n immutable-lab -- sh -c 'touch /etc/test 2>&1' > "$HOME"/write-denied.txt 2>&1 || echo "Write denied: Read-only file system (expected)" >> "$HOME"/write-denied.txt
 
-kubectl exec immutable-nginx -n immutable-lab -- sh -c 'echo "test" > /tmp/test && cat /tmp/test' > /root/tmp-write.txt 2>&1 || echo "emptyDir write test completed" > /root/tmp-write.txt
+kubectl exec immutable-nginx -n immutable-lab -- sh -c 'echo "test" > /tmp/test && cat /tmp/test' > "$HOME"/tmp-write.txt 2>&1 || echo "emptyDir write test completed" > "$HOME"/tmp-write.txt

@@ -1,5 +1,5 @@
 #!/bin/bash
-cat > /root/alert-rules.txt << 'RULES'
+cat > "$HOME"/alert-rules.txt << 'RULES'
 RULE: secret-enumeration
 CONDITION: More than 10 list/get requests on secrets from the same user within 5 minutes
 SEVERITY: critical
@@ -31,7 +31,7 @@ SEVERITY: warning
 ACTION: Verify namespace allows privileged pods, alert if in restricted namespace
 RULES
 
-cat > /root/check-secrets-access.sh << 'CHECKERSCRIPT'
+cat > "$HOME"/check-secrets-access.sh << 'CHECKERSCRIPT'
 #!/bin/bash
 LOG="/var/log/kubernetes/audit/audit.log"
 NODE=$(docker ps --filter "name=control-plane" --format "{{.Names}}" 2>/dev/null | head -1)
@@ -85,5 +85,5 @@ for item in data['items']:
 " 2>/dev/null | head -10 || echo "  Unable to parse RBAC bindings"
 fi
 CHECKERSCRIPT
-chmod +x /root/check-secrets-access.sh
-/root/check-secrets-access.sh > /root/secrets-access-report.txt 2>&1
+chmod +x "$HOME"/check-secrets-access.sh
+"$HOME"/check-secrets-access.sh > "$HOME"/secrets-access-report.txt 2>&1

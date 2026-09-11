@@ -45,4 +45,4 @@ rules:
         resources: ["*"]
 POLICY
 
-grep -c "level:" /etc/kubernetes/audit/policy.yaml > /root/audit-rule-count.txt
+grep -c "level:" /etc/kubernetes/audit/policy.yaml > "$HOME"/audit-rule-count.txt
