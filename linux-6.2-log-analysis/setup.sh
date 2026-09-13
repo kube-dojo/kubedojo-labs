@@ -1,8 +1,9 @@
 #!/bin/bash
 # Setup: Create sample log files
 
-# Apache access log
-cat > /root/access.log << 'EOF'
+_ACCESS=$(mktemp)
+_APP=$(mktemp)
+cat > "$_ACCESS" << 'EOF'
 192.168.1.10 - - [29/Mar/2026:10:00:01 +0000] "GET /index.html HTTP/1.1" 200 1234
 10.0.0.5 - - [29/Mar/2026:10:00:02 +0000] "GET /api/users HTTP/1.1" 200 5678
 192.168.1.10 - - [29/Mar/2026:10:00:03 +0000] "POST /api/login HTTP/1.1" 401 89
@@ -24,9 +25,7 @@ cat > /root/access.log << 'EOF'
 192.168.1.30 - - [29/Mar/2026:10:00:19 +0000] "POST /api/login HTTP/1.1" 200 1234
 10.0.0.15 - - [29/Mar/2026:10:00:20 +0000] "GET /api/status HTTP/1.1" 502 234
 EOF
-
-# Syslog-style log
-cat > /root/app.log << 'EOF'
+cat > "$_APP" << 'EOF'
 2026-03-29T10:00:01Z INFO  Application started on port 8080
 2026-03-29T10:00:05Z ERROR Database connection pool exhausted
 2026-03-29T10:00:09Z WARN  Slow query detected: 2.5s for /api/users
@@ -36,11 +35,15 @@ cat > /root/app.log << 'EOF'
 2026-03-29T10:01:01Z WARN  Memory usage at 85%
 2026-03-29T10:01:05Z ERROR Connection refused to redis:6379
 EOF
+for home in /root /home/ubuntu; do
+  [ -d "$home" ] || continue
+  cp "$_ACCESS" "$home/access.log"
+  cp "$_APP" "$home/app.log"
+done
+rm -f "$_ACCESS" "$_APP"
 
-echo "Setup complete. Log files created at /root/access.log and /root/app.log"
+echo "Setup complete. Log files created in each learner home (access.log, app.log)."
 
-# Seed /home/ubuntu if it exists
 if [ -d /home/ubuntu ]; then
-  cp -r /root/* /home/ubuntu/ 2>/dev/null || true
   chown -R ubuntu:ubuntu /home/ubuntu/ 2>/dev/null || true
 fi
