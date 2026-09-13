@@ -23,9 +23,9 @@ _seed_k_bashrc \
 # Create practice namespace
 kubectl create namespace practice --dry-run=client -o yaml | kubectl apply -f -
 
-# Create a ConfigMap and Secret for projected volume exercise
-kubectl create configmap app-config --from-literal=APP_ENV=production --from-literal=LOG_LEVEL=info -n practice
-kubectl create secret generic app-secret --from-literal=DB_PASSWORD=s3cret123 -n practice
+# Create a ConfigMap and Secret for projected volume exercise (idempotent).
+kubectl create configmap app-config --from-literal=APP_ENV=production --from-literal=LOG_LEVEL=info -n practice --dry-run=client -o yaml | kubectl apply -f -
+kubectl create secret generic app-secret --from-literal=DB_PASSWORD=s3cret123 -n practice --dry-run=client -o yaml | kubectl apply -f -
 
 # Create host directory for hostPath exercise
 mkdir -p /data/hostpath-test
