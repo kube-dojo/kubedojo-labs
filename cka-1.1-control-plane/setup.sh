@@ -12,13 +12,23 @@ until kubectl get pods -n kube-system 2>/dev/null | grep -q "etcd"; do
 done
 
 # Set up aliases
-echo 'alias k=kubectl' >> /root/.bashrc
-source /root/.bashrc
 
+_seed_k_bashrc() {
+  local home line
+  for home in /root /home/ubuntu; do
+    [ -d "$home" ] || continue
+    touch "$home/.bashrc"
+    for line in "$@"; do
+      grep -qxF "$line" "$home/.bashrc" 2>/dev/null || echo "$line" >> "$home/.bashrc"
+    done
+  done
+}
+_seed_k_bashrc \
+  'alias k=kubectl' \
+  'complete -o default -F __start_kubectl k'
 echo "Cluster is ready!"
 
-# Seed /home/ubuntu if it exists
+
 if [ -d /home/ubuntu ]; then
-  cp -r /root/* /home/ubuntu/ 2>/dev/null || true
   chown -R ubuntu:ubuntu /home/ubuntu/ 2>/dev/null || true
 fi
