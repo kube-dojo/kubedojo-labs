@@ -7,13 +7,15 @@ apt-get update -qq
 apt-get install -y -qq policycoreutils selinux-utils > /dev/null 2>&1
 
 # Create working directory
-mkdir -p /root/selinux-lab
+for home in /root /home/ubuntu; do
+  [ -d "$home" ] || continue
+  mkdir -p "$home/selinux-lab"
+done
 
 echo "Setup complete."
 echo "Note: SELinux userspace tools installed. Full enforcement may not be available on this kernel."
 
-# Seed /home/ubuntu if it exists
+
 if [ -d /home/ubuntu ]; then
-  cp -r /root/* /home/ubuntu/ 2>/dev/null || true
   chown -R ubuntu:ubuntu /home/ubuntu/ 2>/dev/null || true
 fi
