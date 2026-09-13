@@ -5,9 +5,11 @@ until kubectl get nodes 2>/dev/null | grep -q "Ready"; do
   sleep 2
 done
 
-# Create directory structure
-mkdir -p /root/base /root/overlays/prod
-
+# Create kustomize directory structure in each present learner home.
+for home in /root /home/ubuntu; do
+  [ -d "$home" ] || continue
+  mkdir -p "$home/base" "$home/overlays/prod"
+done
 
 _seed_k_bashrc() {
   local home line
