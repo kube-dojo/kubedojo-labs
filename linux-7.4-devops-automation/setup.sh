@@ -3,8 +3,9 @@
 apt-get update -qq
 apt-get install -y -qq jq curl gettext-base python3 > /dev/null 2>&1
 
-# Create config template
-cat > /root/app.conf.template << 'EOF'
+# Config template in each learner home
+_TMPL=$(mktemp)
+cat > "$_TMPL" << 'EOFINNER'
 server:
   host: ${APP_HOST}
   port: ${APP_PORT}
@@ -17,11 +18,16 @@ database:
 
 logging:
   level: ${LOG_LEVEL}
-EOF
+EOFINNER
+for home in /root /home/ubuntu; do
+  [ -d "$home" ] || continue
+  cp "$_TMPL" "$home/app.conf.template"
+done
+rm -f "$_TMPL"
 
-# Create a simple HTTP server with JSON response
-mkdir -p /root/api-server
-cat > /root/api-server/api.py << 'PYEOF'
+# Shared HTTP server (not under a single learner home)
+mkdir -p /opt/api-server
+cat > /opt/api-server/api.py << 'PYEOF'
 import http.server
 import json
 
@@ -51,13 +57,11 @@ if __name__ == '__main__':
 PYEOF
 
 # Start the API server in background
-python3 /root/api-server/api.py &
-echo $! > /root/api-server/pid
+python3 /opt/api-server/api.py &
+echo $! > /opt/api-server/pid
 
-echo "Setup complete. Template at /root/app.conf.template, API server at localhost:8080"
+echo "Setup complete. Template in each learner home; API server at localhost:8080"
 
-# Seed /home/ubuntu if it exists
 if [ -d /home/ubuntu ]; then
-  cp -r /root/* /home/ubuntu/ 2>/dev/null || true
   chown -R ubuntu:ubuntu /home/ubuntu/ 2>/dev/null || true
 fi
