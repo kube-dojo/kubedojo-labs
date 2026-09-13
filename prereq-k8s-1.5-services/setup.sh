@@ -7,10 +7,20 @@ done
 echo "Cluster is ready!"
 
 # Set up aliases
-echo 'alias k=kubectl' >> /root/.bashrc
-echo 'complete -o default -F __start_kubectl k' >> /root/.bashrc
-source /root/.bashrc
 
+_seed_k_bashrc() {
+  local home line
+  for home in /root /home/ubuntu; do
+    [ -d "$home" ] || continue
+    touch "$home/.bashrc"
+    for line in "$@"; do
+      grep -qxF "$line" "$home/.bashrc" 2>/dev/null || echo "$line" >> "$home/.bashrc"
+    done
+  done
+}
+_seed_k_bashrc \
+  'alias k=kubectl' \
+  'complete -o default -F __start_kubectl k'
 # Create the "web" deployment with 2 replicas for the lab exercises
 echo "Creating web deployment with 2 nginx replicas..."
 kubectl create deployment web --image=nginx:1.25 --replicas=2
@@ -18,8 +28,7 @@ kubectl wait --for=condition=available deployment/web --timeout=120s
 
 echo "Setup complete. Deployment 'web' is running with 2 replicas."
 
-# Seed /home/ubuntu if it exists
+
 if [ -d /home/ubuntu ]; then
-  cp -r /root/* /home/ubuntu/ 2>/dev/null || true
   chown -R ubuntu:ubuntu /home/ubuntu/ 2>/dev/null || true
 fi
