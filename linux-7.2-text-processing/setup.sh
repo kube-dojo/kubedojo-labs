@@ -1,8 +1,10 @@
 #!/bin/bash
 # Setup: Create sample data files
 
-# CSV data file
-cat > /root/data.csv << 'EOF'
+_CSV=$(mktemp)
+_CONF=$(mktemp)
+_LOG=$(mktemp)
+cat > "$_CSV" << 'EOF'
 name,department,salary
 Alice,Engineering,95000
 Bob,Marketing,72000
@@ -15,9 +17,7 @@ Hank,Engineering,97000
 Ivy,Marketing,76000
 Jack,Sales,91000
 EOF
-
-# Config file for sed exercise
-cat > /root/app.conf << 'EOF'
+cat > "$_CONF" << 'EOF'
 database_host=localhost
 database_port=5432
 database_name=myapp
@@ -27,9 +27,7 @@ log_level=info
 max_connections=100
 timeout=30
 EOF
-
-# Log file for combining tools
-cat > /root/sample.log << 'EOF'
+cat > "$_LOG" << 'EOF'
 2026-03-29 10:00:01 the quick brown fox jumps over the lazy dog
 2026-03-29 10:00:02 docker container started successfully on port 8080
 2026-03-29 10:00:03 the database connection pool is ready
@@ -46,11 +44,16 @@ cat > /root/sample.log << 'EOF'
 2026-03-29 10:00:14 container restart policy set to always
 2026-03-29 10:00:15 the cluster autoscaler added a new node
 EOF
+for home in /root /home/ubuntu; do
+  [ -d "$home" ] || continue
+  cp "$_CSV" "$home/data.csv"
+  cp "$_CONF" "$home/app.conf"
+  cp "$_LOG" "$home/sample.log"
+done
+rm -f "$_CSV" "$_CONF" "$_LOG"
 
-echo "Setup complete. Data files created in /root/"
+echo "Setup complete. Data files created in each learner home."
 
-# Seed /home/ubuntu if it exists
 if [ -d /home/ubuntu ]; then
-  cp -r /root/* /home/ubuntu/ 2>/dev/null || true
   chown -R ubuntu:ubuntu /home/ubuntu/ 2>/dev/null || true
 fi
