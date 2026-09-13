@@ -1,9 +1,14 @@
 #!/bin/bash
 # Setup script for DNS Resolution and Troubleshooting lab
 
-# Install DNS utilities
-apt-get update -qq
-apt-get install -y -qq dnsutils iputils-ping > /dev/null 2>&1
+export DEBIAN_FRONTEND=noninteractive
+
+# Unbounded apt-get update can hang the 420s harness lane (#94). Skip when
+# dig/ping already exist (CI image); otherwise bound update+install.
+if ! command -v dig >/dev/null 2>&1 || ! command -v ping >/dev/null 2>&1; then
+  timeout 30 apt-get update -qq
+  timeout 60 apt-get install -y -qq dnsutils iputils-ping >/dev/null 2>&1
+fi
 
 echo "Setup complete."
 
