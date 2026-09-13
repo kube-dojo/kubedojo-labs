@@ -12,16 +12,17 @@ echo "App log entry" > /opt/myapp/logs/app.log
 # Install acl package for step 4
 apt-get update -qq && apt-get install -y -qq acl > /dev/null 2>&1
 
-# Create shared.txt for ACL step
-echo "This is a shared file for ACL testing." > /root/shared.txt
+# Create shared.txt for ACL step (each learner home).
+for home in /root /home/ubuntu; do
+  [ -d "$home" ] || continue
+  echo "This is a shared file for ACL testing." > "$home/shared.txt"
+done
 
 # Create www-data user if it doesn't exist
 id www-data > /dev/null 2>&1 || useradd -r -s /usr/sbin/nologin www-data
 
 echo "Setup complete."
 
-# Seed /home/ubuntu if it exists
 if [ -d /home/ubuntu ]; then
-  cp -r /root/* /home/ubuntu/ 2>/dev/null || true
   chown -R ubuntu:ubuntu /home/ubuntu/ 2>/dev/null || true
 fi
