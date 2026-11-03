@@ -1,0 +1,22 @@
+{
+  "requirements": [
+    {
+      "id": "pod-manifest",
+      "outcome": "Save a valid Pod manifest to $HOME/nginx-pod.yaml.",
+      "assertion": "pod.get(\"kind\") == \"Pod\"",
+      "negative": "negative/pod-manifest.sh"
+    },
+    {
+      "id": "pod-name",
+      "outcome": "The saved Pod is named nginx.",
+      "assertion": "pod.get(\"metadata\", {}).get(\"name\") == \"nginx\"",
+      "negative": "negative/pod-name.sh"
+    },
+    {
+      "id": "pod-image",
+      "outcome": "The saved Pod uses image nginx:1.25.",
+      "assertion": "any(c.get(\"image\") == \"nginx:1.25\" for c in pod.get(\"spec\", {}).get(\"containers\", []))",
+      "negative": "negative/pod-image.sh"
+    }
+  ]
+}

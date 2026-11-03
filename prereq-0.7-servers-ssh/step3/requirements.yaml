@@ -1,0 +1,10 @@
+{
+  "requirements": [
+    {
+      "id": "port-only",
+      "outcome": "ssh-port.txt contains only the configured/default SSH port number (text.md:2)",
+      "assertion": "awk exactly one line equal to configured/default PORT",
+      "negative": "negative/port-only.sh"
+    }
+  ]
+}

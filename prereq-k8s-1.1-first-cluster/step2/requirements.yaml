@@ -1,0 +1,10 @@
+{
+  "requirements": [
+    {
+      "id": "pod-count",
+      "outcome": "Save the actual kube-system pod count as only a number in $HOME/cp-pod-count.txt.",
+      "assertion": "[ \"$COUNT\" = \"$ACTUAL\" ]",
+      "negative": "negative/pod-count.sh"
+    }
+  ]
+}

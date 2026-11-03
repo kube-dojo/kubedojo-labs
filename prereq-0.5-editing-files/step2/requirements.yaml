@@ -1,0 +1,28 @@
+{
+  "requirements": [
+    {
+      "id": "preserved-lines",
+      "outcome": "app.env retains its original four lines (text.md:3,8)",
+      "assertion": "awk NR == 1 through NR == 4 exact line assertions",
+      "negative": "negative/preserved-lines.sh"
+    },
+    {
+      "id": "log-level",
+      "outcome": "LOG_LEVEL=info is appended as line 5 (text.md:3-5)",
+      "assertion": "awk NR == 5 exact line assertion",
+      "negative": "negative/log-level.sh"
+    },
+    {
+      "id": "debug",
+      "outcome": "DEBUG=false is appended as line 6 (text.md:3-6)",
+      "assertion": "awk NR == 6 exact line assertion",
+      "negative": "negative/debug.sh"
+    },
+    {
+      "id": "six-lines",
+      "outcome": "app.env has six lines total (text.md:8)",
+      "assertion": "awk END NR == 6",
+      "negative": "negative/six-lines.sh"
+    }
+  ]
+}

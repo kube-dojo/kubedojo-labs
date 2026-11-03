@@ -1,0 +1,10 @@
+{
+  "requirements": [
+    {
+      "id": "web-pod-image",
+      "outcome": "Create pod web with image nginx:1.25.",
+      "assertion": "[ \"$IMAGE\" = \"nginx:1.25\" ]",
+      "negative": "negative/web-pod-image.sh"
+    }
+  ]
+}

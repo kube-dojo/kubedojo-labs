@@ -14,25 +14,29 @@
         "title": "Copy and Move Files",
         "text": "step1/text.md",
         "verify": "step1/verify.sh",
-        "solution": "step1/solution.sh"
+        "solution": "step1/solution.sh",
+        "class": "change"
       },
       {
         "title": "Delete Files and Directories",
         "text": "step2/text.md",
         "verify": "step2/verify.sh",
-        "solution": "step2/solution.sh"
+        "solution": "step2/solution.sh",
+        "class": "delete"
       },
       {
         "title": "File Permissions",
         "text": "step3/text.md",
         "verify": "step3/verify.sh",
-        "solution": "step3/solution.sh"
+        "solution": "step3/solution.sh",
+        "class": "change"
       },
       {
         "title": "Absolute and Relative Paths",
         "text": "step4/text.md",
         "verify": "step4/verify.sh",
-        "solution": "step4/solution.sh"
+        "solution": "step4/solution.sh",
+        "class": "change"
       }
     ],
     "finish": {

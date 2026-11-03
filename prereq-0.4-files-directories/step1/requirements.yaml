@@ -1,0 +1,22 @@
+{
+  "requirements": [
+    {
+      "id": "report-copy",
+      "outcome": "report.txt is copied into backup with its contents preserved (text.md:13)",
+      "assertion": "cmp -s \"$BASE/backup/report.txt\" \"$BASE/docs/drafts/report.txt\"",
+      "negative": "negative/report-copy.sh"
+    },
+    {
+      "id": "notes-move",
+      "outcome": "notes.txt is moved from drafts to archive with its contents preserved (text.md:14)",
+      "assertion": "[ ! -e \"$BASE/docs/drafts/notes.txt\" ]",
+      "negative": "negative/notes-move.sh"
+    },
+    {
+      "id": "csv-rename",
+      "outcome": "old_data.csv is renamed historical_data.csv without losing contents (text.md:15)",
+      "assertion": "[ ! -e \"$BASE/docs/archive/old_data.csv\" ]",
+      "negative": "negative/csv-rename.sh"
+    }
+  ]
+}

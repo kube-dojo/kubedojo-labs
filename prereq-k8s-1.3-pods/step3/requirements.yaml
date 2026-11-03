@@ -1,0 +1,10 @@
+{
+  "requirements": [
+    {
+      "id": "pod-ip",
+      "outcome": "Save the actual IP address of pod web to $HOME/web-pod-ip.txt.",
+      "assertion": "[ -n \"$ACTUAL\" ] && [ \"$IP\" = \"$ACTUAL\" ]",
+      "negative": "negative/pod-ip.sh"
+    }
+  ]
+}

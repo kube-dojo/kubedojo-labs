@@ -1,0 +1,16 @@
+{
+  "requirements": [
+    {
+      "id": "selector",
+      "outcome": "Service web-svc exposes the web deployment.",
+      "assertion": "selector and all(labels.get(k) == v for k, v in selector.items())",
+      "negative": "negative/selector.sh"
+    },
+    {
+      "id": "port",
+      "outcome": "Service web-svc exposes port 80.",
+      "assertion": "any(p.get(\"port\") == 80 for p in service[\"spec\"].get(\"ports\", []))",
+      "negative": "negative/port.sh"
+    }
+  ]
+}

@@ -1,0 +1,34 @@
+{
+  "requirements": [
+    {
+      "id": "line-1",
+      "outcome": "app.env line 1 is APP_NAME=kubedojo (text.md:51-58)",
+      "assertion": "awk NR == 1 exact line assertion",
+      "negative": "negative/line-1.sh"
+    },
+    {
+      "id": "line-2",
+      "outcome": "app.env line 2 is APP_PORT=8080 (text.md:51-58)",
+      "assertion": "awk NR == 2 exact line assertion",
+      "negative": "negative/line-2.sh"
+    },
+    {
+      "id": "line-3",
+      "outcome": "app.env line 3 is DB_HOST=localhost (text.md:51-58)",
+      "assertion": "awk NR == 3 exact line assertion",
+      "negative": "negative/line-3.sh"
+    },
+    {
+      "id": "line-4",
+      "outcome": "app.env line 4 is DB_PORT=5432 (text.md:51-58)",
+      "assertion": "awk NR == 4 exact line assertion",
+      "negative": "negative/line-4.sh"
+    },
+    {
+      "id": "four-lines",
+      "outcome": "app.env has exactly four lines (text.md:51)",
+      "assertion": "awk END NR == 4",
+      "negative": "negative/four-lines.sh"
+    }
+  ]
+}

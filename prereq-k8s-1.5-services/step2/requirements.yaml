@@ -1,0 +1,10 @@
+{
+  "requirements": [
+    {
+      "id": "saved-response",
+      "outcome": "Save the web-svc ClusterIP HTTP response to $HOME/curl-output.txt.",
+      "assertion": "[ -n \"$RESPONSE\" ] && [ \"$(cat \"$FILE\")\" = \"$RESPONSE\" ]",
+      "negative": "negative/saved-response.sh"
+    }
+  ]
+}

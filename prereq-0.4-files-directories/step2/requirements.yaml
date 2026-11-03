@@ -1,0 +1,16 @@
+{
+  "requirements": [
+    {
+      "id": "log-deleted",
+      "outcome": "tmp_file.log no longer exists (text.md:6)",
+      "assertion": "[ ! -e \"$BASE/docs/drafts/tmp_file.log\" ]",
+      "negative": "negative/log-deleted.sh"
+    },
+    {
+      "id": "directory-deleted",
+      "outcome": "to_delete_dir and its contents no longer exist (text.md:7)",
+      "assertion": "[ ! -e \"$BASE/to_delete_dir\" ]",
+      "negative": "negative/directory-deleted.sh"
+    }
+  ]
+}

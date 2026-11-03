@@ -1,0 +1,10 @@
+{
+  "requirements": [
+    {
+      "id": "node-name",
+      "outcome": "Save only the name of an existing cluster node to $HOME/node-name.txt.",
+      "assertion": "kubectl get node \"$NODE_NAME\"",
+      "negative": "negative/node-name.sh"
+    }
+  ]
+}

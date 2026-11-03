@@ -1,0 +1,10 @@
+{
+  "requirements": [
+    {
+      "id": "pod-removed",
+      "outcome": "Fully remove the secure-pod created in step 2.",
+      "assertion": "successful pod-list query followed by absence of pod/secure-pod",
+      "negative": "negative/pod-removed.sh"
+    }
+  ]
+}

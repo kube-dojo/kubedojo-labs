@@ -1,0 +1,10 @@
+{
+  "requirements": [
+    {
+      "id": "node-ip",
+      "outcome": "Save the node InternalIP obtained with JSONPath to $HOME/node-ip.txt.",
+      "assertion": "[ \"$IP\" = \"$INTERNAL_IP\" ]",
+      "negative": "negative/node-ip.sh"
+    }
+  ]
+}

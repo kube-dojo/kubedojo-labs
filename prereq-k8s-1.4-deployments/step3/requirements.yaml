@@ -1,0 +1,10 @@
+{
+  "requirements": [
+    {
+      "id": "image",
+      "outcome": "Update the webapp deployment to nginx:1.26.",
+      "assertion": "[ \"$IMAGE\" = 'nginx:1.26' ]",
+      "negative": "negative/image.sh"
+    }
+  ]
+}

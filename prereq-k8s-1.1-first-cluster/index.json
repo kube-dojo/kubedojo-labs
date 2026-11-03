@@ -13,17 +13,20 @@
       {
         "title": "Explore the cluster",
         "text": "step1/text.md",
-        "verify": "step1/verify.sh"
+        "verify": "step1/verify.sh",
+        "class": "change"
       },
       {
         "title": "Understand the control plane",
         "text": "step2/text.md",
-        "verify": "step2/verify.sh"
+        "verify": "step2/verify.sh",
+        "class": "change"
       },
       {
         "title": "Create your first namespace",
         "text": "step3/text.md",
-        "verify": "step3/verify.sh"
+        "verify": "step3/verify.sh",
+        "class": "change"
       }
     ],
     "finish": {

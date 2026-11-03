@@ -1,0 +1,16 @@
+{
+  "requirements": [
+    {
+      "id": "server-typos",
+      "outcome": "every sever typo is changed to server (text.md:3)",
+      "assertion": "! grep -qE 'sever|listn' \"$FILE\"",
+      "negative": "negative/server-typos.sh"
+    },
+    {
+      "id": "listen-typo",
+      "outcome": "listn is changed to listen (text.md:3)",
+      "assertion": "! grep -qE 'sever|listn' \"$FILE\"",
+      "negative": "negative/listen-typo.sh"
+    }
+  ]
+}

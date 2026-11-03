@@ -1,0 +1,22 @@
+{
+  "requirements": [
+    {
+      "id": "key-pair",
+      "outcome": "lab_key and lab_key.pub form one matching key pair (text.md:2)",
+      "assertion": "derived and stored public key algorithm and key data are equal",
+      "negative": "negative/key-pair.sh"
+    },
+    {
+      "id": "ed25519",
+      "outcome": "the key pair uses ed25519 (text.md:2)",
+      "assertion": "[ \"$(awk '{print $1}' \"$KEY.pub\")\" = ssh-ed25519 ]",
+      "negative": "negative/ed25519.sh"
+    },
+    {
+      "id": "no-passphrase",
+      "outcome": "the private key has no passphrase (text.md:2)",
+      "assertion": "ssh-keygen -y -P '' -f \"$KEY\"",
+      "negative": "negative/no-passphrase.sh"
+    }
+  ]
+}

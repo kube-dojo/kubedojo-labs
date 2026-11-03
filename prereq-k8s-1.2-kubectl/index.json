@@ -13,22 +13,26 @@
       {
         "title": "Get resources",
         "text": "step1/text.md",
-        "verify": "step1/verify.sh"
+        "verify": "step1/verify.sh",
+        "class": "change"
       },
       {
         "title": "Describe resources",
         "text": "step2/text.md",
-        "verify": "step2/verify.sh"
+        "verify": "step2/verify.sh",
+        "class": "change"
       },
       {
         "title": "Use output formats",
         "text": "step3/text.md",
-        "verify": "step3/verify.sh"
+        "verify": "step3/verify.sh",
+        "class": "change"
       },
       {
         "title": "Dry run and explain",
         "text": "step4/text.md",
-        "verify": "step4/verify.sh"
+        "verify": "step4/verify.sh",
+        "class": "change"
       }
     ],
     "finish": {

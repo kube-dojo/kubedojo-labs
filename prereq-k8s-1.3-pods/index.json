@@ -13,22 +13,26 @@
       {
         "title": "Create a pod imperatively",
         "text": "step1/text.md",
-        "verify": "step1/verify.sh"
+        "verify": "step1/verify.sh",
+        "class": "change"
       },
       {
         "title": "Create a pod from YAML",
         "text": "step2/text.md",
-        "verify": "step2/verify.sh"
+        "verify": "step2/verify.sh",
+        "class": "change"
       },
       {
         "title": "Inspect a running pod",
         "text": "step3/text.md",
-        "verify": "step3/verify.sh"
+        "verify": "step3/verify.sh",
+        "class": "change"
       },
       {
         "title": "Delete pods",
         "text": "step4/text.md",
-        "verify": "step4/verify.sh"
+        "verify": "step4/verify.sh",
+        "class": "delete"
       }
     ],
     "finish": {

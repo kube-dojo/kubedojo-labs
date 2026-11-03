@@ -1,0 +1,16 @@
+{
+  "requirements": [
+    {
+      "id": "archive-txt",
+      "outcome": "all archive .txt files are copied into backup with identical contents (text.md:6)",
+      "assertion": "cmp -s \"$BASE/backup/notes.txt\" \"$BASE/docs/archive/notes.txt\"",
+      "negative": "negative/archive-txt.sh"
+    },
+    {
+      "id": "draft-txt",
+      "outcome": "all drafts .txt files are copied into backup with identical contents (text.md:6)",
+      "assertion": "cmp -s \"$BASE/backup/report.txt\" \"$BASE/docs/drafts/report.txt\"",
+      "negative": "negative/draft-txt.sh"
+    }
+  ]
+}
