@@ -4,6 +4,7 @@ The cluster lifecycle unit test substitutes the CLI transport only. --live-kind
 additionally proves isolation using a real cluster-scoped object on two fresh clusters.
 """
 import importlib.util
+from contextlib import contextmanager
 import json
 import os
 from pathlib import Path
@@ -120,6 +121,22 @@ class FalseGreenTests(unittest.TestCase):
         self.assertEqual(len(created), 2)
         self.assertEqual(deleted, created)
         self.assertEqual(live, set())
+
+    def test_report_collection_reads_mounted_tmpfs_through_exec(self):
+        @contextmanager
+        def environment(*args):
+            yield "test-node"
+        def cli(argv, **kwargs):
+            if argv[:2] == ["docker", "cp"]:
+                raise host.InfrastructureError("archive API cannot read tmpfs")
+            if argv == ["docker", "exec", "test-node", "cat", "/tmp/lane-report.json"]:
+                output = '{"status":"pass","steps":[]}'
+            else:
+                output = "lab stdout is not the report"
+            return type("Result", (), {"returncode": 0, "stdout": output})()
+        with patch.object(host, "fresh_environment", environment), patch.object(host, "command", side_effect=cli):
+            result = host.execute(self.root, "ubuntu", "learner")
+        self.assertEqual(result, {"status": "pass", "steps": []})
 
     def test_failure_propagates_to_pr_exit_but_main_residual_is_reported(self):
         report = {"execution": "fail", "level": "executable"}

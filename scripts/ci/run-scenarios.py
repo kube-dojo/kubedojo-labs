@@ -7,7 +7,6 @@ from pathlib import Path
 import signal
 import subprocess
 import sys
-import tempfile
 import time
 import uuid
 
@@ -89,14 +88,13 @@ def execute(scenario, backend, mode, target=None, fixture=None):
         process = command(argv, timeout=600, check=False)
         if process.returncode not in (0, 1):
             raise InfrastructureError(f"guest crashed with {process.returncode}: {process.stdout[-4000:]}")
-        # Never parse lab stdout as instructions. Copy only the designated JSON report.
-        with tempfile.TemporaryDirectory(prefix="kd-report-") as temporary:
-            file = Path(temporary) / "lane.json"
-            try:
-                command(["docker", "cp", node + ":/tmp/lane-report.json", str(file)])
-            except InfrastructureError as exc:
-                raise InfrastructureError(f"{exc}\nGuest exit {process.returncode}: {process.stdout[-6000:]}") from exc
-            result = json.loads(file.read_text())
+        # docker cp uses the archive API, which cannot read user-mounted tmpfs.
+        # Read exactly the designated report through exec, not the lab's stdout.
+        try:
+            data = command(["docker", "exec", node, "cat", "/tmp/lane-report.json"])
+        except InfrastructureError as exc:
+            raise InfrastructureError(f"{exc}\nGuest exit {process.returncode}: {process.stdout[-6000:]}") from exc
+        result = json.loads(data.stdout)
         if process.returncode == 1:
             result["status"] = "fail"
         return result
