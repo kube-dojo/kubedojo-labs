@@ -62,7 +62,7 @@ jobs:
     cache-mode: none
     strategy:
       fail-fast: false
-      max-parallel: 8
+      max-parallel: 16
       matrix: ${{ fromJSON(needs.inventory.outputs.matrix) }}
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
@@ -93,15 +93,21 @@ jobs:
   gate:
     name: CI Gate
     needs: [inventory, execute]
-    if: >-
-      always() &&
-      (github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository)
+    if: always()
     runs-on: ubuntu-24.04
     timeout-minutes: 1
     permissions:
       contents: read
     cache-mode: none
     steps:
+      - name: Refuse fork pull requests explicitly
+        env:
+          HEAD_REPO: ${{ github.event.pull_request.head.repo.full_name }}
+        run: |
+          if [ "$GITHUB_EVENT_NAME" = pull_request ] && [ "$HEAD_REPO" != "$GITHUB_REPOSITORY" ]; then
+            echo 'Fork execution is disabled; required CI evidence is unavailable.'
+            exit 1
+          fi
       - name: Require successful structural, self-test and execution jobs
         env:
           INVENTORY: ${{ needs.inventory.result }}

@@ -13,6 +13,7 @@ import shutil
 import subprocess
 import sys
 import tempfile
+import textwrap
 import unittest
 from unittest.mock import patch
 
@@ -229,6 +230,20 @@ class FalseGreenTests(unittest.TestCase):
         self.assertEqual(select(rows, ["scripts/ci/run-steps.py"]), ["a", "b"])
         self.assertEqual(select(rows, ["templates/k8s-base/index.json"]), ["a", "b"])
         self.assertEqual(select(rows, None), ["a", "b"])
+
+    def test_fork_gate_runs_and_refuses_skipped_execution(self):
+        workflow = (host.ROOT / ".github/workflows/test-scenarios.yml").read_text()
+        gate = workflow.split("  gate:\n", 1)[1]
+        self.assertIn("    if: always()\n", gate)
+        refusal = gate.split("      - name: Refuse fork pull requests explicitly\n", 1)[1].split("      - name:", 1)[0]
+        code = textwrap.dedent(refusal.split("        run: |\n", 1)[1])
+        for event, head, expected in [("pull_request", "outside/fork", 1),
+                                      ("pull_request", "kube-dojo/kubedojo-labs", 0),
+                                      ("push", "", 0)]:
+            result = subprocess.run(["bash", "-e", "-c", code], capture_output=True,
+                                    env={**os.environ, "GITHUB_EVENT_NAME": event,
+                                         "GITHUB_REPOSITORY": "kube-dojo/kubedojo-labs", "HEAD_REPO": head})
+            self.assertEqual(result.returncode, expected)
 
 
 def live_kind_isolation():

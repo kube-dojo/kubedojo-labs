@@ -133,7 +133,7 @@ transcript or verifier and executes nothing.
 
 Pull requests select changed scenario directories. Harness, workflow and shared
 template changes select all scenarios. Main pushes and nightly select all 144.
-Every scenario is a separate job, with at most eight concurrent jobs. A scenario
+Every scenario is a separate job, with at most sixteen concurrent jobs. A scenario
 has a 17-minute wall-clock budget including image build, each lane has a
 10-minute transport bound, commands have 120 seconds, and cluster startup has
 180 seconds. The execution job has 18 minutes; inventory has one and the gate
@@ -165,3 +165,7 @@ in another. This catches namespace-only cleanup or accidental cluster reuse.
 The per-script repair evidence is in [Ubuntu fixes](ubuntu-lab-fixes.md) and
 [Kubernetes fixes](k8s-lab-fixes.md). Those controlled probes do not replace live
 container and cluster execution.
+
+The Ubuntu learner uses the ubuntu account. The previous harness also tested
+root; matching Killercoda's terminal identity is an explicit D2 residual owned
+by the kube-dojo lane. D1 does not certify that identity difference.

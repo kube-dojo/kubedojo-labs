@@ -42,3 +42,21 @@ step, setup creates both `docs/drafts/tmp_file.log` and `to_delete_dir` before
 the transcript removes them. All fixtures preserve the other outcomes of their
 step. The package-removal transcript expects exit 1 for `which wget`, after an
 exit-0 `apt remove` command.
+
+## Exact-head review repairs
+
+Review F2 found two over-strict checks introduced by the initial repair. The
+following controlled probes compare head `7de2f81` with this revision using
+identical temporary-home remapping. The socket probe substitutes process and
+socket queries; the checksum probe uses real `md5sum` and file bytes.
+
+| Path | Text requirement and defect | Controlled before and after |
+|---|---|---|
+| `prereq-0.7-servers-ssh/step2/verify.sh` | `step2/text.md:2-3` requires nginx running and a full saved `ss -tlnp` table. Byte equality rejected privileged process columns and historical PIDs. The checker now validates the table and required listener rows while accepting either privilege level and changed PIDs or unrelated sockets. | A complete privileged table with historical PIDs: before 1, after 0. Complete unprivileged table: before 0, after 0. Truncated port-only output: before 1, after 1. |
+| `prereq-0.7-servers-ssh/step4/verify.sh` | `step4/text.md:2` requires full checksum output. Byte equality required one absolute filename spelling. The checker now validates one complete checksum record, the actual digest and the target filename, accepting relative spelling. | Real relative-path `md5sum`: before 1, after 0. Absolute-path output: before 0, after 0. Digest-only output: before 1, after 1. |
+
+A subsequent controlled root probe also completed the owner-bit before/after
+evidence for `prereq-0.4-files-directories/step3/verify.sh`: missing owner execute
+with another execute bit set returned before 0, after 1; missing owner read with
+another read bit set returned before 0, after 1; both required bits present
+returned before 0, after 0. Both scripts used the same temporary-home remapping.
