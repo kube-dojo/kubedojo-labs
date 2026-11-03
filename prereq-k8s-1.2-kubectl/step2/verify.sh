@@ -6,7 +6,7 @@ if [ ! -f "$FILE" ]; then
   echo "FAIL: $FILE not found."
   exit 1
 fi
-if grep -q "kind: Pod" "$FILE" && grep -q "containers:" "$FILE"; then
+if grep -q "kind: Pod" "$FILE" && grep -q "containers:" "$FILE" && grep -Eq "^[[:space:]]*(-[[:space:]]*)?image:[[:space:]]*(nginx:1\\.25|'nginx:1\\.25'|\"nginx:1\\.25\")[[:space:]]*(#.*)?$" "$FILE"; then
   echo "PASS: Pod spec generated!"
   exit 0
 else
