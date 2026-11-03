@@ -1,0 +1,16 @@
+{
+  "requirements": [
+    {
+      "id": "updated-lists",
+      "outcome": "package indexes are populated after apt update (text.md:2)",
+      "assertion": "find /var/lib/apt/lists -maxdepth 1 -type f -name '*_Packages*'",
+      "negative": "negative/updated-lists.sh"
+    },
+    {
+      "id": "full-curl-info",
+      "outcome": "curl-info.txt contains the full apt show curl output (text.md:3)",
+      "assertion": "cmp -s \"$FILE\" <(apt show curl 2>/dev/null)",
+      "negative": "negative/full-curl-info.sh"
+    }
+  ]
+}

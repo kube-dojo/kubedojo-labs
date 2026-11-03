@@ -6,7 +6,7 @@ if [ ! -f "$FILE" ]; then
   echo "FAIL: $FILE not found."
   exit 1
 fi
-NODE_NAME=$(cat "$FILE" | tr -d '[:space:]')
+NODE_NAME=$(cat "$FILE")
 if [ -z "$NODE_NAME" ]; then
   echo "FAIL: $FILE is empty."
   exit 1

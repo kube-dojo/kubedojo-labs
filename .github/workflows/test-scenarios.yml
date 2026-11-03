@@ -1,79 +1,121 @@
 name: Test Lab Scenarios
 
-# SECURITY: the docker job below executes UNTRUSTED scenario code with full
-# privileges inside a disposable container on the ephemeral runner. That is
-# only safe because this workflow (a) triggers via plain push/pull_request —
-# NEVER pull_request_target, (b) grants a read-only token, and (c) exposes
-# no secrets. Keep all three properties when editing.
 on:
   push:
     branches: [main]
   pull_request:
     branches: [main]
+  schedule:
+    - cron: '23 2 * * *'
 
 permissions:
   contents: read
 
+# Lab code can compromise its entire ephemeral VM. No private network, secrets,
+# writable token, caches or persistent runner may be attached to these jobs.
+# Fork execution remains disabled by an explicit same-repository guard. The live
+# approval policy was all_external_contributors; the brief's stricter literal
+# all_outside_collaborators condition has not been observed, so no fork runs.
 jobs:
-  validate-json:
-    name: Validate index.json
-    runs-on: ubuntu-latest
+  inventory:
+    if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-24.04
+    timeout-minutes: 1
+    permissions:
+      contents: read
+    cache-mode: none
+    outputs:
+      matrix: ${{ steps.select.outputs.matrix }}
+      has_work: ${{ steps.select.outputs.has_work }}
     steps:
-      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
         with:
           persist-credentials: false
-      - name: Validate all index.json files
+          fetch-depth: 0
+      - name: Structural inventory and execution selection
+        id: select
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
         run: |
-          ERRORS=0
-          for f in $(find . -name "index.json" -not -path "./templates/*"); do
-            if ! python3 -c "import json; json.load(open('$f'))" 2>/dev/null; then
-              echo "FAIL: Invalid JSON in $f"
-              ERRORS=$((ERRORS + 1))
-            else
-              # Check required fields
-              python3 -c "
-          import json, sys
-          d = json.load(open('$f'))
-          errors = []
-          if 'title' not in d: errors.append('missing title')
-          if 'backend' not in d or 'imageid' not in d.get('backend', {}): errors.append('missing backend.imageid')
-          if 'details' not in d or 'steps' not in d.get('details', {}): errors.append('missing details.steps')
-          if errors:
-              print(f'FAIL: $f — {', '.join(errors)}')
-              sys.exit(1)
-          print(f'OK: $f — {len(d[\"details\"][\"steps\"])} steps')
-          " || ERRORS=$((ERRORS + 1))
-            fi
-          done
-          echo ""
-          echo "Validated $(find . -name 'index.json' -not -path './templates/*' | wc -l) scenarios"
-          [ "$ERRORS" -eq 0 ] || exit 1
+          args=()
+          if [ "$GITHUB_EVENT_NAME" = pull_request ]; then args+=(--base "$BASE_SHA"); fi
+          python3 scripts/ci/scenarios.py "${args[@]}" --github-output "$GITHUB_OUTPUT"
+      - name: Prove false-green paths fail
+        run: python3 scripts/ci/self-test.py
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        if: always()
+        with:
+          name: structural-inventory
+          path: reports/inventory.json
+          if-no-files-found: error
+          retention-days: 7
 
-  test-verify-scripts:
-    name: Test verify.sh scripts (Ubuntu scenarios)
-    runs-on: ubuntu-latest
+  execute:
+    needs: inventory
+    if: >-
+      needs.inventory.outputs.has_work == 'true' &&
+      (github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 18
+    permissions:
+      contents: read
+    cache-mode: none
+    strategy:
+      fail-fast: false
+      max-parallel: 16
+      matrix: ${{ fromJSON(needs.inventory.outputs.matrix) }}
     steps:
-      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
         with:
           persist-credentials: false
-      - name: Check verify scripts are executable and valid bash
+      - name: Install checksum-pinned kind
+        if: matrix.backend == 'kubernetes-kubeadm-1node'
         run: |
-          ERRORS=0
-          for f in $(find . -name "verify.sh"); do
-            if ! bash -n "$f" 2>/dev/null; then
-              echo "FAIL: Syntax error in $f"
-              ERRORS=$((ERRORS + 1))
-            fi
-          done
-          echo "Checked $(find . -name 'verify.sh' | wc -l) verify scripts"
-          [ "$ERRORS" -eq 0 ] || exit 1
-
-  test-ubuntu-scenarios:
-    name: Run Ubuntu scenarios in Docker
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+          curl --fail --location --retry 2 --max-time 60 -o /tmp/kind https://github.com/kubernetes-sigs/kind/releases/download/v0.33.0/kind-linux-amd64
+          echo 'aee6151561422756b764a4ae28e7f44cda5af5a9eead3cc9985112b1de8d8e0d  /tmp/kind' | sha256sum --check --strict
+          sudo install -m 0755 /tmp/kind /usr/local/bin/kind
+      - name: Execute independent learner, solution and negative lanes
+        env:
+          SCENARIO: ${{ matrix.scenario }}
+          TOUCHED: ${{ matrix.touched }}
+        run: python3 scripts/ci/run-scenarios.py "$SCENARIO" --event "$GITHUB_EVENT_NAME" --touched "$TOUCHED"
+      - name: Prove fresh-cluster isolation with a cluster-scoped object
+        if: matrix.scenario == 'prereq-k8s-1.1-first-cluster'
+        run: timeout --signal=TERM 180s python3 scripts/ci/self-test.py --live-kind
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        if: always()
         with:
-          persist-credentials: false
-      - name: Test all Ubuntu scenarios (privileged systemd containers)
-        run: bash scripts/test-scenario.sh --all
+          name: scenario-${{ matrix.scenario }}
+          path: reports/${{ matrix.scenario }}.json
+          if-no-files-found: error
+          retention-days: 7
+
+  gate:
+    name: CI Gate
+    needs: [inventory, execute]
+    if: always()
+    runs-on: ubuntu-24.04
+    timeout-minutes: 1
+    permissions:
+      contents: read
+    cache-mode: none
+    steps:
+      - name: Refuse fork pull requests explicitly
+        env:
+          HEAD_REPO: ${{ github.event.pull_request.head.repo.full_name }}
+        run: |
+          if [ "$GITHUB_EVENT_NAME" = pull_request ] && [ "$HEAD_REPO" != "$GITHUB_REPOSITORY" ]; then
+            echo 'Fork execution is disabled; required CI evidence is unavailable.'
+            exit 1
+          fi
+      - name: Require successful structural, self-test and execution jobs
+        env:
+          INVENTORY: ${{ needs.inventory.result }}
+          EXECUTION: ${{ needs.execute.result }}
+          HAS_WORK: ${{ needs.inventory.outputs.has_work }}
+        run: |
+          test "$INVENTORY" = success
+          if [ "$HAS_WORK" = true ]; then test "$EXECUTION" = success; else test "$EXECUTION" = skipped; fi
+
+# Published JSON is untrusted. No downstream job reads it as code or approval.
+# The lane files issues outside execution jobs from residual failure reports.

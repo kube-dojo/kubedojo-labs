@@ -1,0 +1,16 @@
+{
+  "requirements": [
+    {
+      "id": "replicas",
+      "outcome": "Create webapp with 3 replicas.",
+      "assertion": "[ \"$REPLICAS\" = 3 ]",
+      "negative": "negative/replicas.sh"
+    },
+    {
+      "id": "image",
+      "outcome": "Create webapp using image nginx:1.25.",
+      "assertion": "[ \"$IMAGE\" = \"nginx:1.25\" ]",
+      "negative": "negative/image.sh"
+    }
+  ]
+}

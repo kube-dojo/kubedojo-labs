@@ -14,19 +14,22 @@
         "title": "Update and search packages",
         "text": "step1/text.md",
         "verify": "step1/verify.sh",
-        "solution": "step1/solution.sh"
+        "solution": "step1/solution.sh",
+        "class": "change"
       },
       {
         "title": "Install a package",
         "text": "step2/text.md",
         "verify": "step2/verify.sh",
-        "solution": "step2/solution.sh"
+        "solution": "step2/solution.sh",
+        "class": "change"
       },
       {
         "title": "Inspect installed packages",
         "text": "step3/text.md",
         "verify": "step3/verify.sh",
-        "solution": "step3/solution.sh"
+        "solution": "step3/solution.sh",
+        "class": "expect-error"
       }
     ],
     "finish": {

@@ -1,7 +1,8 @@
 #!/bin/bash
 if id 'ubuntu' &>/dev/null; then USER_HOME='/home/ubuntu'; else USER_HOME='/root'; fi
 #!/bin/bash
-if kubectl get pod secure-pod >/dev/null 2>&1; then
+PODS=$(kubectl get pods -n default -o name) || exit 2
+if grep -qxF 'pod/secure-pod' <<< "$PODS"; then
   echo "FAIL: Pod 'secure-pod' still exists."
   exit 1
 else

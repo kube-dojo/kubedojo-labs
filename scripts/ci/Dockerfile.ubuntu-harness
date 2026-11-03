@@ -1,6 +1,6 @@
 # Harness image for kubedojo-labs Ubuntu scenario CI.
 #
-# Approximates the Killercoda `ubuntu` environment: a full Ubuntu 22.04
+# Approximates the Killercoda `ubuntu` environment: a full Ubuntu 24.04
 # system with REAL systemd as PID 1 (no systemctl mock), booted per
 # scenario-lane as a privileged, disposable container.
 #
@@ -9,7 +9,7 @@
 # runner. The workflow must therefore only ever trigger via `push` /
 # `pull_request` (never `pull_request_target`), with a read-only token
 # and no secrets in the job environment.
-FROM ubuntu:22.04
+FROM ubuntu:24.04
 
 ENV DEBIAN_FRONTEND=noninteractive container=docker
 
@@ -36,9 +36,11 @@ RUN systemctl mask systemd-udevd.service systemd-udevd-kernel.socket \
     e2scrubb_all.timer 2>/dev/null; \
     systemctl set-default multi-user.target
 
-COPY run-lane.sh /opt/harness/run-lane.sh
 COPY run-steps.py /opt/harness/run-steps.py
-RUN chmod +x /opt/harness/run-lane.sh
+COPY scenarios.py /opt/harness/scenarios.py
+RUN id ubuntu >/dev/null 2>&1 || useradd -m -s /bin/bash ubuntu
+RUN echo 'ubuntu ALL=(ALL) NOPASSWD:ALL' > /etc/sudoers.d/90-ubuntu-lab \
+    && chmod 0440 /etc/sudoers.d/90-ubuntu-lab
 
 STOPSIGNAL SIGRTMIN+3
 CMD ["/sbin/init"]

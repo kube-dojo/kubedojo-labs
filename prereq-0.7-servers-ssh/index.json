@@ -14,25 +14,29 @@
         "title": "Generate SSH keys",
         "text": "step1/text.md",
         "verify": "step1/verify.sh",
-        "solution": "step1/solution.sh"
+        "solution": "step1/solution.sh",
+        "class": "change"
       },
       {
         "title": "Check listening ports",
         "text": "step2/text.md",
         "verify": "step2/verify.sh",
-        "solution": "step2/solution.sh"
+        "solution": "step2/solution.sh",
+        "class": "change"
       },
       {
         "title": "Explore SSH configuration",
         "text": "step3/text.md",
         "verify": "step3/verify.sh",
-        "solution": "step3/solution.sh"
+        "solution": "step3/solution.sh",
+        "class": "change"
       },
       {
         "title": "Verify file integrity",
         "text": "step4/text.md",
         "verify": "step4/verify.sh",
-        "solution": "step4/solution.sh"
+        "solution": "step4/solution.sh",
+        "class": "change"
       }
     ],
     "finish": {

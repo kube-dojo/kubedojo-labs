@@ -1,0 +1,22 @@
+{
+  "requirements": [
+    {
+      "id": "namespace",
+      "outcome": "Create secure-pod in namespace default.",
+      "assertion": "kubectl get pod secure-pod -n default",
+      "negative": "negative/namespace.sh"
+    },
+    {
+      "id": "pod-image",
+      "outcome": "Use exactly nginx:1.25 for secure-pod.",
+      "assertion": "[ \"$IMAGE\" = \"nginx:1.25\" ]",
+      "negative": "negative/pod-image.sh"
+    },
+    {
+      "id": "pod-label",
+      "outcome": "Set secure-pod label app=secure.",
+      "assertion": "[ \"$LABELS\" = \"secure\" ]",
+      "negative": "negative/pod-label.sh"
+    }
+  ]
+}

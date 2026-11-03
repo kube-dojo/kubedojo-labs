@@ -1,0 +1,16 @@
+{
+  "requirements": [
+    {
+      "id": "wget-removed",
+      "outcome": "wget is removed and which wget returns the documented exit 1 (text.md:2-3)",
+      "assertion": "dpkg-query does not report installed and which wget returns exactly 1",
+      "negative": "negative/wget-removed.sh"
+    },
+    {
+      "id": "which-output",
+      "outcome": "wget-check.txt exists and contains the empty output of which wget (text.md:3)",
+      "assertion": "[ ! -f \"$USER_HOME/wget-check.txt\" ] || [ -s \"$USER_HOME/wget-check.txt\" ]",
+      "negative": "negative/which-output.sh"
+    }
+  ]
+}

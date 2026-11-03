@@ -1,0 +1,10 @@
+{
+  "requirements": [
+    {
+      "id": "saved-pod-table",
+      "outcome": "Save the full default kubectl get pods table for every kube-system pod in $HOME/kube-system-pods.txt.",
+      "assertion": "default-table header, complete pod names ($SAVED = $EXPECTED), and at least five columns per row",
+      "negative": "negative/saved-pod-table.sh"
+    }
+  ]
+}

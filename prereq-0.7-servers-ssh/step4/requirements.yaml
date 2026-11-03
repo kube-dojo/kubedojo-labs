@@ -1,0 +1,10 @@
+{
+  "requirements": [
+    {
+      "id": "full-checksum",
+      "outcome": "checksum.txt contains the full md5sum output for important-data.bin (text.md:2)",
+      "assertion": "one complete md5sum line with the actual digest and target filename, accepting relative and absolute spelling",
+      "negative": "negative/full-checksum.sh"
+    }
+  ]
+}

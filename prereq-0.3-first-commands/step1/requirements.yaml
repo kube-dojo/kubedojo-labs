@@ -1,0 +1,10 @@
+{
+  "requirements": [
+    {
+      "id": "only-code",
+      "outcome": "~/code.txt contains only DOJO123 (text.md:19)",
+      "assertion": "awk exactly one line equal to DOJO123",
+      "negative": "negative/only-code.sh"
+    }
+  ]
+}

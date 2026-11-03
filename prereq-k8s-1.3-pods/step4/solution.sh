@@ -1,2 +1,2 @@
 #!/bin/bash
-kubectl delete pod api --wait=true
+kubectl delete pod secure-pod --wait=true --timeout=120s

@@ -1,0 +1,16 @@
+{
+  "requirements": [
+    {
+      "id": "owner-execute",
+      "outcome": "important_script.sh has the owner execute bit (text.md:6)",
+      "assertion": "(8#$SCRIPT_MODE & 0100) != 0",
+      "negative": "negative/owner-execute.sh"
+    },
+    {
+      "id": "owner-read",
+      "outcome": "secret_config.cfg has the owner read bit (text.md:7)",
+      "assertion": "(8#$CONFIG_MODE & 0400) != 0",
+      "negative": "negative/owner-read.sh"
+    }
+  ]
+}

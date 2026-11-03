@@ -1,0 +1,10 @@
+{
+  "requirements": [
+    {
+      "id": "stopped-list",
+      "outcome": "~/projects/lab-results/stopped.txt is the complete list of stopped services (text.md:6-7)",
+      "assertion": "cmp -s \"$TARGET\" <(grep stopped \"$USER_HOME/documents/services.txt\")",
+      "negative": "negative/stopped-list.sh"
+    }
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "requirements": [
+    {
+      "id": "nginx-running",
+      "outcome": "nginx is running (text.md:2)",
+      "assertion": "pgrep -x nginx >/dev/null",
+      "negative": "negative/nginx-running.sh"
+    },
+    {
+      "id": "full-ports",
+      "outcome": "ports.txt contains the full ss -tlnp output (text.md:3)",
+      "assertion": "saved ss table header, LISTEN rows, port 80 and the seeded SSH listener; process columns and PIDs may differ",
+      "negative": "negative/full-ports.sh"
+    }
+  ]
+}

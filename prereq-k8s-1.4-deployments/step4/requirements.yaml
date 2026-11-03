@@ -1,0 +1,10 @@
+{
+  "requirements": [
+    {
+      "id": "image",
+      "outcome": "Roll webapp back to the previous nginx:1.25 version.",
+      "assertion": "[ \"$IMAGE\" = 'nginx:1.25' ]",
+      "negative": "negative/image.sh"
+    }
+  ]
+}

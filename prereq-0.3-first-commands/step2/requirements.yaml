@@ -1,0 +1,10 @@
+{
+  "requirements": [
+    {
+      "id": "result-file",
+      "outcome": "~/projects/lab-results/step2.txt contains step 2 complete (text.md:16)",
+      "assertion": "grep -q \"step 2 complete\" \"$USER_HOME/projects/lab-results/step2.txt\"",
+      "negative": "negative/result-file.sh"
+    }
+  ]
+}

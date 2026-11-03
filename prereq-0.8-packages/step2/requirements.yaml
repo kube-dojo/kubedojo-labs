@@ -1,0 +1,16 @@
+{
+  "requirements": [
+    {
+      "id": "wget-installed",
+      "outcome": "wget package is installed and its command is available (text.md:2)",
+      "assertion": "dpkg-query -W -f='${Status}' wget",
+      "negative": "negative/wget-installed.sh"
+    },
+    {
+      "id": "full-version",
+      "outcome": "wget-version.txt contains the full wget --version output (text.md:3)",
+      "assertion": "cmp -s \"$FILE\" <(wget --version)",
+      "negative": "negative/full-version.sh"
+    }
+  ]
+}

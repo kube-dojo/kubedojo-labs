@@ -1,0 +1,10 @@
+{
+  "requirements": [
+    {
+      "id": "namespace",
+      "outcome": "Create namespace my-first-ns.",
+      "assertion": "kubectl get namespace my-first-ns",
+      "negative": "negative/namespace.sh"
+    }
+  ]
+}

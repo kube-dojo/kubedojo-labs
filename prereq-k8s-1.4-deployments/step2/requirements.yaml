@@ -1,0 +1,10 @@
+{
+  "requirements": [
+    {
+      "id": "replicas",
+      "outcome": "Scale the webapp deployment to 5 replicas.",
+      "assertion": "[ \"$REPLICAS\" = 5 ]",
+      "negative": "negative/replicas.sh"
+    }
+  ]
+}
