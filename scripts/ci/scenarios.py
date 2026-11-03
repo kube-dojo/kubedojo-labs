@@ -108,13 +108,19 @@ def inventory(root):
         row = {"scenario": path.parent.name,
                "level": "executable" if path.parent.name in REFERENCES else "residual"}
         try:
-            index, steps = validate(path.parent, row["level"] == "executable")
+            index, steps = validate(path.parent)
             row.update(structural="pass", backend=index["backend"]["imageid"], steps=len(steps))
         except (ValueError, KeyError, TypeError, OSError) as exc:
             row.update(structural="fail", error=str(exc))
         if row["level"] == "residual":
             row.update(certification="not certified", replay="not replayable",
                        adequacy="checker adequacy not proven", execution="not run")
+        elif row["structural"] == "pass":
+            try:
+                validate(path.parent, True)
+                row["evidence"] = "pass"
+            except (ValueError, KeyError, TypeError, OSError) as exc:
+                row.update(evidence="fail", evidence_error=str(exc))
         rows.append(row)
     missing = REFERENCES - {r["scenario"] for r in rows}
     if missing:
@@ -157,8 +163,8 @@ def main():
     print(json.dumps({"scenarios": len(rows), "steps": sum(r.get("steps", 0) for r in rows),
                       "references": sum(r["level"] == "executable" for r in rows),
                       "residual": sum(r["level"] == "residual" for r in rows),
-                      "errors": [r for r in rows if r["structural"] == "fail"]}))
-    return int(any(r["structural"] == "fail" for r in rows))
+                      "errors": [r for r in rows if r["structural"] == "fail" or r.get("evidence") == "fail"]}))
+    return int(any(r["structural"] == "fail" or r.get("evidence") == "fail" for r in rows))
 
 
 if __name__ == "__main__":

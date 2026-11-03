@@ -9,6 +9,7 @@ import json
 import os
 from pathlib import Path
 import pwd
+import shutil
 import subprocess
 import sys
 import tempfile
@@ -16,6 +17,7 @@ import unittest
 from unittest.mock import patch
 
 from scenarios import select, validate
+import scenarios
 
 
 def module(name):
@@ -182,6 +184,18 @@ class FalseGreenTests(unittest.TestCase):
         (self.root / "step1/solution.sh").unlink()
         with self.assertRaisesRegex(ValueError, "missing or escaping declared path"):
             validate(self.root, True)
+
+    def test_missing_transcript_fails_evidence_without_failing_structural_level(self):
+        nested = self.root / "lab"
+        nested.mkdir()
+        shutil.move(str(self.root / "step1"), nested)
+        shutil.move(str(self.root / "index.json"), nested)
+        (nested / "step1/learner.sh").unlink()
+        with patch.object(scenarios, "REFERENCES", {"lab"}):
+            rows = scenarios.inventory(self.root)
+        self.assertEqual(rows[0]["structural"], "pass")
+        self.assertEqual(rows[0]["evidence"], "fail")
+        self.assertIn("not replayable", rows[0]["evidence_error"])
 
     def test_timeout_cannot_pass(self):
         self.write("step1/learner.sh", "sleep 10\n")

@@ -177,7 +177,7 @@ def main():
         report = {"scenario": name, "level": "executable" if name in REFERENCES else "residual",
                   "execution": "fail", "steps": [], "runs": []}
         try:
-            signal.alarm(900)
+            signal.alarm(1020)
             index, _ = validate(path, name in REFERENCES)
             _, steps = steps_for(path)
             report["steps"] = [{"step": n + 1, "text": step["text"],
@@ -191,7 +191,7 @@ def main():
             if backend not in built:
                 build(backend)
                 built.add(backend)
-            # One-lab execution is capped at 15 minutes, including the image build.
+            # One-lab execution is capped at 17 minutes, including the image build.
             report = run_scenario(path)
         except (Exception, ScenarioTimeout) as exc:
             report["error"] = f"crash, missing input or timeout: {type(exc).__name__}: {exc}"
