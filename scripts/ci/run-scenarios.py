@@ -92,7 +92,10 @@ def execute(scenario, backend, mode, target=None, fixture=None):
         # Never parse lab stdout as instructions. Copy only the designated JSON report.
         with tempfile.TemporaryDirectory(prefix="kd-report-") as temporary:
             file = Path(temporary) / "lane.json"
-            command(["docker", "cp", node + ":/tmp/lane-report.json", str(file)])
+            try:
+                command(["docker", "cp", node + ":/tmp/lane-report.json", str(file)])
+            except InfrastructureError as exc:
+                raise InfrastructureError(f"{exc}\nGuest exit {process.returncode}: {process.stdout[-6000:]}") from exc
             result = json.loads(file.read_text())
         if process.returncode == 1:
             result["status"] = "fail"

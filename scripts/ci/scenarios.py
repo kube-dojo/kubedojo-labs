@@ -148,7 +148,8 @@ def main():
     matrix = {"include": [{"scenario": r["scenario"], "backend": r.get("backend", "ubuntu"),
                             "touched": changed is not None and any(
                                 p.startswith(r["scenario"] + "/") for p in changed)}
-                          for r in rows if r["scenario"] in selected]}
+                          for r in sorted(rows, key=lambda row: (row["level"] != "executable", row["scenario"]))
+                          if r["scenario"] in selected]}
     if args.github_output:
         with args.github_output.open("a") as output:
             output.write("matrix=" + json.dumps(matrix, separators=(",", ":")) + "\n")
