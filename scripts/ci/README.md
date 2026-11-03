@@ -28,6 +28,7 @@ observed residual failure fatal. `--event push` and `--event schedule` preserve
 the failure report for the lane to file an issue without failing residual runs.
 A harness-only PR executes all residuals with `--touched false`; an individual
 residual becomes fatal when that PR also changes its directory.
+Local wrapper runs always return nonzero on an observed execution failure.
 
 ## Coverage and reports
 

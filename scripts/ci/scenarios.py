@@ -56,7 +56,7 @@ def requirements(root, step):
         ids.add(row["id"])
         fixtures.add(row["negative"])
         negative = declared(path.parent, row["negative"])
-        if not negative.is_relative_to(path.parent / "negative"):
+        if not negative.resolve().is_relative_to((path.parent / "negative").resolve()):
             raise ValueError(f"fixture outside negative/: {negative}")
     if "initial_pass" in data and (not isinstance(data["initial_pass"], str)
                                     or not data["initial_pass"].strip()):

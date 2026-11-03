@@ -145,6 +145,7 @@ class FalseGreenTests(unittest.TestCase):
         self.assertEqual(host.exit_status(report, "pull_request"), 1)
         self.assertEqual(host.exit_status(report, "push"), 1)
         report["level"] = "residual"
+        self.assertEqual(host.exit_status(report, "local"), 1)
         self.assertEqual(host.exit_status(report, "pull_request"), 1)
         self.assertEqual(host.exit_status(report, "schedule"), 0)
         self.assertEqual(host.exit_status(report, "pull_request", touched=False), 0)
@@ -161,6 +162,20 @@ class FalseGreenTests(unittest.TestCase):
         report = json.loads((self.root / "reports/prereq-0.3-first-commands.json").read_text())
         self.assertEqual(report["execution"], "fail")
         self.assertIn("command exited 19", report["error"])
+        # A local residual must also fail through the historical K8s wrapper.
+        result = subprocess.run(
+            ["bash", str(host.ROOT / "scripts/test-k8s-scenario.sh"), "cka-0.1-cluster-setup",
+             "--report-dir", str(self.root / "residual-reports")],
+            env={**os.environ, "PATH": str(docker.parent) + os.pathsep + os.environ["PATH"]},
+            text=True, capture_output=True, timeout=10)
+        self.assertEqual(result.returncode, 1, result.stdout + result.stderr)
+
+    def test_fixture_dotdot_cannot_escape_negative_directory(self):
+        data = json.loads((self.root / "step1/requirements.yaml").read_text())
+        data["requirements"][0]["negative"] = "negative/../solution.sh"
+        self.write("step1/requirements.yaml", json.dumps(data))
+        with self.assertRaisesRegex(ValueError, "fixture outside negative"):
+            validate(self.root, True)
 
     def test_wrong_expected_exit_is_rejected(self):
         self.write("step1/learner.sh", "# expect-exit: 3\nfalse\n")

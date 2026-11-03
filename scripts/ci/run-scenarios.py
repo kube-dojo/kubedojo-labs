@@ -145,7 +145,8 @@ def run_scenario(scenario, executor=execute):
 
 def exit_status(report, event, touched=True):
     return int(report["execution"] != "pass" and
-               (report["level"] == "executable" or (event == "pull_request" and touched)))
+               (report["level"] == "executable" or event == "local"
+                or (event == "pull_request" and touched)))
 
 
 def main():
@@ -199,7 +200,7 @@ def main():
             signal.alarm(0)
         report["elapsed_seconds"] = round(time.monotonic() - started, 3)
         report["disposition"] = ("lane issue required" if report["execution"] == "fail"
-                                  and report["level"] == "residual" and not (
+                                  and report["level"] == "residual" and args.event != "local" and not (
                                       args.event == "pull_request" and args.touched == "true")
                                   else report["execution"])
         (args.report_dir / (name + ".json")).write_text(json.dumps(report, indent=2) + "\n")
