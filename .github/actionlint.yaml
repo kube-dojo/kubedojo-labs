@@ -1,0 +1,5 @@
+paths:
+  .github/workflows/test-scenarios.yml:
+    ignore:
+      # Remove when the pinned actionlint supports GitHub's cache-mode key.
+      - '^unexpected key "cache-mode" for "job" section\.'
