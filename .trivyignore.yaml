@@ -18,16 +18,23 @@ misconfigurations:
 #   distribution in the digest and no fixed version for the upgrade;
 # - approved-unfixed: a Debian package the digest does not ship, named exactly
 #   in unfixed-project-packages, while Trivy reports no fixed version.
-# Every other row blocks, including downgrades, same-version rewrites and a
-# fixed version on an upgraded or approved package. Unknown attribution,
-# missing or malformed scan data (including a built image that lacks the
-# distribution or any package the digest ships), a changed digest, a review-by
-# date in the past or a window over 30 days fail closed. The Dockerfile must
-# have exactly one literal FROM equal to the recorded base, and the built
-# image's layers must start with that digest's layers.
+# Every finding in a later (suffix) layer is project content, attributed only
+# by the inherited-upgrade and approved-unfixed rules, and blocks otherwise
+# (including downgrades, same-version rewrites and a fixed version on an
+# upgraded or approved package). The check fails closed when the built image's
+# layers don't begin with the recorded digest's layers (base_mismatch), when a
+# suffix layer repeats a prefix layer DiffID (ambiguous_layers), on unknown
+# attribution, on missing or malformed scan data (including a built image that
+# lacks the distribution or any package the digest ships), on a review-by date
+# in the past, or on a window over 30 days. A different image config with the
+# same layer prefix is allowed for package attribution; this policy classifies
+# Trivy scanner findings and does not guarantee file-level integrity.
 # Review again at the next kind release and at least every 30 days; only the
 # 30-day bound is enforced here. .github/dependabot.yml proposes newer
-# kindest/node images as a prompt for the release review.
+# kindest/node images as a prompt for the release review; a new digest fails
+# with base_mismatch until the disposition is reviewed again (unless the new
+# image is built on top of the old one, whose extra layers are then attributed
+# as project content).
 inherited-base-images:
   - dockerfile: scripts/ci/Dockerfile.kind-harness
     base: kindest/node:v1.37.0@sha256:a1ed56cfb0e7b93589bdf97c8cd566405a265939e3620fc4f5de89adff580ae5
@@ -47,4 +54,6 @@ inherited-base-images:
       stable kind release. Its distribution packages and compiled runtime
       binaries carry upstream HIGH/CRITICAL findings, many without fixes, that
       the lab harness cannot change. It runs only as a disposable cluster node
-      on an ephemeral GitHub-hosted runner with a read-only token and no secrets.
+      on an ephemeral GitHub-hosted runner with a read-only token and no
+      secrets. Attribution fails closed when the built image's layers don't
+      begin with the recorded digest's layers.

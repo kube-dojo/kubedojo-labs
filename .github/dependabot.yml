@@ -1,8 +1,11 @@
 # Proposes the newest kindest/node image (one open PR at a time, after a
 # 7-day cooldown) as a prompt for the disposition review at a kind release.
-# The proposed digest fails the kind harness attribution job until the
-# disposition in .trivyignore.yaml is reviewed for it. The enforced bound is
-# the disposition's 30-day review-by date (#106).
+# The kind harness attribution job fails closed when the built image's layers
+# don't begin with the recorded digest's layers: a new kindest/node digest
+# fails with base_mismatch until the disposition in .trivyignore.yaml is
+# reviewed again. The only exception is a new image built on top of the old
+# one, whose extra layers are then attributed as project content. The enforced
+# bound is the disposition's 30-day review-by date (#106).
 version: 2
 updates:
   - package-ecosystem: docker

@@ -54,6 +54,8 @@ jobs:
       TRIVY_VERSION: "0.76.2"
       TRIVY_LINUX_64BIT_SHA256: bc0fc726e017b8927a62b2d3531d7a84ee01769daf5c99ed866dced54089fdbf
       TRIVY_DB_REPOSITORY: "mirror.gcr.io/aquasec/trivy-db:2,ghcr.io/aquasecurity/trivy-db:2"
+      # Pinned BuildKit Dockerfile frontend so no Dockerfile syntax directive can override it.
+      DOCKERFILE_FRONTEND: "docker.io/docker/dockerfile:1.29.0@sha256:572cebbc2b15e6f84c077742952674889cb63cd5e9b80abdffcbe587b6f19183"
       POLICY: .trivyignore.yaml
       DOCKERFILE: scripts/ci/Dockerfile.kind-harness
       CONTEXT: scripts/ci
@@ -84,13 +86,18 @@ jobs:
             reports no fixed version.
 
           Inherited rows are report-only whether or not a fix exists upstream (the first
-          designated decision on #106). Every other row blocks, including downgrades,
-          same-version rewrites, unmatched advisories and a fixed version on an upgraded
-          or approved package. A built scan that lacks the distribution or any package
-          the pinned digest ships, malformed or empty scan data, unknown attribution, a
-          Dockerfile whose only FROM is not the recorded digest, a built image whose
-          layers do not start with the digest's layers and an overdue disposition fail
-          closed. When the built scan is
+          designated decision on #106). Base binding is the filesystem layer prefix:
+          this check fails closed when the built image's layers don't begin with the
+          recorded digest's layers (base_mismatch), or when a suffix layer repeats a
+          prefix layer DiffID (ambiguous_layers). A different image config with the same
+          layer prefix is allowed for package attribution; this policy classifies Trivy
+          scanner findings and does not guarantee file-level integrity. Every finding in
+          a later (suffix) layer is project content, attributed only by the
+          inherited-upgrade and approved-unfixed rules, and blocks otherwise (including
+          downgrades, same-version rewrites, unmatched advisories and a fixed version on
+          an upgraded or approved package). A built scan that lacks the distribution or
+          any package the pinned digest ships, malformed or empty scan data, unknown
+          attribution and an overdue disposition fail closed. When the built scan is
           readable, a refusal still reports its rows as unknown.
           """
           import datetime
@@ -139,7 +146,11 @@ jobs:
 
 
           def disposition(policy_path, dockerfile, today):
-              """Return the validated disposition entry whose base equals the Dockerfile's only FROM."""
+              """Return the validated disposition entry keyed by Dockerfile path.
+
+              Base binding is enforced in attribute(), which fails closed when the built
+              image's layers don't begin with the recorded digest's layers.
+              """
               try:
                   import yaml
               except ImportError:
@@ -177,53 +188,7 @@ jobs:
                   raise Refusal("invalid_disposition", f"review-by must be within {MAX_REVIEW_DAYS} days of reviewed")
               if today > review_by:
                   raise Refusal("review_overdue", f"disposition expired on {review_by.isoformat()}; record a fresh review")
-              instructions = dockerfile_instructions(dockerfile)
-              keywords = [words[0].upper() for words in instructions]
-              if "ARG" in keywords or keywords.count("FROM") != 1 or keywords[0] != "FROM" or len(instructions[0]) != 2:
-                  raise Refusal("unsupported_dockerfile", "expected exactly one literal 'FROM <image>' stage without flags, stage name or ARG")
-              if instructions[0][1] != base:
-                  raise Refusal("base_changed", f"Dockerfile FROM {clean(instructions[0][1])} differs from the recorded disposition; "
-                                "record a fresh disposition")
-              # attribute() also proves the built image's layers start with the digest's layers.
               return entry
-
-
-          def dockerfile_instructions(path):
-              """Split a Dockerfile into logical instructions using its lexical rules; refuse what this check cannot model.
-
-              A UTF-8 byte-order mark is dropped. Parser directives (which can change the escape character) and
-              heredocs (whose bodies are data) refuse. A backslash at the end of a line joins the next line as
-              BuildKit does: comment lines and blank lines inside a continuation are skipped and the remaining
-              text is concatenated without a separator.
-              """
-              try:
-                  source = Path(path).read_text(encoding="utf-8").removeprefix("\ufeff")
-              except (OSError, UnicodeDecodeError) as exc:
-                  raise Refusal("dockerfile_unreadable", type(exc).__name__) from None
-              logical, current = [], None
-              for raw in source.splitlines():
-                  stripped = raw.strip()
-                  if stripped.startswith("#"):
-                      if re.match(r"#\s*[A-Za-z]+\s*=", stripped):
-                          raise Refusal("unsupported_dockerfile", "parser directives are not supported")
-                      continue
-                  if not stripped:
-                      continue
-                  if "<<" in raw:
-                      raise Refusal("unsupported_dockerfile", "heredoc syntax is not supported")
-                  body = raw.lstrip() if current is None else raw
-                  continued = re.search(r"\\\s*$", body)
-                  if continued:
-                      current = (current or "") + body[:continued.start()]
-                      continue
-                  logical.append((current or "") + body)
-                  current = None
-              if current is not None:
-                  logical.append(current)
-              instructions = [line.split() for line in logical if line.split()]
-              if not instructions:
-                  raise Refusal("unsupported_dockerfile", "the Dockerfile has no instructions")
-              return instructions
 
 
           def load_scan(path, label):
@@ -353,6 +318,8 @@ jobs:
                                      "image_id": clean(built["Metadata"].get("ImageID", ""))}
                   if built_ids[: len(up_ids)] != up_ids:
                       raise Refusal("base_mismatch", "built image layers do not start with the pinned upstream layers")
+                  if set(built_ids[len(up_ids) :]) & set(up_ids):
+                      raise Refusal("ambiguous_layers", "built image suffix repeats a pinned upstream layer DiffID")
                   if (up_os["Family"], up_os["Name"]) != (built_os["Family"], built_os["Name"]):
                       raise Refusal("base_mismatch", "built image distribution differs from the pinned digest")
                   lost = up_inventory - built_inventory
@@ -494,7 +461,7 @@ jobs:
 
           def self_test():
               """Prove report-only, blocking and fail-closed paths on owned fixtures."""
-              a, b = "sha256:" + "a" * 64, "sha256:" + "b" * 64
+              a, b, d = "sha256:" + "a" * 64, "sha256:" + "b" * 64, "sha256:" + "d" * 64
               base = "kindest/node:v0.0.0@sha256:" + "c" * 64
               approved = ("python3.13",)
 
@@ -614,7 +581,18 @@ jobs:
                   ("base-layer finding absent upstream blocks",
                    up, built([row("CVE-9", "curl", "8.1-2+deb13u4", a)]), 1, "blocked", "unknown", 1),
                   ("built scan with zero packages fails", up, scan([a, b], [], [], packages=0) | {"Results": []}, 1, "error", None, 0),
-                  ("built scan on another base fails", up, scan([b, a], [], [], 1), 1, "error", None, 0),
+                  ("built scan on another base fails", up, scan([b, a], [], [], 1), 1, "error", None, 0, "base_mismatch"),
+                  ("wrong layer prefix refuses with base_mismatch",
+                   scan([a, b], [row("CVE-1", "curl", "8.1-2+deb13u4", a)], go),
+                   scan([a, d], [row("CVE-1", "curl", "8.1-2+deb13u4", a)], go), 1, "error", None, 0, "base_mismatch"),
+                  ("multistage build with a non-exempt suffix finding blocks",
+                   up,
+                   scan([a, b, d],
+                        [row("CVE-1", "curl", "8.1-2+deb13u4", a), row("CVE-3", "python3.13", "3.13.5-2", b)],
+                        go + [row("CVE-10", "helper", "v0.1", d, purl=False)]),
+                   1, "blocked", "project", 1),
+                  ("suffix layer repeating a prefix DiffID refuses",
+                   up, scan([a, b, a], [row("CVE-1", "curl", "8.1-2+deb13u4", a)], go), 1, "error", None, 0, "ambiguous_layers"),
                   ("built scan without results fails", up, {"Metadata": {"DiffIDs": [a, b]}}, 1, "error", None, 0),
                   ("unreadable built scan fails", up, "{", 1, "error", None, 0),
                   ("empty built scan file fails", up, "", 1, "error", None, 0),
@@ -623,7 +601,8 @@ jobs:
               failures = 0
               with tempfile.TemporaryDirectory() as tmp:
                   tmp = Path(tmp)
-                  for name, upstream, built_scan, want_rc, want_status, want_class, want_count in attribution_cases:
+                  for name, upstream, built_scan, want_rc, want_status, want_class, want_count, *rest in attribution_cases:
+                      want_reason = rest[0] if rest else None
                       for label, data in (("up.json", upstream), ("built.json", built_scan)):
                           (tmp / label).write_text(data if isinstance(data, str) else json.dumps(data), encoding="utf-8")
                       rc, report = attribute(tmp / "up.json", tmp / "built.json", base, approved)
@@ -632,38 +611,26 @@ jobs:
                           ok_rest = sum(report["counts"].values()) == report["counts"]["unknown"]
                       else:
                           ok_rest = True
+                      ok_reason = want_reason is None or report["reason"] == want_reason
                       got_count = report["counts"][want_class]
-                      ok = ok_rest and (rc, report["status"], got_count) == (want_rc, want_status, want_count)
+                      ok = ok_rest and ok_reason and (rc, report["status"], got_count) == (want_rc, want_status, want_count)
                       failures += not ok
-                      print(f"{'PASS' if ok else 'FAIL'} {name}: rc={rc} status={report['status']} counts={report['counts']}")
+                      print(f"{'PASS' if ok else 'FAIL'} {name}: rc={rc} status={report['status']} reason={report['reason']} counts={report['counts']}")
                   today = datetime.date(2026, 11, 21)
-                  good = {"dockerfile": str(tmp / "Dockerfile"), "base": base, "owner": "claude-cto",
+                  good = {"dockerfile": "scripts/ci/Dockerfile.kind-harness", "base": base, "owner": "claude-cto",
                           "reviewed": "2026-11-21", "review-by": "2026-12-21",
                           "unfixed-project-packages": ["python3.13"], "statement": "fixture"}
                   policy_cases = [
-                      ("current disposition is accepted", {}, f"FROM {base}\nRUN true\n", None),
-                      ("overdue disposition fails", {"reviewed": "2026-10-01", "review-by": "2026-10-31"}, f"FROM {base}\n", "review_overdue"),
-                      ("window over 30 days fails", {"review-by": "2027-01-21"}, f"FROM {base}\n", "invalid_disposition"),
-                      ("unknown field fails", {"extra": "x"}, f"FROM {base}\n", "invalid_disposition"),
-                      ("tag-only base fails", {"base": "kindest/node:v0.0.0"}, "FROM kindest/node:v0.0.0\n", "invalid_disposition"),
-                      ("unquoted date fails", {"reviewed": datetime.date(2026, 11, 21)}, f"FROM {base}\n", "invalid_disposition"),
-                      ("package pattern instead of a name fails", {"unfixed-project-packages": ["python3.*"]}, f"FROM {base}\n", "invalid_disposition"),
-                      ("second FROM stage fails", {}, f"FROM {base}\nRUN true\nFROM {base}\n", "unsupported_dockerfile"),
-                      ("changed digest fails", {}, "FROM kindest/node:v0.0.0@sha256:" + "d" * 64 + "\n", "base_changed"),
-                      ("FROM split across a continuation fails", {}, f"FROM {base}\nRUN true\nFR\\\nOM {base}\n", "unsupported_dockerfile"),
-                      ("heredoc fails", {}, f"FROM {base}\nRUN <<EOF\nFROM {base}\nEOF\n", "unsupported_dockerfile"),
-                      ("heredoc without a second FROM fails", {}, f"FROM {base}\nCOPY <<EOF /etc/note\nhello\nEOF\n", "unsupported_dockerfile"),
-                      ("ARG after the FROM fails", {}, f"FROM {base}\nARG X\nRUN true\n", "unsupported_dockerfile"),
-                      ("parser directive fails", {}, f"# escape=`\nFROM {base}\n", "unsupported_dockerfile"),
-                      ("byte-order mark is accepted", {}, f"\ufeffFROM {base}\nRUN true\n", None),
-                      ("variable base fails", {}, f"ARG X\nFROM {base}\n", "unsupported_dockerfile"),
-                      ("stage name fails", {}, f"FROM {base} AS kind\n", "unsupported_dockerfile"),
-                      ("continued FROM with an inner comment is accepted", {},
-                       f"FROM \\\n# note\n\n  {base}\nRUN apt-get update \\\n  && true\n", None),
+                      ("current disposition is accepted", {}, None),
+                      ("overdue disposition fails", {"reviewed": "2026-10-01", "review-by": "2026-10-31"}, "review_overdue"),
+                      ("window over 30 days fails", {"review-by": "2027-01-21"}, "invalid_disposition"),
+                      ("unknown field fails", {"extra": "x"}, "invalid_disposition"),
+                      ("tag-only base fails", {"base": "kindest/node:v0.0.0"}, "invalid_disposition"),
+                      ("unquoted date fails", {"reviewed": datetime.date(2026, 11, 21)}, "invalid_disposition"),
+                      ("package pattern instead of a name fails", {"unfixed-project-packages": ["python3.*"]}, "invalid_disposition"),
                   ]
                   import yaml
-                  for name, change, dockerfile_text, want in policy_cases:
-                      (tmp / "Dockerfile").write_text(dockerfile_text, encoding="utf-8")
+                  for name, change, want in policy_cases:
                       (tmp / "policy.yaml").write_text(yaml.safe_dump({POLICY_KEY: [{**good, **change}]}), encoding="utf-8")
                       try:
                           disposition(tmp / "policy.yaml", good["dockerfile"], today)
@@ -759,7 +726,9 @@ jobs:
         run: |
           set -euo pipefail
           work="$RUNNER_TEMP/kind-harness"
-          docker build --no-cache --file "$DOCKERFILE" --tag kind-harness-scan:local "$CONTEXT"
+          DOCKER_BUILDKIT=1 docker build --no-cache \
+            --build-arg "BUILDKIT_SYNTAX=$DOCKERFILE_FRONTEND" \
+            --file "$DOCKERFILE" --tag kind-harness-scan:local "$CONTEXT"
           platform="$(docker image inspect --format '{{.Os}}/{{.Architecture}}' kind-harness-scan:local)"
           if ! [[ "$platform" =~ ^[a-z0-9]+/[a-z0-9]+$ ]]; then
             echo "::error::Unexpected built image platform '${platform}'; failing closed"
