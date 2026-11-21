@@ -88,7 +88,9 @@ jobs:
           same-version rewrites, unmatched advisories and a fixed version on an upgraded
           or approved package. A built scan that lacks the distribution or any package
           the pinned digest ships, malformed or empty scan data, unknown attribution, a
-          changed digest and an overdue disposition fail closed.
+          built image whose layers do not start with the recorded digest's layers (a
+          changed FROM) and an overdue disposition fail closed. When the built scan is
+          readable, a refusal still reports its rows as unknown.
           """
           import datetime
           import json
@@ -136,7 +138,7 @@ jobs:
 
 
           def disposition(policy_path, dockerfile, today):
-              """Return the validated disposition entry whose base equals the Dockerfile's only FROM."""
+              """Return the validated disposition entry recorded for this Dockerfile path."""
               try:
                   import yaml
               except ImportError:
@@ -174,17 +176,7 @@ jobs:
                   raise Refusal("invalid_disposition", f"review-by must be within {MAX_REVIEW_DAYS} days of reviewed")
               if today > review_by:
                   raise Refusal("review_overdue", f"disposition expired on {review_by.isoformat()}; record a fresh review")
-              try:
-                  lines = Path(dockerfile).read_text(encoding="utf-8").splitlines()
-              except (OSError, UnicodeDecodeError) as exc:
-                  raise Refusal("dockerfile_unreadable", type(exc).__name__) from None
-              froms = [line.split() for line in lines if re.match(r"\s*FROM\s", line, re.IGNORECASE)]
-              if len(froms) != 1 or len(froms[0]) != 2:
-                  raise Refusal("unsupported_dockerfile", "expected exactly one 'FROM <image>' instruction without flags or stage names")
-              if any(re.match(r"\s*ARG\s", line, re.IGNORECASE) for line in lines) or "$" in froms[0][1]:
-                  raise Refusal("unsupported_dockerfile", "the FROM reference must be literal")
-              if froms[0][1] != base:
-                  raise Refusal("base_changed", f"Dockerfile FROM {clean(froms[0][1])} differs from the recorded disposition; record a fresh disposition")
+              # The built image's layers prove its base (attribute); the Dockerfile text is not parsed.
               return entry
 
 
@@ -202,8 +194,10 @@ jobs:
               if not isinstance(results, list) or not all(isinstance(r, dict) for r in results):
                   raise Refusal("missing_scan_data", f"{label} scan has no results list")
               os_info = report["Metadata"].get("OS")
-              if not isinstance(os_info, dict) or not all(isinstance(os_info.get(f), str) and os_info[f] for f in ("Family", "Name")):
+              if not isinstance(os_info, dict) or not all(text(os_info.get(f)) for f in ("Family", "Name")):
                   raise Refusal("missing_scan_data", f"{label} scan did not detect the distribution")
+              if "ImageID" in report["Metadata"] and not isinstance(report["Metadata"]["ImageID"], str):
+                  raise Refusal("missing_scan_data", f"{label} scan has a malformed image id")
               inventory = set()
               for result in results:
                   # Trivy omits empty lists and an absent fixed version; a present field must have its type.
@@ -212,17 +206,23 @@ jobs:
                       raise Refusal("missing_scan_data", f"{label} scan has a malformed result")
                   if not all(text(result.get(f)) for f in ("Class", "Type", "Target")):
                       raise Refusal("missing_scan_data", f"{label} scan has a result without class, type or target")
+                  debian = result["Class"] == "os-pkgs" and result["Type"] == "debian"
                   for pkg in result.get("Packages", []):
-                      if not isinstance(pkg, dict) or not text(pkg.get("Name")) or "Arch" in pkg and not isinstance(pkg["Arch"], str):
-                          raise Refusal("missing_scan_data", f"{label} scan has a package record without a name or with a malformed architecture")
+                      if not isinstance(pkg, dict) or not text(pkg.get("Name")):
+                          raise Refusal("missing_scan_data", f"{label} scan has a package record without a name")
+                      arch_ok = text(pkg.get("Arch")) if debian else isinstance(pkg.get("Arch", ""), str)
+                      if not arch_ok:
+                          raise Refusal("missing_scan_data", f"{label} scan has a package record with a missing or malformed architecture")
                       inventory.add(package_key(result, pkg["Name"], pkg.get("Arch", "")))
                   for vuln in result.get("Vulnerabilities", []):
                       if not isinstance(vuln, dict) or not all(text(vuln.get(f)) for f in ROW_FIELDS):
                           raise Refusal("missing_scan_data", f"{label} scan has a finding without package, version, advisory or severity")
-                      if "FixedVersion" in vuln and not isinstance(vuln["FixedVersion"], str):
-                          raise Refusal("missing_scan_data", f"{label} scan has a finding with a malformed fixed version")
-                      if "Layer" in vuln and not isinstance(vuln["Layer"], dict):
-                          raise Refusal("missing_scan_data", f"{label} scan has a finding with a malformed layer")
+                      ident = vuln.get("PkgIdentifier")
+                      layer = vuln.get("Layer")
+                      if any(f in vuln and not isinstance(vuln[f], str) for f in ("FixedVersion", "PkgPath")) or \
+                              "Layer" in vuln and not (isinstance(layer, dict) and isinstance(layer.get("DiffID", ""), str)) or \
+                              "PkgIdentifier" in vuln and not (isinstance(ident, dict) and isinstance(ident.get("PURL", ""), str)):
+                          raise Refusal("missing_scan_data", f"{label} scan has a finding with a malformed optional field")
               if not any(k[0] == "os-pkgs" for k in inventory):
                   raise Refusal("missing_scan_data", f"{label} scan inventoried no distribution packages")
               return report, diff_ids, results, inventory
@@ -239,9 +239,15 @@ jobs:
 
 
           def key(result, vuln):
+              """Exact finding identity; a distribution row without a valid package URL has none."""
+              identity = ""
+              if result.get("Class") == "os-pkgs":
+                  identity = deb_identity(result, vuln)
+                  if identity is None:
+                      return None
               target = "" if result.get("Class") == "os-pkgs" else result.get("Target")
               return (result.get("Class"), result.get("Type"), target, vuln.get("PkgName"),
-                      vuln.get("PkgPath", ""), vuln.get("InstalledVersion"), vuln.get("VulnerabilityID"))
+                      vuln.get("PkgPath", ""), vuln.get("InstalledVersion"), vuln.get("VulnerabilityID"), identity)
 
 
           def layer_of(vuln):
@@ -292,7 +298,6 @@ jobs:
               report = {"schema": "kind-harness-attribution.v2", "base": base, "status": "error", "reason": "",
                         "approved_unfixed_packages": sorted(approved),
                         "counts": {name: 0 for name in COUNTS}, "findings": []}
-              built_results = None
               try:
                   built, built_ids, built_results, built_inventory = load_scan(built_path, "built")
                   upstream, up_ids, up_results, up_inventory = load_scan(upstream_path, "upstream")
@@ -315,18 +320,13 @@ jobs:
                       for vuln in result.get("Vulnerabilities") or []:
                           if layer_of(vuln) not in up_ids:
                               raise Refusal("missing_scan_data", "upstream scan has a finding outside the pinned digest's layers")
-                          inherited.add(key(result, vuln))
+                          if key(result, vuln) is not None:
+                              inherited.add(key(result, vuln))
                           identity = deb_identity(result, vuln)
                           if identity is not None:
                               advisories.setdefault((identity, vuln["VulnerabilityID"]), set()).add(vuln["InstalledVersion"])
               except Refusal as exc:
-                  report["reason"] = exc.reason
-                  report["detail"] = exc.detail
-                  # A readable built scan keeps every row in the report, unattributed.
-                  for result in built_results or []:
-                      for vuln in result.get("Vulnerabilities", []):
-                          record(report, result, vuln, "unknown", f"attribution refused: {exc.reason}")
-                  return 1, report
+                  return 1, refusal_report(report, exc, built_path)
               up_os_names = {k[3] for k in up_inventory if k[0] == "os-pkgs"}
               base_layers = set(up_ids)
               for result in built_results:
@@ -338,7 +338,7 @@ jobs:
                       if layer not in built_ids:
                           attribution, reason = "unknown", "finding lacks a layer of the built image"
                       elif layer in base_layers:
-                          if key(result, vuln) in inherited:
+                          if key(result, vuln) is not None and key(result, vuln) in inherited:
                               attribution, reason = "inherited", "same package, version and advisory in the pinned digest's layers"
                           else:
                               attribution, reason = "unknown", "base-layer finding not reported for the pinned digest"
@@ -377,6 +377,29 @@ jobs:
               return 0, report
 
 
+          def readable_rows(path):
+              """Yield (result, finding) mappings from a scan file without trusting its shape."""
+              try:
+                  data = json.loads(Path(path).read_text(encoding="utf-8"))
+              except (OSError, UnicodeDecodeError, ValueError):
+                  return
+              results = data.get("Results") if isinstance(data, dict) else None
+              for result in results if isinstance(results, list) else []:
+                  vulns = result.get("Vulnerabilities") if isinstance(result, dict) else None
+                  for vuln in vulns if isinstance(vulns, list) else []:
+                      if isinstance(vuln, dict):
+                          yield result, vuln
+
+
+          def refusal_report(report, exc, built_path):
+              """Fail closed with a typed reason, keeping every readable built row as unknown."""
+              report.update(status="error", reason=exc.reason, detail=exc.detail,
+                            counts={name: 0 for name in COUNTS}, findings=[])
+              for result, vuln in readable_rows(built_path):
+                  record(report, result, vuln, "unknown", f"attribution refused: {exc.reason}")
+              return report
+
+
           def record(report, result, vuln, attribution, reason, upstream_version=""):
               report["counts"][attribution] += 1
               report["findings"].append({
@@ -387,7 +410,7 @@ jobs:
                   "package": clean(vuln.get("PkgName", "?")),
                   "version": clean(vuln.get("InstalledVersion", "?")),
                   "upstream_version": clean(upstream_version),
-                  "fixed": clean(vuln.get("FixedVersion") or "unfixed"),
+                  "fixed": clean(vuln.get("FixedVersion") or "unfixed"),  # only rendered, never trusted
                   "target": clean("" if result.get("Class") == "os-pkgs" else result.get("Target", "")),
                   "layer": layer_of(vuln) or "",
               })
@@ -443,7 +466,7 @@ jobs:
               def scan(ids, os_vulns, go_vulns, packages=2, os_name="13.6", names=("p",), arch="amd64"):
                   return {"Metadata": {"DiffIDs": ids, "OS": {"Family": "debian", "Name": os_name}}, "Results": [
                       {"Target": "img (debian 13.6)", "Class": "os-pkgs", "Type": "debian",
-                       "Packages": [{"Name": n, "Arch": arch} for n in names] * packages, "Vulnerabilities": os_vulns},
+                       "Packages": [{"Name": n, "Arch": arch} for n in names for _ in range(packages)], "Vulnerabilities": os_vulns},
                       {"Target": "usr/bin/kubelet", "Class": "lang-pkgs", "Type": "gobinary",
                        "Packages": [{"Name": "stdlib"}], "Vulnerabilities": go_vulns}]}
 
@@ -516,6 +539,29 @@ jobs:
                   ("rewritten Go binary in a project layer blocks",
                    up, built([row("CVE-1", "curl", "8.1-2+deb13u4", a)], [row("CVE-2", "stdlib", "v1.0", b, purl=False)]),
                    1, "blocked", "project", 1),
+                  ("base-layer finding of another architecture blocks",
+                   up, built([row("CVE-1", "curl", "8.1-2+deb13u4", a, arch="arm64")]), 1, "blocked", "unknown", 1),
+                  ("base-layer distribution finding without a package URL blocks",
+                   up, built([row("CVE-1", "curl", "8.1-2+deb13u4", a, purl=False)]), 1, "blocked", "unknown", 1),
+                  ("blank distribution name fails",
+                   up, edited(built([]), lambda d: d["Metadata"]["OS"].update(Name=" ")), 1, "error", None, 0),
+                  ("Debian package without an architecture fails",
+                   up, edited(built([]), lambda d: d["Results"][0]["Packages"][0].pop("Arch")), 1, "error", None, 0),
+                  ("scans that both lack Debian architectures fail",
+                   edited(scan([a], [], go), lambda d: [x.pop("Arch", None) for x in d["Results"][0]["Packages"]]),
+                   edited(built([]), lambda d: [x.pop("Arch", None) for x in d["Results"][0]["Packages"]]), 1, "error", None, 0),
+                  ("scans that both have a blank distribution name fail",
+                   edited(scan([a], [], go), lambda d: d["Metadata"]["OS"].update(Name=" ")),
+                   edited(built([]), lambda d: d["Metadata"]["OS"].update(Name=" ")), 1, "error", None, 0),
+                  ("null package URL fails",
+                   up, built([row("CVE-3", "python3.13", "3.13.5-2", b) | {"PkgIdentifier": {"PURL": None}}]), 1, "error", None, 0),
+                  ("non-string package path fails",
+                   up, built([], [row("CVE-2", "stdlib", "v1.0", a, purl=False) | {"PkgPath": ["x"]}]), 1, "error", None, 0),
+                  ("null image id fails",
+                   up, edited(built([]), lambda d: d["Metadata"].update(ImageID=None)), 1, "error", None, 0),
+                  ("refused built scan keeps every readable row",
+                   up, built([row("CVE-1", "curl", "8.1-2+deb13u4", a), row("CVE-3", "python3.13", "3.13.5-2", b) | {"FixedVersion": None}]),
+                   1, "error", None, 0),
                   ("finding without a layer blocks",
                    up, built([{k: v for k, v in row("CVE-1", "curl", "8.1-2+deb13u4", a).items() if k != "Layer"}]),
                    1, "blocked", "unknown", 1),
@@ -535,8 +581,13 @@ jobs:
                       for label, data in (("up.json", upstream), ("built.json", built_scan)):
                           (tmp / label).write_text(data if isinstance(data, str) else json.dumps(data), encoding="utf-8")
                       rc, report = attribute(tmp / "up.json", tmp / "built.json", base, approved)
-                      got_count = report["counts"][want_class] if want_class else sum(report["counts"].values())
-                      ok = (rc, report["status"], got_count) == (want_rc, want_status, want_count)
+                      if want_class is None:  # a refusal keeps every readable built row as unknown, and nothing else
+                          want_class, want_count = "unknown", sum(1 for _ in readable_rows(tmp / "built.json"))
+                          ok_rest = sum(report["counts"].values()) == report["counts"]["unknown"]
+                      else:
+                          ok_rest = True
+                      got_count = report["counts"][want_class]
+                      ok = ok_rest and (rc, report["status"], got_count) == (want_rc, want_status, want_count)
                       failures += not ok
                       print(f"{'PASS' if ok else 'FAIL'} {name}: rc={rc} status={report['status']} counts={report['counts']}")
                   today = datetime.date(2026, 11, 21)
@@ -547,9 +598,6 @@ jobs:
                       ("current disposition is accepted", {}, f"FROM {base}\nRUN true\n", None),
                       ("overdue disposition fails", {"reviewed": "2026-10-01", "review-by": "2026-10-31"}, f"FROM {base}\n", "review_overdue"),
                       ("window over 30 days fails", {"review-by": "2027-01-21"}, f"FROM {base}\n", "invalid_disposition"),
-                      ("changed digest fails", {}, "FROM kindest/node:v0.0.0@sha256:" + "d" * 64 + "\n", "base_changed"),
-                      ("second stage fails", {}, f"FROM {base}\nFROM {base}\n", "unsupported_dockerfile"),
-                      ("variable base fails", {}, f"ARG X\nFROM {base}\n", "unsupported_dockerfile"),
                       ("unknown field fails", {"extra": "x"}, f"FROM {base}\n", "invalid_disposition"),
                       ("tag-only base fails", {"base": "kindest/node:v0.0.0"}, "FROM kindest/node:v0.0.0\n", "invalid_disposition"),
                       ("unquoted date fails", {"reviewed": datetime.date(2026, 11, 21)}, f"FROM {base}\n", "invalid_disposition"),
@@ -575,8 +623,24 @@ jobs:
                       got = exc.reason
                   failures += got != "no_disposition"
                   print(f"{'PASS' if got == 'no_disposition' else 'FAIL'} missing disposition fails: refusal={got}")
+                  (tmp / "built.json").write_text(json.dumps(built([row("CVE-1", "curl", "8.1-2+deb13u4", a)])), encoding="utf-8")
+                  _, rc, report = run_attribution(tmp / "policy.yaml", good["dockerfile"], tmp / "up.json", tmp / "built.json", today)
+                  ok = (rc, report["status"], report["reason"], report["counts"]["unknown"]) == (1, "error", "no_disposition", 2)
+                  failures += not ok
+                  print(f"{'PASS' if ok else 'FAIL'} disposition refusal keeps the readable built rows: rc={rc} counts={report['counts']}")
               print(f"attribution self-test: {failures} failure(s)")
               return 1 if failures else 0
+
+
+          def run_attribution(policy_path, dockerfile, upstream_path, built_path, today):
+              """Return (disposition entry or {}, exit code, report) for the attribute command."""
+              try:
+                  entry = disposition(policy_path, dockerfile, today)
+              except Refusal as exc:
+                  empty = {"schema": "kind-harness-attribution.v2", "base": "", "approved_unfixed_packages": []}
+                  return {}, 1, refusal_report(empty, exc, built_path)
+              rc, report = attribute(upstream_path, built_path, entry["base"], tuple(entry["unfixed-project-packages"]))
+              return entry, rc, report
 
 
           def main(argv):
@@ -596,15 +660,7 @@ jobs:
                   return 0
               if len(argv) == 6 and argv[0] == "attribute":
                   policy_path, dockerfile, upstream_path, built_path, report_path = argv[1:]
-                  try:
-                      entry = disposition(policy_path, dockerfile, today)
-                  except Refusal as exc:
-                      entry = {}
-                      rc, report = 1, {"schema": "kind-harness-attribution.v2", "base": "", "status": "error",
-                                       "reason": exc.reason, "detail": exc.detail,
-                                       "counts": {name: 0 for name in COUNTS}, "findings": []}
-                  else:
-                      rc, report = attribute(upstream_path, built_path, entry["base"], tuple(entry["unfixed-project-packages"]))
+                  entry, rc, report = run_attribution(policy_path, dockerfile, upstream_path, built_path, today)
                   publish(report, entry, report_path)
                   return rc
               print("usage: attribute.py self-test | disposition POLICY DOCKERFILE | "
