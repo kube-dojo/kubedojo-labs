@@ -1,0 +1,14 @@
+# Opens a pull request when kind publishes a newer kindest/node image. The new
+# digest fails the kind harness attribution job until the disposition in
+# .trivyignore.yaml is reviewed for it (#106).
+version: 2
+updates:
+  - package-ecosystem: docker
+    directory: /scripts/ci
+    schedule:
+      interval: daily
+    cooldown:
+      default-days: 7
+    allow:
+      - dependency-name: kindest/node
+    open-pull-requests-limit: 1

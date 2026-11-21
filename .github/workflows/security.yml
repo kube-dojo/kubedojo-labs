@@ -10,11 +10,12 @@ on:
 permissions:
   contents: read
 
+# Static and secret scans run on every pull request, including forks: they only
+# read the checkout. Building a PR Dockerfile follows the scenario workflow's
+# fork boundary, so both image scans run only for same-repository heads.
 jobs:
   scan:
-    # Building PR Dockerfiles follows the scenario workflow's fork boundary.
-    if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
-    uses: learn-ukrainian/machinery/.github/workflows/fleet-security.yml@078285f3192049bc5d795c5c5e59339fd0c974ab
+    uses: learn-ukrainian/machinery/.github/workflows/fleet-security.yml@fc01f27ea07c31fa00958136d37bd94ea0fc6823
     with:
       run-actionlint: true
       run-zizmor: true
@@ -27,11 +28,463 @@ jobs:
         scripts
         templates|error
       # There are no package lockfiles. Scan the tracked infrastructure and
-      # check dependencies installed into the two images built by scenario CI.
+      # the Ubuntu harness built by scenario CI. Every HIGH/CRITICAL finding in
+      # it blocks. The kind harness is scanned by kind-harness-image below.
       run-trivy-iac: true
       trivy-iac-targets: .
       trivy-ignorefile: .trivyignore.yaml
-      run-trivy-image: true
+      run-trivy-image: ${{ github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository }}
       trivy-image-targets: |
-        build|scripts/ci/Dockerfile.kind-harness|scripts/ci
         build|scripts/ci/Dockerfile.ubuntu-harness|scripts/ci
+
+  # The kind harness extends a digest-pinned kind node image whose own packages
+  # carry upstream HIGH/CRITICAL findings. This job scans the built harness and
+  # the recorded upstream digest with the fleet workflow's pinned Trivy and
+  # blocks on every finding not proven inherited from that digest (#106).
+  kind-harness-image:
+    name: Kind harness image attribution
+    if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    permissions:
+      contents: read
+    env:
+      # Same pins as the fleet workflow at the SHA used by the scan job above.
+      TRIVY_VERSION: "0.76.2"
+      TRIVY_LINUX_64BIT_SHA256: bc0fc726e017b8927a62b2d3531d7a84ee01769daf5c99ed866dced54089fdbf
+      TRIVY_DB_REPOSITORY: "mirror.gcr.io/aquasec/trivy-db:2,ghcr.io/aquasecurity/trivy-db:2"
+      POLICY: .trivyignore.yaml
+      DOCKERFILE: scripts/ci/Dockerfile.kind-harness
+      CONTEXT: scripts/ci
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Write the attribution check
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/kind-harness/home" "$RUNNER_TEMP/kind-harness/tmp" "$RUNNER_TEMP/kind-harness/cache"
+          cat > "$RUNNER_TEMP/kind-harness/attribute.py" <<'PY'
+          """Attribute kind harness Trivy findings to its pinned upstream base (kube-dojo/kubedojo-labs#106).
+
+          A HIGH/CRITICAL finding in the built harness is report-only only when the same
+          package, version and advisory are reported for the exact digest recorded in
+          .trivyignore.yaml and Trivy places the package in one of that digest's layers.
+          Project-added or changed packages block. Unknown attribution, malformed or
+          empty scan data, a changed digest and an overdue disposition fail closed.
+          """
+          import datetime
+          import json
+          import os
+          import re
+          import sys
+          import tempfile
+          from pathlib import Path
+
+          POLICY_KEY = "inherited-base-images"
+          FIELDS = {"dockerfile", "base", "owner", "reviewed", "review-by", "statement"}
+          MAX_REVIEW_DAYS = 30
+          BASE_REF = re.compile(r"^[a-z0-9]+(?:[._/-][a-z0-9]+)*(?::[A-Za-z0-9._-]{1,128})?@sha256:[0-9a-f]{64}$")
+          DIFF_ID = re.compile(r"^sha256:[0-9a-f]{64}$")
+          ROW_FIELDS = ("VulnerabilityID", "PkgName", "InstalledVersion", "Severity")
+
+
+          class Refusal(Exception):
+              """A typed fail-closed reason."""
+
+              def __init__(self, reason, detail):
+                  super().__init__(f"{reason}: {detail}")
+                  self.reason = reason
+                  self.detail = detail
+
+
+          def clean(value):
+              return re.sub(r"[\r\n\x00-\x1f\x7f]+", " ", str(value))
+
+
+          def iso_date(entry, key):
+              value = entry.get(key)
+              if not isinstance(value, str) or not re.fullmatch(r"\d{4}-\d{2}-\d{2}", value):
+                  raise Refusal("invalid_disposition", f"{key} must be a quoted YYYY-MM-DD string")
+              try:
+                  return datetime.date.fromisoformat(value)
+              except ValueError:
+                  raise Refusal("invalid_disposition", f"{key} is not a calendar date") from None
+
+
+          def disposition(policy_path, dockerfile, today):
+              """Return the validated disposition entry whose base equals the Dockerfile's only FROM."""
+              try:
+                  import yaml
+              except ImportError:
+                  raise Refusal("policy_unreadable", "PyYAML is unavailable to the system interpreter") from None
+              try:
+                  data = yaml.safe_load(Path(policy_path).read_text(encoding="utf-8"))
+              except (OSError, UnicodeDecodeError, yaml.YAMLError) as exc:
+                  raise Refusal("policy_unreadable", type(exc).__name__) from None
+              entries = data.get(POLICY_KEY) if isinstance(data, dict) else None
+              if not isinstance(entries, list):
+                  raise Refusal("no_disposition", f"{policy_path} has no {POLICY_KEY} list")
+              if not all(isinstance(e, dict) for e in entries):
+                  raise Refusal("invalid_disposition", f"every {POLICY_KEY} entry must be a mapping")
+              matches = [e for e in entries if e.get("dockerfile") == dockerfile]
+              if len(matches) != 1:
+                  raise Refusal("no_disposition", f"expected exactly one entry for {dockerfile}, found {len(matches)}")
+              entry = matches[0]
+              if set(entry) != FIELDS:
+                  raise Refusal("invalid_disposition", f"fields must be exactly {sorted(FIELDS)}")
+              base = entry["base"]
+              if not isinstance(base, str) or not BASE_REF.fullmatch(base):
+                  raise Refusal("invalid_disposition", "base must be a digest-pinned image reference")
+              for key in ("owner", "statement"):
+                  if not isinstance(entry[key], str) or not entry[key].strip():
+                      raise Refusal("invalid_disposition", f"{key} must be a non-empty string")
+              reviewed = iso_date(entry, "reviewed")
+              review_by = iso_date(entry, "review-by")
+              if reviewed > today:
+                  raise Refusal("invalid_disposition", "reviewed date is in the future")
+              if (review_by - reviewed).days > MAX_REVIEW_DAYS or review_by < reviewed:
+                  raise Refusal("invalid_disposition", f"review-by must be within {MAX_REVIEW_DAYS} days of reviewed")
+              if today > review_by:
+                  raise Refusal("review_overdue", f"disposition expired on {review_by.isoformat()}; record a fresh review")
+              try:
+                  lines = Path(dockerfile).read_text(encoding="utf-8").splitlines()
+              except (OSError, UnicodeDecodeError) as exc:
+                  raise Refusal("dockerfile_unreadable", type(exc).__name__) from None
+              froms = [line.split() for line in lines if re.match(r"\s*FROM\s", line, re.IGNORECASE)]
+              if len(froms) != 1 or len(froms[0]) != 2:
+                  raise Refusal("unsupported_dockerfile", "expected exactly one 'FROM <image>' instruction without flags or stage names")
+              if any(re.match(r"\s*ARG\s", line, re.IGNORECASE) for line in lines) or "$" in froms[0][1]:
+                  raise Refusal("unsupported_dockerfile", "the FROM reference must be literal")
+              if froms[0][1] != base:
+                  raise Refusal("base_changed", f"Dockerfile FROM {clean(froms[0][1])} differs from the recorded disposition; record a fresh disposition")
+              return entry
+
+
+          def load_scan(path, label):
+              try:
+                  report = json.loads(Path(path).read_text(encoding="utf-8"))
+              except (OSError, UnicodeDecodeError, ValueError) as exc:
+                  raise Refusal("missing_scan_data", f"{label} scan is unreadable ({type(exc).__name__})") from None
+              if not isinstance(report, dict) or not isinstance(report.get("Metadata"), dict):
+                  raise Refusal("missing_scan_data", f"{label} scan has no metadata")
+              diff_ids = report["Metadata"].get("DiffIDs")
+              if not isinstance(diff_ids, list) or not diff_ids or not all(isinstance(d, str) and DIFF_ID.fullmatch(d) for d in diff_ids):
+                  raise Refusal("missing_scan_data", f"{label} scan has no valid layer DiffIDs")
+              results = report.get("Results")
+              if not isinstance(results, list) or not all(isinstance(r, dict) for r in results):
+                  raise Refusal("missing_scan_data", f"{label} scan has no results list")
+              packages = 0
+              for result in results:
+                  pkgs = result.get("Packages")
+                  vulns = result.get("Vulnerabilities")
+                  if pkgs is not None and not isinstance(pkgs, list) or vulns is not None and not isinstance(vulns, list):
+                      raise Refusal("missing_scan_data", f"{label} scan has a malformed result")
+                  if vulns and not all(isinstance(v, dict) for v in vulns):
+                      raise Refusal("missing_scan_data", f"{label} scan has a malformed finding")
+                  packages += len(pkgs or [])
+              if packages == 0:
+                  raise Refusal("missing_scan_data", f"{label} scan inventoried zero packages")
+              return report, diff_ids, results, packages
+
+
+          def key(result, vuln):
+              target = "" if result.get("Class") == "os-pkgs" else result.get("Target")
+              return (result.get("Class"), result.get("Type"), target, vuln.get("PkgName"),
+                      vuln.get("PkgPath", ""), vuln.get("InstalledVersion"), vuln.get("VulnerabilityID"))
+
+
+          def layer_of(vuln):
+              layer = vuln.get("Layer")
+              diff_id = layer.get("DiffID") if isinstance(layer, dict) else None
+              return diff_id if isinstance(diff_id, str) and DIFF_ID.fullmatch(diff_id) else None
+
+
+          def attribute(upstream_path, built_path, base):
+              """Return (exit code, report). Every refusal yields a non-zero exit and an error report."""
+              report = {"schema": "kind-harness-attribution.v1", "base": base, "status": "error", "reason": "",
+                        "counts": {"inherited": 0, "project": 0, "unknown": 0}, "findings": []}
+              try:
+                  _, up_ids, up_results, up_pkgs = load_scan(upstream_path, "upstream")
+                  built, built_ids, built_results, built_pkgs = load_scan(built_path, "built")
+                  report["upstream"] = {"diff_ids": up_ids, "packages": up_pkgs}
+                  report["built"] = {"diff_ids": built_ids, "packages": built_pkgs,
+                                     "image_id": clean(built["Metadata"].get("ImageID", ""))}
+                  if built_ids[: len(up_ids)] != up_ids:
+                      raise Refusal("base_mismatch", "built image layers do not start with the pinned upstream layers")
+                  inherited = set()
+                  for result in up_results:
+                      for vuln in result.get("Vulnerabilities") or []:
+                          if any(not isinstance(vuln.get(f), str) for f in ROW_FIELDS) or layer_of(vuln) is None:
+                              raise Refusal("missing_scan_data", "upstream scan has a finding without package, version, advisory or layer")
+                          inherited.add(key(result, vuln))
+              except Refusal as exc:
+                  report["reason"] = exc.reason
+                  report["detail"] = exc.detail
+                  return 1, report
+              base_layers = set(up_ids)
+              for result in built_results:
+                  for vuln in result.get("Vulnerabilities") or []:
+                      layer = layer_of(vuln)
+                      complete = all(isinstance(vuln.get(f), str) for f in ROW_FIELDS) and layer in built_ids
+                      if not complete:
+                          attribution = "unknown"
+                      elif layer not in base_layers:
+                          attribution = "project"
+                      elif key(result, vuln) in inherited:
+                          attribution = "inherited"
+                      else:
+                          attribution = "unknown"
+                      report["counts"][attribution] += 1
+                      report["findings"].append({
+                          "attribution": attribution,
+                          "vulnerability": clean(vuln.get("VulnerabilityID", "?")),
+                          "severity": clean(vuln.get("Severity", "?")),
+                          "package": clean(vuln.get("PkgName", "?")),
+                          "version": clean(vuln.get("InstalledVersion", "?")),
+                          "fixed": clean(vuln.get("FixedVersion") or "unfixed"),
+                          "target": clean("" if result.get("Class") == "os-pkgs" else result.get("Target", "")),
+                          "layer": layer or "",
+                      })
+              counts = report["counts"]
+              if counts["project"] or counts["unknown"]:
+                  report["status"] = "blocked"
+                  report["reason"] = "project_or_unknown_findings"
+                  return 1, report
+              report["status"] = "inherited_only" if counts["inherited"] else "clean"
+              return 0, report
+
+
+          def publish(report, entry, report_path):
+              Path(report_path).write_text(json.dumps(report, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+              for row in report["findings"]:
+                  line = (f"{row['vulnerability']} ({row['severity']}) {row['package']} {row['version']} "
+                          f"(fixed: {row['fixed']}) {row['target']}").rstrip()
+                  if row["attribution"] == "inherited":
+                      print(f"inherited, report-only: {line}")
+                  else:
+                      print(f"::error::{row['attribution']} kind harness finding blocks: {line}")
+              if report["status"] == "error":
+                  print(f"::error::Kind harness attribution failed closed: {report['reason']}: {clean(report.get('detail', ''))}")
+              counts = report["counts"]
+              summary = [
+                  "### Kind harness image attribution",
+                  "",
+                  f"- Status: **{report['status']}**" + (f" ({report['reason']})" if report["reason"] else ""),
+                  f"- Upstream base: `{report['base']}`",
+                  f"- Owner: {clean(entry.get('owner', ''))}; review by {clean(entry.get('review-by', ''))}",
+                  f"- Inherited (report-only): {counts['inherited']}; project (blocking): {counts['project']}; "
+                  f"unknown (blocking): {counts['unknown']}",
+                  "- Full rows: `kind-harness-attribution` artifact",
+                  "",
+              ]
+              print("\n".join(summary))
+              if os.environ.get("GITHUB_STEP_SUMMARY"):
+                  with open(os.environ["GITHUB_STEP_SUMMARY"], "a", encoding="utf-8") as handle:
+                      handle.write("\n".join(summary) + "\n")
+
+
+          def self_test():
+              """Prove the three defect classes and the fail-closed paths on owned fixtures."""
+              a, b = "sha256:" + "a" * 64, "sha256:" + "b" * 64
+              base = "kindest/node:v0.0.0@sha256:" + "c" * 64
+
+              def row(vid, pkg, ver, layer, **extra):
+                  return {"VulnerabilityID": vid, "PkgName": pkg, "InstalledVersion": ver, "Severity": "HIGH",
+                          "Layer": {"DiffID": layer}, **extra}
+
+              def scan(ids, os_vulns, go_vulns, packages=2):
+                  return {"Metadata": {"DiffIDs": ids}, "Results": [
+                      {"Target": "img (debian 13.6)", "Class": "os-pkgs", "Type": "debian",
+                       "Packages": [{"Name": "p"}] * packages, "Vulnerabilities": os_vulns},
+                      {"Target": "usr/bin/kubelet", "Class": "lang-pkgs", "Type": "gobinary",
+                       "Packages": [{"Name": "stdlib"}], "Vulnerabilities": go_vulns}]}
+
+              up = scan([a], [row("CVE-1", "libc6", "1.0", a)], [row("CVE-2", "stdlib", "v1.0", a)])
+              inherited_only = scan([a, b], [row("CVE-1", "libc6", "1.0", a)], [row("CVE-2", "stdlib", "v1.0", a)])
+              project_added = scan([a, b], [row("CVE-1", "libc6", "1.0", a), row("CVE-3", "python3.13", "3.13", b)],
+                                   [row("CVE-2", "stdlib", "v1.0", a)])
+              changed = scan([a, b], [row("CVE-1", "libc6", "1.1", b)], [row("CVE-2", "stdlib", "v1.0", a)])
+              rewritten = scan([a, b], [row("CVE-1", "libc6", "1.0", a)], [row("CVE-2", "stdlib", "v1.0", b)])
+              no_layer = scan([a, b], [{k: v for k, v in row("CVE-1", "libc6", "1.0", a).items() if k != "Layer"}], [])
+              unseen = scan([a, b], [row("CVE-9", "libc6", "1.0", a)], [])
+              empty = scan([a, b], [], [], packages=0)
+              empty["Results"][1]["Packages"] = []
+              attribution_cases = [
+                  ("inherited finding is reported, not blocking", up, inherited_only, 0, "inherited_only", 2),
+                  ("project-added finding blocks", up, project_added, 1, "blocked", 2),
+                  ("changed package finding blocks", up, changed, 1, "blocked", 1),
+                  ("same package rewritten in a project layer blocks", up, rewritten, 1, "blocked", 1),
+                  ("finding without a layer blocks", up, no_layer, 1, "blocked", 0),
+                  ("base-layer finding absent upstream blocks", up, unseen, 1, "blocked", 0),
+                  ("built scan with zero packages fails", up, empty, 1, "error", 0),
+                  ("built scan on another base fails", up, scan([b, a], [], [], 1), 1, "error", 0),
+                  ("built scan without results fails", up, {"Metadata": {"DiffIDs": [a, b]}}, 1, "error", 0),
+                  ("unreadable built scan fails", up, "{", 1, "error", 0),
+                  ("empty built scan file fails", up, "", 1, "error", 0),
+                  ("upstream scan without layers fails", {"Metadata": {}, "Results": []}, inherited_only, 1, "error", 0),
+              ]
+              failures = 0
+              with tempfile.TemporaryDirectory() as tmp:
+                  tmp = Path(tmp)
+                  for name, upstream, built, want_rc, want_status, want_inherited in attribution_cases:
+                      for label, data in (("up.json", upstream), ("built.json", built)):
+                          (tmp / label).write_text(data if isinstance(data, str) else json.dumps(data), encoding="utf-8")
+                      rc, report = attribute(tmp / "up.json", tmp / "built.json", base)
+                      ok = (rc, report["status"], report["counts"]["inherited"]) == (want_rc, want_status, want_inherited)
+                      failures += not ok
+                      print(f"{'PASS' if ok else 'FAIL'} {name}: rc={rc} status={report['status']} counts={report['counts']}")
+                  today = datetime.date(2026, 11, 21)
+                  good = {"dockerfile": str(tmp / "Dockerfile"), "base": base, "owner": "claude-cto",
+                          "reviewed": "2026-11-21", "review-by": "2026-12-21", "statement": "fixture"}
+                  policy_cases = [
+                      ("current disposition is accepted", {}, f"FROM {base}\nRUN true\n", None),
+                      ("overdue disposition fails", {"reviewed": "2026-10-01", "review-by": "2026-10-31"}, f"FROM {base}\n", "review_overdue"),
+                      ("window over 30 days fails", {"review-by": "2027-01-21"}, f"FROM {base}\n", "invalid_disposition"),
+                      ("changed digest fails", {}, "FROM kindest/node:v0.0.0@sha256:" + "d" * 64 + "\n", "base_changed"),
+                      ("second stage fails", {}, f"FROM {base}\nFROM {base}\n", "unsupported_dockerfile"),
+                      ("variable base fails", {}, f"ARG X\nFROM {base}\n", "unsupported_dockerfile"),
+                      ("unknown field fails", {"extra": "x"}, f"FROM {base}\n", "invalid_disposition"),
+                      ("tag-only base fails", {"base": "kindest/node:v0.0.0"}, "FROM kindest/node:v0.0.0\n", "invalid_disposition"),
+                      ("unquoted date fails", {"reviewed": datetime.date(2026, 11, 21)}, f"FROM {base}\n", "invalid_disposition"),
+                  ]
+                  import yaml
+                  for name, change, dockerfile_text, want in policy_cases:
+                      (tmp / "Dockerfile").write_text(dockerfile_text, encoding="utf-8")
+                      (tmp / "policy.yaml").write_text(yaml.safe_dump({POLICY_KEY: [{**good, **change}]}), encoding="utf-8")
+                      try:
+                          disposition(tmp / "policy.yaml", good["dockerfile"], today)
+                          got = None
+                      except Refusal as exc:
+                          got = exc.reason
+                      ok = got == want
+                      failures += not ok
+                      print(f"{'PASS' if ok else 'FAIL'} {name}: refusal={got}")
+                  (tmp / "policy.yaml").write_text("misconfigurations: []\n", encoding="utf-8")
+                  try:
+                      disposition(tmp / "policy.yaml", good["dockerfile"], today)
+                      got = None
+                  except Refusal as exc:
+                      got = exc.reason
+                  failures += got != "no_disposition"
+                  print(f"{'PASS' if got == 'no_disposition' else 'FAIL'} missing disposition fails: refusal={got}")
+              print(f"attribution self-test: {failures} failure(s)")
+              return 1 if failures else 0
+
+
+          def main(argv):
+              if argv == ["self-test"]:
+                  return self_test()
+              today = datetime.datetime.now(datetime.timezone.utc).date()
+              if len(argv) == 3 and argv[0] == "disposition":
+                  try:
+                      entry = disposition(argv[1], argv[2], today)
+                  except Refusal as exc:
+                      print(f"::error::Kind harness disposition refused: {exc.reason}: {clean(exc.detail)}")
+                      return 1
+                  print(f"Disposition for {argv[2]}: base {entry['base']}, owner {clean(entry['owner'])}, review by {entry['review-by']}")
+                  with open(os.environ["GITHUB_OUTPUT"], "a", encoding="utf-8") as handle:
+                      handle.write(f"base={entry['base']}\n")
+                  return 0
+              if len(argv) == 6 and argv[0] == "attribute":
+                  policy_path, dockerfile, upstream_path, built_path, report_path = argv[1:]
+                  try:
+                      entry = disposition(policy_path, dockerfile, today)
+                  except Refusal as exc:
+                      entry = {}
+                      rc, report = 1, {"schema": "kind-harness-attribution.v1", "base": "", "status": "error",
+                                       "reason": exc.reason, "detail": exc.detail,
+                                       "counts": {"inherited": 0, "project": 0, "unknown": 0}, "findings": []}
+                  else:
+                      rc, report = attribute(upstream_path, built_path, entry["base"])
+                  publish(report, entry, report_path)
+                  return rc
+              print("usage: attribute.py self-test | disposition POLICY DOCKERFILE | "
+                    "attribute POLICY DOCKERFILE UPSTREAM_JSON BUILT_JSON REPORT_JSON", file=sys.stderr)
+              return 2
+
+
+          if __name__ == "__main__":
+              sys.exit(main(sys.argv[1:]))
+          PY
+
+      - name: Prove inherited, project and missing-data paths
+        run: /usr/bin/python3 -I -B "$RUNNER_TEMP/kind-harness/attribute.py" self-test
+
+      - name: Validate the recorded upstream disposition
+        id: disposition
+        run: /usr/bin/python3 -I -B "$RUNNER_TEMP/kind-harness/attribute.py" disposition "$POLICY" "$DOCKERFILE"
+
+      - name: Install pinned Trivy
+        run: |
+          set -euo pipefail
+          work="$RUNNER_TEMP/kind-harness"
+          curl --fail --silent --show-error --location --proto '=https' --tlsv1.2 \
+            --retry 10 --retry-all-errors --retry-delay 5 --retry-max-time 120 \
+            --connect-timeout 20 --max-time 60 --output "$work/trivy.tar.gz" \
+            "https://github.com/aquasecurity/trivy/releases/download/v${TRIVY_VERSION}/trivy_${TRIVY_VERSION}_Linux-64bit.tar.gz"
+          printf '%s  %s\n' "$TRIVY_LINUX_64BIT_SHA256" "$work/trivy.tar.gz" | sha256sum --check --strict
+          tar -xzf "$work/trivy.tar.gz" -C "$work" trivy
+          reported="$(env -i PATH=/usr/bin:/bin HOME="$work/home" "$work/trivy" --config "" --version | head -n 1)"
+          if [ "$reported" != "Version: ${TRIVY_VERSION}" ]; then
+            echo "::error::Expected trivy Version: ${TRIVY_VERSION}, got: ${reported}"
+            exit 1
+          fi
+
+      - name: Scan the built harness and its upstream base
+        env:
+          BASE_REF: ${{ steps.disposition.outputs.base }}
+        run: |
+          set -euo pipefail
+          work="$RUNNER_TEMP/kind-harness"
+          docker build --no-cache --file "$DOCKERFILE" --tag kind-harness-scan:local "$CONTEXT"
+          platform="$(docker image inspect --format '{{.Os}}/{{.Architecture}}' kind-harness-scan:local)"
+          if ! [[ "$platform" =~ ^[a-z0-9]+/[a-z0-9]+$ ]]; then
+            echo "::error::Unexpected built image platform '${platform}'; failing closed"
+            exit 1
+          fi
+          docker save --output "$work/built.tar" kind-harness-scan:local
+          trivy() {
+            env -i PATH=/usr/bin:/bin HOME="$work/home" TMPDIR="$work/tmp" "$work/trivy" image --config "" \
+              --cache-dir "$work/cache" --disable-telemetry --skip-version-check --quiet --no-progress "$@"
+          }
+          trivy --download-db-only --db-repository "$TRIVY_DB_REPOSITORY"
+          # No ignore file: attribution is the only report-only path.
+          : > "$work/no-ignores"
+          scan_image() {
+            local name="$1" rc=0
+            shift
+            trivy --skip-db-update --db-repository "$TRIVY_DB_REPOSITORY" --scanners vuln \
+              --severity HIGH,CRITICAL --list-all-pkgs --ignorefile "$work/no-ignores" \
+              --format json --output "$work/$name.json" "$@" 2> "$work/$name.stderr" || rc=$?
+            if [ "$rc" -ne 0 ]; then
+              echo "::error::trivy image exited $rc on the $name image ($(wc -l < "$work/$name.stderr") stderr line(s) withheld)"
+              return 1
+            fi
+          }
+          scan_image upstream --image-src remote --platform "$platform" "$BASE_REF"
+          scan_image built --input "$work/built.tar"
+
+      - name: Attribute findings to the pinned upstream base
+        id: attribute
+        if: ${{ !cancelled() && steps.disposition.outcome == 'success' }}
+        run: |
+          mkdir -p "$RUNNER_TEMP/kind-harness/report"
+          /usr/bin/python3 -I -B "$RUNNER_TEMP/kind-harness/attribute.py" attribute "$POLICY" "$DOCKERFILE" \
+            "$RUNNER_TEMP/kind-harness/upstream.json" "$RUNNER_TEMP/kind-harness/built.json" \
+            "$RUNNER_TEMP/kind-harness/report/kind-harness-attribution.json"
+
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        if: ${{ !cancelled() && steps.attribute.outcome != 'skipped' }}
+        with:
+          name: kind-harness-attribution
+          path: ${{ runner.temp }}/kind-harness/report/kind-harness-attribution.json
+          if-no-files-found: error
+          retention-days: 30
+
+      - name: Remove tools, images and scan results
+        if: always()
+        run: |
+          rm -rf "$RUNNER_TEMP/kind-harness"
+          docker image rm -f kind-harness-scan:local > /dev/null 2>&1 || true

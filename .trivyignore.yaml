@@ -7,3 +7,24 @@ misconfigurations:
     paths:
       - scripts/ci/Dockerfile.ubuntu-harness
     statement: The disposable Ubuntu lab boots systemd as root and supports privileged scenario setup.
+# Report-only disposition for HIGH/CRITICAL findings inherited unchanged from a
+# digest-pinned upstream base (designated approval, kube-dojo/kubedojo-labs#106).
+# The kind-harness-image job in .github/workflows/security.yml enforces it. A
+# finding is report-only only when Trivy reports the same package, version and
+# advisory for this exact digest and places the package in its layers.
+# Project-added or changed packages and unknown attribution block. A changed
+# digest, a review-by date in the past or a window over 30 days fails closed.
+# Review again on every kind release (.github/dependabot.yml opens a PR) and at
+# least every 30 days.
+inherited-base-images:
+  - dockerfile: scripts/ci/Dockerfile.kind-harness
+    base: kindest/node:v1.37.0@sha256:a1ed56cfb0e7b93589bdf97c8cd566405a265939e3620fc4f5de89adff580ae5
+    owner: claude-cto
+    reviewed: "2026-11-21"
+    review-by: "2026-12-21"
+    statement: >-
+      The kind v0.33.0 default node image for Kubernetes 1.37.0, the latest
+      stable kind release. Its distribution packages and compiled runtime
+      binaries carry upstream HIGH/CRITICAL findings, many without fixes, that
+      the lab harness cannot change. It runs only as a disposable cluster node
+      on an ephemeral GitHub-hosted runner with a read-only token and no secrets.
