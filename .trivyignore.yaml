@@ -1,0 +1,9 @@
+misconfigurations:
+  - id: AVD-DS-0002
+    paths:
+      - scripts/ci/Dockerfile.kind-harness
+    statement: The kind node image runs kubelet and system services as root on an ephemeral runner.
+  - id: AVD-DS-0002
+    paths:
+      - scripts/ci/Dockerfile.ubuntu-harness
+    statement: The disposable Ubuntu lab boots systemd as root and supports privileged scenario setup.
