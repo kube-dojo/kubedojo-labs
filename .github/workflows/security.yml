@@ -1,0 +1,37 @@
+name: Lab Security
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+  merge_group:
+
+permissions:
+  contents: read
+
+jobs:
+  scan:
+    # Building PR Dockerfiles follows the scenario workflow's fork boundary.
+    if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
+    uses: learn-ukrainian/machinery/.github/workflows/fleet-security.yml@078285f3192049bc5d795c5c5e59339fd0c974ab
+    with:
+      run-actionlint: true
+      run-zizmor: true
+      run-secret-scan: true
+      run-shellcheck: true
+      # Learner fixtures under cka-*/, ckad-*/, cks-*/, linux-*/ and prereq-*/
+      # are exercised by scenario CI. ShellCheck covers the harness and templates.
+      # Template verifiers contain unused example variables (SC2034).
+      shellcheck-paths: |
+        scripts
+        templates|error
+      # There are no package lockfiles. Scan the tracked infrastructure and
+      # check dependencies installed into the two images built by scenario CI.
+      run-trivy-iac: true
+      trivy-iac-targets: .
+      trivy-ignorefile: .trivyignore.yaml
+      run-trivy-image: true
+      trivy-image-targets: |
+        build|scripts/ci/Dockerfile.kind-harness|scripts/ci
+        build|scripts/ci/Dockerfile.ubuntu-harness|scripts/ci
