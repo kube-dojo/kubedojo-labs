@@ -1,6 +1,8 @@
-# Opens a pull request when kind publishes a newer kindest/node image. The new
-# digest fails the kind harness attribution job until the disposition in
-# .trivyignore.yaml is reviewed for it (#106).
+# Proposes the newest kindest/node image (one open PR at a time, after a
+# 7-day cooldown) as a prompt for the disposition review at a kind release.
+# The proposed digest fails the kind harness attribution job until the
+# disposition in .trivyignore.yaml is reviewed for it. The enforced bound is
+# the disposition's 30-day review-by date (#106).
 version: 2
 updates:
   - package-ecosystem: docker

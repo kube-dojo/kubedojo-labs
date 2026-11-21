@@ -12,17 +12,20 @@ misconfigurations:
 # .github/workflows/security.yml. Every HIGH/CRITICAL row is still reported.
 # A row is report-only only when it is:
 # - inherited: same package, version and advisory reported for this exact
-#   digest, in the digest's layers;
+#   digest, in the digest's layers, whether or not a fix exists upstream;
 # - inherited-upgrade: a Debian package of the digest upgraded by the harness,
 #   with the same advisory reported for the same name, architecture and
 #   distribution in the digest and no fixed version for the upgrade;
-# - approved-unfixed: a project-installed package named exactly in
-#   unfixed-project-packages while Trivy reports no fixed version.
-# Every other row blocks, including downgrades, same-version rewrites and any
-# fixed version. Unknown attribution, missing scan data, a changed digest, a
-# review-by date in the past or a window over 30 days fail closed.
-# Review again on every kind release (.github/dependabot.yml opens a PR) and at
-# least every 30 days.
+# - approved-unfixed: a Debian package the digest does not ship, named exactly
+#   in unfixed-project-packages, while Trivy reports no fixed version.
+# Every other row blocks, including downgrades, same-version rewrites and a
+# fixed version on an upgraded or approved package. Unknown attribution,
+# missing or malformed scan data (including a built image that lacks the
+# distribution or any package the digest ships), a changed digest, a review-by
+# date in the past or a window over 30 days fail closed.
+# Review again at the next kind release and at least every 30 days; only the
+# 30-day bound is enforced here. .github/dependabot.yml proposes newer
+# kindest/node images as a prompt for the release review.
 inherited-base-images:
   - dockerfile: scripts/ci/Dockerfile.kind-harness
     base: kindest/node:v1.37.0@sha256:a1ed56cfb0e7b93589bdf97c8cd566405a265939e3620fc4f5de89adff580ae5

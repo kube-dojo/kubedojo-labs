@@ -79,13 +79,16 @@ jobs:
             ships, the digest's scan reports the same advisory for the same package
             identity (name, architecture, distribution), the installed version is newer
             and Trivy reports no fixed version for the upgraded package.
-          - approved-unfixed: a project-installed Debian package named exactly in the
-            disposition's unfixed-project-packages list while Trivy reports no fixed
-            version.
+          - approved-unfixed: a Debian package the pinned digest does not ship, named
+            exactly in the disposition's unfixed-project-packages list, while Trivy
+            reports no fixed version.
 
-          Every other row blocks, including downgrades, same-version rewrites, unmatched
-          advisories and rows with a fixed version. Unknown attribution, malformed or
-          empty scan data, a changed digest and an overdue disposition fail closed.
+          Inherited rows are report-only whether or not a fix exists upstream (the first
+          designated decision on #106). Every other row blocks, including downgrades,
+          same-version rewrites, unmatched advisories and a fixed version on an upgraded
+          or approved package. A built scan that lacks the distribution or any package
+          the pinned digest ships, malformed or empty scan data, unknown attribution, a
+          changed digest and an overdue disposition fail closed.
           """
           import datetime
           import json
@@ -198,18 +201,36 @@ jobs:
               results = report.get("Results")
               if not isinstance(results, list) or not all(isinstance(r, dict) for r in results):
                   raise Refusal("missing_scan_data", f"{label} scan has no results list")
-              packages = 0
+              os_info = report["Metadata"].get("OS")
+              if not isinstance(os_info, dict) or not all(isinstance(os_info.get(f), str) and os_info[f] for f in ("Family", "Name")):
+                  raise Refusal("missing_scan_data", f"{label} scan did not detect the distribution")
+              inventory = set()
               for result in results:
                   pkgs = result.get("Packages")
                   vulns = result.get("Vulnerabilities")
                   if pkgs is not None and not isinstance(pkgs, list) or vulns is not None and not isinstance(vulns, list):
                       raise Refusal("missing_scan_data", f"{label} scan has a malformed result")
-                  if vulns and not all(isinstance(v, dict) for v in vulns):
-                      raise Refusal("missing_scan_data", f"{label} scan has a malformed finding")
-                  packages += len(pkgs or [])
-              if packages == 0:
+                  if not all(isinstance(r, str) and r for r in (result.get("Class"), result.get("Type"), result.get("Target"))):
+                      raise Refusal("missing_scan_data", f"{label} scan has a result without class, type or target")
+                  for pkg in pkgs or []:
+                      if not isinstance(pkg, dict) or not isinstance(pkg.get("Name"), str) or not pkg["Name"]:
+                          raise Refusal("missing_scan_data", f"{label} scan has a package record without a name")
+                      inventory.add(package_key(result, pkg["Name"]))
+                  for vuln in vulns or []:
+                      if not isinstance(vuln, dict) or not all(isinstance(vuln.get(f), str) and vuln[f] for f in ROW_FIELDS):
+                          raise Refusal("missing_scan_data", f"{label} scan has a finding without package, version, advisory or severity")
+                      if vuln.get("FixedVersion") is not None and not isinstance(vuln["FixedVersion"], str):
+                          raise Refusal("missing_scan_data", f"{label} scan has a finding with a malformed fixed version")
+                      if vuln.get("Layer") is not None and not isinstance(vuln["Layer"], dict):
+                          raise Refusal("missing_scan_data", f"{label} scan has a finding with a malformed layer")
+              if not inventory:
                   raise Refusal("missing_scan_data", f"{label} scan inventoried zero packages")
-              return report, diff_ids, results, packages
+              return report, diff_ids, results, inventory
+
+
+          def package_key(result, name):
+              target = "" if result.get("Class") == "os-pkgs" else result.get("Target")
+              return (result.get("Class"), result.get("Type"), target, name)
 
 
           def key(result, vuln):
@@ -267,19 +288,27 @@ jobs:
                         "approved_unfixed_packages": sorted(approved),
                         "counts": {name: 0 for name in COUNTS}, "findings": []}
               try:
-                  upstream, up_ids, up_results, up_pkgs = load_scan(upstream_path, "upstream")
-                  built, built_ids, built_results, built_pkgs = load_scan(built_path, "built")
-                  report["upstream"] = {"diff_ids": up_ids, "packages": up_pkgs, "os": upstream["Metadata"].get("OS")}
-                  report["built"] = {"diff_ids": built_ids, "packages": built_pkgs, "os": built["Metadata"].get("OS"),
+                  upstream, up_ids, up_results, up_inventory = load_scan(upstream_path, "upstream")
+                  built, built_ids, built_results, built_inventory = load_scan(built_path, "built")
+                  up_os, built_os = upstream["Metadata"]["OS"], built["Metadata"]["OS"]
+                  report["upstream"] = {"diff_ids": up_ids, "packages": len(up_inventory), "os": up_os}
+                  report["built"] = {"diff_ids": built_ids, "packages": len(built_inventory), "os": built_os,
                                      "image_id": clean(built["Metadata"].get("ImageID", ""))}
                   if built_ids[: len(up_ids)] != up_ids:
                       raise Refusal("base_mismatch", "built image layers do not start with the pinned upstream layers")
+                  if (up_os["Family"], up_os["Name"]) != (built_os["Family"], built_os["Name"]):
+                      raise Refusal("base_mismatch", "built image distribution differs from the pinned digest")
+                  lost = up_inventory - built_inventory
+                  if lost:
+                      raise Refusal("missing_scan_data", f"built scan lacks {len(lost)} package(s) the pinned digest ships, "
+                                    f"for example {clean(min(lost, key=str))}")
+                  distro = f"{built_os['Family']}-{built_os['Name']}"
                   inherited = set()
                   advisories = {}
                   for result in up_results:
                       for vuln in result.get("Vulnerabilities") or []:
-                          if any(not isinstance(vuln.get(f), str) for f in ROW_FIELDS) or layer_of(vuln) is None:
-                              raise Refusal("missing_scan_data", "upstream scan has a finding without package, version, advisory or layer")
+                          if layer_of(vuln) not in up_ids:
+                              raise Refusal("missing_scan_data", "upstream scan has a finding outside the pinned digest's layers")
                           inherited.add(key(result, vuln))
                           identity = deb_identity(result, vuln)
                           if identity is not None:
@@ -288,32 +317,30 @@ jobs:
                   report["reason"] = exc.reason
                   report["detail"] = exc.detail
                   return 1, report
-              same_os = isinstance(report["upstream"]["os"], dict) and report["upstream"]["os"] == report["built"]["os"]
               base_layers = set(up_ids)
               for result in built_results:
                   for vuln in result.get("Vulnerabilities") or []:
                       layer = layer_of(vuln)
                       fixed = vuln.get("FixedVersion") or ""
                       upstream_version = ""
-                      if not all(isinstance(vuln.get(f), str) for f in ROW_FIELDS) or layer not in built_ids:
-                          attribution, reason = "unknown", "finding lacks package, version, advisory or a built layer"
+                      identity = deb_identity(result, vuln)
+                      if layer not in built_ids:
+                          attribution, reason = "unknown", "finding lacks a layer of the built image"
                       elif layer in base_layers:
                           if key(result, vuln) in inherited:
                               attribution, reason = "inherited", "same package, version and advisory in the pinned digest's layers"
                           else:
                               attribution, reason = "unknown", "base-layer finding not reported for the pinned digest"
-                      elif result.get("Class") == "os-pkgs" and vuln["PkgName"] in approved:
+                      elif (vuln["PkgName"] in approved and identity is not None and identity[3] == distro
+                            and package_key(result, vuln["PkgName"]) not in up_inventory):
                           if fixed:
                               attribution, reason = "project", "approved project package now has a fixed version"
                           else:
                               attribution, reason = "approved-unfixed", "project-installed package listed in the disposition; no fixed version"
                       else:
-                          identity = deb_identity(result, vuln)
                           versions = advisories.get((identity, vuln["VulnerabilityID"])) if identity else None
                           if not versions:
                               attribution, reason = "project", "project-added or changed package; advisory not in the pinned digest"
-                          elif not same_os:
-                              attribution, reason = "project", "distribution differs from the pinned digest"
                           elif len(versions) != 1:
                               attribution, reason = "unknown", "pinned digest reports several versions of this package"
                           else:
@@ -398,10 +425,10 @@ jobs:
                       vuln["PkgIdentifier"] = {"PURL": f"pkg:deb/debian/{pkg}@{plain.replace('+', '%2B')}?{qualifiers}"}
                   return vuln
 
-              def scan(ids, os_vulns, go_vulns, packages=2, os_name="13.6"):
+              def scan(ids, os_vulns, go_vulns, packages=2, os_name="13.6", names=("p",)):
                   return {"Metadata": {"DiffIDs": ids, "OS": {"Family": "debian", "Name": os_name}}, "Results": [
                       {"Target": "img (debian 13.6)", "Class": "os-pkgs", "Type": "debian",
-                       "Packages": [{"Name": "p"}] * packages, "Vulnerabilities": os_vulns},
+                       "Packages": [{"Name": n} for n in names] * packages, "Vulnerabilities": os_vulns},
                       {"Target": "usr/bin/kubelet", "Class": "lang-pkgs", "Type": "gobinary",
                        "Packages": [{"Name": "stdlib"}], "Vulnerabilities": go_vulns}]}
 
@@ -409,6 +436,12 @@ jobs:
               up = scan([a], [row("CVE-1", "curl", "8.1-2+deb13u4", a)], go)
               def built(os_vulns, go_vulns=go, **kw):
                   return scan([a, b], os_vulns, go_vulns, **kw)
+
+              def edited(data, edit):
+                  edit(data)
+                  return data
+
+              shipped = scan([a], [row("CVE-3", "python3.13", "3.13.5-2", a)], go, names=("p", "python3.13"))
 
               attribution_cases = [
                   ("inherited finding is reported, not blocking",
@@ -434,8 +467,27 @@ jobs:
                    up, built([row("CVE-9", "curl", "8.1-2+deb13u7", b)]), 1, "blocked", "project", 1),
                   ("upgraded package of another architecture blocks",
                    up, built([row("CVE-1", "curl", "8.1-2+deb13u7", b, arch="arm64")]), 1, "blocked", "project", 1),
-                  ("upgraded package on another distribution release blocks",
-                   up, built([row("CVE-1", "curl", "8.1-2+deb13u7", b)], os_name="13.7"), 1, "blocked", "project", 1),
+                  ("built scan on another distribution release fails",
+                   up, built([row("CVE-1", "curl", "8.1-2+deb13u7", b)], os_name="13.7"), 1, "error", None, 0),
+                  ("built scan without the OS package inventory fails",
+                   up, edited(built([]), lambda d: d["Results"].pop(0)), 1, "error", None, 0),
+                  ("built scan without a detected distribution fails",
+                   up, edited(built([]), lambda d: d["Metadata"].pop("OS")), 1, "error", None, 0),
+                  ("approved name shipped by the pinned digest follows the upgrade rules",
+                   shipped, built([row("CVE-3", "python3.13", "3.13.5-2", b)], names=("p", "python3.13")),
+                   1, "blocked", "project", 1),
+                  ("approved package from another distribution blocks",
+                   up, built([row("CVE-3", "python3.13", "3.13.5-2", b, distro="debian-12")]), 1, "blocked", "project", 1),
+                  ("null package record fails",
+                   up, edited(built([]), lambda d: d["Results"][0]["Packages"].append(None)), 1, "error", None, 0),
+                  ("package record without a name fails",
+                   up, edited(built([]), lambda d: d["Results"][0]["Packages"].append({"Version": "1"})), 1, "error", None, 0),
+                  ("non-string fixed version fails",
+                   up, built([row("CVE-3", "python3.13", "3.13.5-2", b) | {"FixedVersion": False}]), 1, "error", None, 0),
+                  ("blank advisory id fails",
+                   up, built([row("", "python3.13", "3.13.5-2", b)]), 1, "error", None, 0),
+                  ("upstream finding outside the digest's layers fails",
+                   scan([a], [row("CVE-1", "curl", "8.1-2+deb13u4", b)], go), built([]), 1, "error", None, 0),
                   ("upgraded package without a package URL blocks",
                    up, built([row("CVE-1", "curl", "8.1-2+deb13u7", b, purl=False)]), 1, "blocked", "project", 1),
                   ("rewritten Go binary in a project layer blocks",
