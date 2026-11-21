@@ -22,8 +22,9 @@ misconfigurations:
 # fixed version on an upgraded or approved package. Unknown attribution,
 # missing or malformed scan data (including a built image that lacks the
 # distribution or any package the digest ships), a changed digest, a review-by
-# date in the past or a window over 30 days fail closed. The digest check uses
-# the built image's layers, so a changed FROM fails closed without a new review.
+# date in the past or a window over 30 days fail closed. The Dockerfile must
+# have exactly one literal FROM equal to the recorded base, and the built
+# image's layers must start with that digest's layers.
 # Review again at the next kind release and at least every 30 days; only the
 # 30-day bound is enforced here. .github/dependabot.yml proposes newer
 # kindest/node images as a prompt for the release review.

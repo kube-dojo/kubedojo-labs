@@ -88,8 +88,9 @@ jobs:
           same-version rewrites, unmatched advisories and a fixed version on an upgraded
           or approved package. A built scan that lacks the distribution or any package
           the pinned digest ships, malformed or empty scan data, unknown attribution, a
-          built image whose layers do not start with the recorded digest's layers (a
-          changed FROM) and an overdue disposition fail closed. When the built scan is
+          Dockerfile whose only FROM is not the recorded digest, a built image whose
+          layers do not start with the digest's layers and an overdue disposition fail
+          closed. When the built scan is
           readable, a refusal still reports its rows as unknown.
           """
           import datetime
@@ -138,7 +139,7 @@ jobs:
 
 
           def disposition(policy_path, dockerfile, today):
-              """Return the validated disposition entry recorded for this Dockerfile path."""
+              """Return the validated disposition entry whose base equals the Dockerfile's only FROM."""
               try:
                   import yaml
               except ImportError:
@@ -176,8 +177,53 @@ jobs:
                   raise Refusal("invalid_disposition", f"review-by must be within {MAX_REVIEW_DAYS} days of reviewed")
               if today > review_by:
                   raise Refusal("review_overdue", f"disposition expired on {review_by.isoformat()}; record a fresh review")
-              # The built image's layers prove its base (attribute); the Dockerfile text is not parsed.
+              instructions = dockerfile_instructions(dockerfile)
+              keywords = [words[0].upper() for words in instructions]
+              if "ARG" in keywords or keywords.count("FROM") != 1 or keywords[0] != "FROM" or len(instructions[0]) != 2:
+                  raise Refusal("unsupported_dockerfile", "expected exactly one literal 'FROM <image>' stage without flags, stage name or ARG")
+              if instructions[0][1] != base:
+                  raise Refusal("base_changed", f"Dockerfile FROM {clean(instructions[0][1])} differs from the recorded disposition; "
+                                "record a fresh disposition")
+              # attribute() also proves the built image's layers start with the digest's layers.
               return entry
+
+
+          def dockerfile_instructions(path):
+              """Split a Dockerfile into logical instructions using its lexical rules; refuse what this check cannot model.
+
+              A UTF-8 byte-order mark is dropped. Parser directives (which can change the escape character) and
+              heredocs (whose bodies are data) refuse. A backslash at the end of a line joins the next line as
+              BuildKit does: comment lines and blank lines inside a continuation are skipped and the remaining
+              text is concatenated without a separator.
+              """
+              try:
+                  source = Path(path).read_text(encoding="utf-8").removeprefix("\ufeff")
+              except (OSError, UnicodeDecodeError) as exc:
+                  raise Refusal("dockerfile_unreadable", type(exc).__name__) from None
+              logical, current = [], None
+              for raw in source.splitlines():
+                  stripped = raw.strip()
+                  if stripped.startswith("#"):
+                      if re.match(r"#\s*[A-Za-z]+\s*=", stripped):
+                          raise Refusal("unsupported_dockerfile", "parser directives are not supported")
+                      continue
+                  if not stripped:
+                      continue
+                  if "<<" in raw:
+                      raise Refusal("unsupported_dockerfile", "heredoc syntax is not supported")
+                  body = raw.lstrip() if current is None else raw
+                  continued = re.search(r"\\\s*$", body)
+                  if continued:
+                      current = (current or "") + body[:continued.start()]
+                      continue
+                  logical.append((current or "") + body)
+                  current = None
+              if current is not None:
+                  logical.append(current)
+              instructions = [line.split() for line in logical if line.split()]
+              if not instructions:
+                  raise Refusal("unsupported_dockerfile", "the Dockerfile has no instructions")
+              return instructions
 
 
           def load_scan(path, label):
@@ -602,6 +648,18 @@ jobs:
                       ("tag-only base fails", {"base": "kindest/node:v0.0.0"}, "FROM kindest/node:v0.0.0\n", "invalid_disposition"),
                       ("unquoted date fails", {"reviewed": datetime.date(2026, 11, 21)}, f"FROM {base}\n", "invalid_disposition"),
                       ("package pattern instead of a name fails", {"unfixed-project-packages": ["python3.*"]}, f"FROM {base}\n", "invalid_disposition"),
+                      ("second FROM stage fails", {}, f"FROM {base}\nRUN true\nFROM {base}\n", "unsupported_dockerfile"),
+                      ("changed digest fails", {}, "FROM kindest/node:v0.0.0@sha256:" + "d" * 64 + "\n", "base_changed"),
+                      ("FROM split across a continuation fails", {}, f"FROM {base}\nRUN true\nFR\\\nOM {base}\n", "unsupported_dockerfile"),
+                      ("heredoc fails", {}, f"FROM {base}\nRUN <<EOF\nFROM {base}\nEOF\n", "unsupported_dockerfile"),
+                      ("heredoc without a second FROM fails", {}, f"FROM {base}\nCOPY <<EOF /etc/note\nhello\nEOF\n", "unsupported_dockerfile"),
+                      ("ARG after the FROM fails", {}, f"FROM {base}\nARG X\nRUN true\n", "unsupported_dockerfile"),
+                      ("parser directive fails", {}, f"# escape=`\nFROM {base}\n", "unsupported_dockerfile"),
+                      ("byte-order mark is accepted", {}, f"\ufeffFROM {base}\nRUN true\n", None),
+                      ("variable base fails", {}, f"ARG X\nFROM {base}\n", "unsupported_dockerfile"),
+                      ("stage name fails", {}, f"FROM {base} AS kind\n", "unsupported_dockerfile"),
+                      ("continued FROM with an inner comment is accepted", {},
+                       f"FROM \\\n# note\n\n  {base}\nRUN apt-get update \\\n  && true\n", None),
                   ]
                   import yaml
                   for name, change, dockerfile_text, want in policy_cases:
