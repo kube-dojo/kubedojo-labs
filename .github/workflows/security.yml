@@ -39,8 +39,9 @@ jobs:
 
   # The kind harness extends a digest-pinned kind node image whose own packages
   # carry upstream HIGH/CRITICAL findings. This job scans the built harness and
-  # the recorded upstream digest with the fleet workflow's pinned Trivy and
-  # blocks on every finding not proven inherited from that digest (#106).
+  # the recorded upstream digest with the fleet workflow's pinned Trivy, reports
+  # every row with its attribution and blocks on every row the disposition in
+  # .trivyignore.yaml does not make report-only (#106).
   kind-harness-image:
     name: Kind harness image attribution
     if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
@@ -68,26 +69,44 @@ jobs:
           cat > "$RUNNER_TEMP/kind-harness/attribute.py" <<'PY'
           """Attribute kind harness Trivy findings to its pinned upstream base (kube-dojo/kubedojo-labs#106).
 
-          A HIGH/CRITICAL finding in the built harness is report-only only when the same
-          package, version and advisory are reported for the exact digest recorded in
-          .trivyignore.yaml and Trivy places the package in one of that digest's layers.
-          Project-added or changed packages block. Unknown attribution, malformed or
+          Every HIGH/CRITICAL row of the built harness is reported with an attribution
+          and a reason. Three attributions are report-only:
+
+          - inherited: Trivy reports the same package, version and advisory for the
+            exact digest recorded in .trivyignore.yaml and places the package in one of
+            that digest's layers.
+          - inherited-upgrade: the harness upgraded a Debian package that the digest
+            ships, the digest's scan reports the same advisory for the same package
+            identity (name, architecture, distribution), the installed version is newer
+            and Trivy reports no fixed version for the upgraded package.
+          - approved-unfixed: a project-installed Debian package named exactly in the
+            disposition's unfixed-project-packages list while Trivy reports no fixed
+            version.
+
+          Every other row blocks, including downgrades, same-version rewrites, unmatched
+          advisories and rows with a fixed version. Unknown attribution, malformed or
           empty scan data, a changed digest and an overdue disposition fail closed.
           """
           import datetime
           import json
           import os
           import re
+          import subprocess
           import sys
           import tempfile
           from pathlib import Path
+          from urllib.parse import unquote
 
           POLICY_KEY = "inherited-base-images"
-          FIELDS = {"dockerfile", "base", "owner", "reviewed", "review-by", "statement"}
+          FIELDS = {"dockerfile", "base", "owner", "reviewed", "review-by", "unfixed-project-packages", "statement"}
           MAX_REVIEW_DAYS = 30
           BASE_REF = re.compile(r"^[a-z0-9]+(?:[._/-][a-z0-9]+)*(?::[A-Za-z0-9._-]{1,128})?@sha256:[0-9a-f]{64}$")
+          DEB_NAME = re.compile(r"^[a-z0-9][a-z0-9+.-]+$")
           DIFF_ID = re.compile(r"^sha256:[0-9a-f]{64}$")
+          DEB_PURL = re.compile(r"^pkg:deb/([a-z0-9.-]+)/([^@?/]+)@([^?]+)\?(.+)$")
           ROW_FIELDS = ("VulnerabilityID", "PkgName", "InstalledVersion", "Severity")
+          REPORT_ONLY = ("inherited", "inherited-upgrade", "approved-unfixed")
+          COUNTS = (*REPORT_ONLY, "project", "unknown")
 
 
           class Refusal(Exception):
@@ -140,6 +159,10 @@ jobs:
               for key in ("owner", "statement"):
                   if not isinstance(entry[key], str) or not entry[key].strip():
                       raise Refusal("invalid_disposition", f"{key} must be a non-empty string")
+              names = entry["unfixed-project-packages"]
+              if (not isinstance(names, list) or not all(isinstance(n, str) and DEB_NAME.fullmatch(n) for n in names)
+                      or len(set(names)) != len(names)):
+                  raise Refusal("invalid_disposition", "unfixed-project-packages must list unique exact Debian package names")
               reviewed = iso_date(entry, "reviewed")
               review_by = iso_date(entry, "review-by")
               if reviewed > today:
@@ -201,49 +224,121 @@ jobs:
               return diff_id if isinstance(diff_id, str) and DIFF_ID.fullmatch(diff_id) else None
 
 
-          def attribute(upstream_path, built_path, base):
+          def deb_identity(result, vuln):
+              """Return (distro namespace, name, arch, distro) from a Debian row's PURL, or None."""
+              if result.get("Class") != "os-pkgs" or result.get("Type") != "debian":
+                  return None
+              ident = vuln.get("PkgIdentifier")
+              purl = ident.get("PURL") if isinstance(ident, dict) else None
+              match = DEB_PURL.fullmatch(purl) if isinstance(purl, str) else None
+              if not match:
+                  return None
+              qualifiers = dict(part.split("=", 1) for part in match.group(4).split("&") if "=" in part)
+              name = unquote(match.group(2))
+              version = unquote(match.group(3))
+              if qualifiers.get("epoch"):
+                  version = f"{unquote(qualifiers['epoch'])}:{version}"
+              if name != vuln.get("PkgName") or version != vuln.get("InstalledVersion"):
+                  return None
+              if not qualifiers.get("arch") or not qualifiers.get("distro"):
+                  return None
+              return (match.group(1), name, unquote(qualifiers["arch"]), unquote(qualifiers["distro"]))
+
+
+          def deb_compare(left, right):
+              """Return -1, 0 or 1 using dpkg's own ordering; None when dpkg cannot decide."""
+              env = {"PATH": "/usr/bin:/bin", "LC_ALL": "C"}
+              for op, value in (("lt", -1), ("eq", 0), ("gt", 1)):
+                  try:
+                      proc = subprocess.run(["/usr/bin/dpkg", "--compare-versions", left, op, right],
+                                            env=env, capture_output=True, check=False, timeout=10)
+                  except (OSError, subprocess.TimeoutExpired):
+                      return None
+                  if proc.returncode == 0:
+                      return value
+                  if proc.returncode != 1 or proc.stderr:
+                      return None
+              return None
+
+
+          def attribute(upstream_path, built_path, base, approved=()):
               """Return (exit code, report). Every refusal yields a non-zero exit and an error report."""
-              report = {"schema": "kind-harness-attribution.v1", "base": base, "status": "error", "reason": "",
-                        "counts": {"inherited": 0, "project": 0, "unknown": 0}, "findings": []}
+              report = {"schema": "kind-harness-attribution.v2", "base": base, "status": "error", "reason": "",
+                        "approved_unfixed_packages": sorted(approved),
+                        "counts": {name: 0 for name in COUNTS}, "findings": []}
               try:
-                  _, up_ids, up_results, up_pkgs = load_scan(upstream_path, "upstream")
+                  upstream, up_ids, up_results, up_pkgs = load_scan(upstream_path, "upstream")
                   built, built_ids, built_results, built_pkgs = load_scan(built_path, "built")
-                  report["upstream"] = {"diff_ids": up_ids, "packages": up_pkgs}
-                  report["built"] = {"diff_ids": built_ids, "packages": built_pkgs,
+                  report["upstream"] = {"diff_ids": up_ids, "packages": up_pkgs, "os": upstream["Metadata"].get("OS")}
+                  report["built"] = {"diff_ids": built_ids, "packages": built_pkgs, "os": built["Metadata"].get("OS"),
                                      "image_id": clean(built["Metadata"].get("ImageID", ""))}
                   if built_ids[: len(up_ids)] != up_ids:
                       raise Refusal("base_mismatch", "built image layers do not start with the pinned upstream layers")
                   inherited = set()
+                  advisories = {}
                   for result in up_results:
                       for vuln in result.get("Vulnerabilities") or []:
                           if any(not isinstance(vuln.get(f), str) for f in ROW_FIELDS) or layer_of(vuln) is None:
                               raise Refusal("missing_scan_data", "upstream scan has a finding without package, version, advisory or layer")
                           inherited.add(key(result, vuln))
+                          identity = deb_identity(result, vuln)
+                          if identity is not None:
+                              advisories.setdefault((identity, vuln["VulnerabilityID"]), set()).add(vuln["InstalledVersion"])
               except Refusal as exc:
                   report["reason"] = exc.reason
                   report["detail"] = exc.detail
                   return 1, report
+              same_os = isinstance(report["upstream"]["os"], dict) and report["upstream"]["os"] == report["built"]["os"]
               base_layers = set(up_ids)
               for result in built_results:
                   for vuln in result.get("Vulnerabilities") or []:
                       layer = layer_of(vuln)
-                      complete = all(isinstance(vuln.get(f), str) for f in ROW_FIELDS) and layer in built_ids
-                      if not complete:
-                          attribution = "unknown"
-                      elif layer not in base_layers:
-                          attribution = "project"
-                      elif key(result, vuln) in inherited:
-                          attribution = "inherited"
+                      fixed = vuln.get("FixedVersion") or ""
+                      upstream_version = ""
+                      if not all(isinstance(vuln.get(f), str) for f in ROW_FIELDS) or layer not in built_ids:
+                          attribution, reason = "unknown", "finding lacks package, version, advisory or a built layer"
+                      elif layer in base_layers:
+                          if key(result, vuln) in inherited:
+                              attribution, reason = "inherited", "same package, version and advisory in the pinned digest's layers"
+                          else:
+                              attribution, reason = "unknown", "base-layer finding not reported for the pinned digest"
+                      elif result.get("Class") == "os-pkgs" and vuln["PkgName"] in approved:
+                          if fixed:
+                              attribution, reason = "project", "approved project package now has a fixed version"
+                          else:
+                              attribution, reason = "approved-unfixed", "project-installed package listed in the disposition; no fixed version"
                       else:
-                          attribution = "unknown"
+                          identity = deb_identity(result, vuln)
+                          versions = advisories.get((identity, vuln["VulnerabilityID"])) if identity else None
+                          if not versions:
+                              attribution, reason = "project", "project-added or changed package; advisory not in the pinned digest"
+                          elif not same_os:
+                              attribution, reason = "project", "distribution differs from the pinned digest"
+                          elif len(versions) != 1:
+                              attribution, reason = "unknown", "pinned digest reports several versions of this package"
+                          else:
+                              upstream_version = next(iter(versions))
+                              order = deb_compare(vuln["InstalledVersion"], upstream_version)
+                              if order is None:
+                                  attribution, reason = "unknown", "dpkg could not compare the installed versions"
+                              elif order < 0:
+                                  attribution, reason = "project", "downgrade of a pinned digest package"
+                              elif order == 0:
+                                  attribution, reason = "project", "same-version rewrite in a project layer"
+                              elif fixed:
+                                  attribution, reason = "project", "upgraded package still has a fixed version available"
+                              else:
+                                  attribution, reason = "inherited-upgrade", "advisory inherited from the pinned digest; package upgraded; no fixed version"
                       report["counts"][attribution] += 1
                       report["findings"].append({
                           "attribution": attribution,
+                          "reason": reason,
                           "vulnerability": clean(vuln.get("VulnerabilityID", "?")),
                           "severity": clean(vuln.get("Severity", "?")),
                           "package": clean(vuln.get("PkgName", "?")),
                           "version": clean(vuln.get("InstalledVersion", "?")),
-                          "fixed": clean(vuln.get("FixedVersion") or "unfixed"),
+                          "upstream_version": clean(upstream_version),
+                          "fixed": clean(fixed or "unfixed"),
                           "target": clean("" if result.get("Class") == "os-pkgs" else result.get("Target", "")),
                           "layer": layer or "",
                       })
@@ -252,19 +347,20 @@ jobs:
                   report["status"] = "blocked"
                   report["reason"] = "project_or_unknown_findings"
                   return 1, report
-              report["status"] = "inherited_only" if counts["inherited"] else "clean"
+              report["status"] = "report_only" if any(counts[name] for name in REPORT_ONLY) else "clean"
               return 0, report
 
 
           def publish(report, entry, report_path):
               Path(report_path).write_text(json.dumps(report, indent=2, sort_keys=True) + "\n", encoding="utf-8")
               for row in report["findings"]:
-                  line = (f"{row['vulnerability']} ({row['severity']}) {row['package']} {row['version']} "
+                  version = row["version"] + (f" (upstream {row['upstream_version']})" if row["upstream_version"] else "")
+                  line = (f"{row['vulnerability']} ({row['severity']}) {row['package']} {version} "
                           f"(fixed: {row['fixed']}) {row['target']}").rstrip()
-                  if row["attribution"] == "inherited":
-                      print(f"inherited, report-only: {line}")
+                  if row["attribution"] in REPORT_ONLY:
+                      print(f"{row['attribution']}, report-only: {line}: {row['reason']}")
                   else:
-                      print(f"::error::{row['attribution']} kind harness finding blocks: {line}")
+                      print(f"::error::{row['attribution']} kind harness finding blocks: {line}: {row['reason']}")
               if report["status"] == "error":
                   print(f"::error::Kind harness attribution failed closed: {report['reason']}: {clean(report.get('detail', ''))}")
               counts = report["counts"]
@@ -274,9 +370,9 @@ jobs:
                   f"- Status: **{report['status']}**" + (f" ({report['reason']})" if report["reason"] else ""),
                   f"- Upstream base: `{report['base']}`",
                   f"- Owner: {clean(entry.get('owner', ''))}; review by {clean(entry.get('review-by', ''))}",
-                  f"- Inherited (report-only): {counts['inherited']}; project (blocking): {counts['project']}; "
-                  f"unknown (blocking): {counts['unknown']}",
-                  "- Full rows: `kind-harness-attribution` artifact",
+                  "- Report-only: " + "; ".join(f"{name} {counts[name]}" for name in REPORT_ONLY),
+                  f"- Blocking: project {counts['project']}; unknown {counts['unknown']}",
+                  "- Every row with its reason: `kind-harness-attribution` artifact",
                   "",
               ]
               print("\n".join(summary))
@@ -286,58 +382,92 @@ jobs:
 
 
           def self_test():
-              """Prove the three defect classes and the fail-closed paths on owned fixtures."""
+              """Prove report-only, blocking and fail-closed paths on owned fixtures."""
               a, b = "sha256:" + "a" * 64, "sha256:" + "b" * 64
               base = "kindest/node:v0.0.0@sha256:" + "c" * 64
+              approved = ("python3.13",)
 
-              def row(vid, pkg, ver, layer, **extra):
-                  return {"VulnerabilityID": vid, "PkgName": pkg, "InstalledVersion": ver, "Severity": "HIGH",
-                          "Layer": {"DiffID": layer}, **extra}
+              def row(vid, pkg, ver, layer, fixed="", purl=True, arch="amd64", distro="debian-13.6"):
+                  vuln = {"VulnerabilityID": vid, "PkgName": pkg, "InstalledVersion": ver, "Severity": "HIGH",
+                          "Layer": {"DiffID": layer}}
+                  if fixed:
+                      vuln["FixedVersion"] = fixed
+                  if purl:
+                      epoch, _, plain = ver.rpartition(":")
+                      qualifiers = f"arch={arch}&distro={distro}" + (f"&epoch={epoch}" if epoch else "")
+                      vuln["PkgIdentifier"] = {"PURL": f"pkg:deb/debian/{pkg}@{plain.replace('+', '%2B')}?{qualifiers}"}
+                  return vuln
 
-              def scan(ids, os_vulns, go_vulns, packages=2):
-                  return {"Metadata": {"DiffIDs": ids}, "Results": [
+              def scan(ids, os_vulns, go_vulns, packages=2, os_name="13.6"):
+                  return {"Metadata": {"DiffIDs": ids, "OS": {"Family": "debian", "Name": os_name}}, "Results": [
                       {"Target": "img (debian 13.6)", "Class": "os-pkgs", "Type": "debian",
                        "Packages": [{"Name": "p"}] * packages, "Vulnerabilities": os_vulns},
                       {"Target": "usr/bin/kubelet", "Class": "lang-pkgs", "Type": "gobinary",
                        "Packages": [{"Name": "stdlib"}], "Vulnerabilities": go_vulns}]}
 
-              up = scan([a], [row("CVE-1", "libc6", "1.0", a)], [row("CVE-2", "stdlib", "v1.0", a)])
-              inherited_only = scan([a, b], [row("CVE-1", "libc6", "1.0", a)], [row("CVE-2", "stdlib", "v1.0", a)])
-              project_added = scan([a, b], [row("CVE-1", "libc6", "1.0", a), row("CVE-3", "python3.13", "3.13", b)],
-                                   [row("CVE-2", "stdlib", "v1.0", a)])
-              changed = scan([a, b], [row("CVE-1", "libc6", "1.1", b)], [row("CVE-2", "stdlib", "v1.0", a)])
-              rewritten = scan([a, b], [row("CVE-1", "libc6", "1.0", a)], [row("CVE-2", "stdlib", "v1.0", b)])
-              no_layer = scan([a, b], [{k: v for k, v in row("CVE-1", "libc6", "1.0", a).items() if k != "Layer"}], [])
-              unseen = scan([a, b], [row("CVE-9", "libc6", "1.0", a)], [])
-              empty = scan([a, b], [], [], packages=0)
-              empty["Results"][1]["Packages"] = []
+              go = [row("CVE-2", "stdlib", "v1.0", a, purl=False)]
+              up = scan([a], [row("CVE-1", "curl", "8.1-2+deb13u4", a)], go)
+              def built(os_vulns, go_vulns=go, **kw):
+                  return scan([a, b], os_vulns, go_vulns, **kw)
+
               attribution_cases = [
-                  ("inherited finding is reported, not blocking", up, inherited_only, 0, "inherited_only", 2),
-                  ("project-added finding blocks", up, project_added, 1, "blocked", 2),
-                  ("changed package finding blocks", up, changed, 1, "blocked", 1),
-                  ("same package rewritten in a project layer blocks", up, rewritten, 1, "blocked", 1),
-                  ("finding without a layer blocks", up, no_layer, 1, "blocked", 0),
-                  ("base-layer finding absent upstream blocks", up, unseen, 1, "blocked", 0),
-                  ("built scan with zero packages fails", up, empty, 1, "error", 0),
-                  ("built scan on another base fails", up, scan([b, a], [], [], 1), 1, "error", 0),
-                  ("built scan without results fails", up, {"Metadata": {"DiffIDs": [a, b]}}, 1, "error", 0),
-                  ("unreadable built scan fails", up, "{", 1, "error", 0),
-                  ("empty built scan file fails", up, "", 1, "error", 0),
-                  ("upstream scan without layers fails", {"Metadata": {}, "Results": []}, inherited_only, 1, "error", 0),
+                  ("inherited finding is reported, not blocking",
+                   up, built([row("CVE-1", "curl", "8.1-2+deb13u4", a)]), 0, "report_only", "inherited", 2),
+                  ("upgraded package keeping an inherited unfixed advisory is reported",
+                   up, built([row("CVE-1", "curl", "8.1-2+deb13u7", b)]), 0, "report_only", "inherited-upgrade", 1),
+                  ("approved project package without a fix is reported",
+                   up, built([row("CVE-3", "python3.13", "3.13.5-2", b)]), 0, "report_only", "approved-unfixed", 1),
+                  ("approved project package with a fixed version blocks",
+                   up, built([row("CVE-3", "python3.13", "3.13.5-2", b, fixed="3.13.5-3")]), 1, "blocked", "project", 1),
+                  ("unlisted project package blocks",
+                   up, built([row("CVE-4", "libexpat1", "2.9.0-1", b)]), 1, "blocked", "project", 1),
+                  ("upgraded package with an epoch keeping an inherited unfixed advisory is reported",
+                   scan([a], [row("CVE-5", "perl-base", "1:5.40-1", a)], go),
+                   built([row("CVE-5", "perl-base", "1:5.40-2", b)]), 0, "report_only", "inherited-upgrade", 1),
+                  ("upgraded package with a fixed version blocks",
+                   up, built([row("CVE-1", "curl", "8.1-2+deb13u7", b, fixed="8.1-2+deb13u9")]), 1, "blocked", "project", 1),
+                  ("downgraded package blocks",
+                   up, built([row("CVE-1", "curl", "8.1-2+deb13u1", b)]), 1, "blocked", "project", 1),
+                  ("same-version rewrite in a project layer blocks",
+                   up, built([row("CVE-1", "curl", "8.1-2+deb13u4", b)]), 1, "blocked", "project", 1),
+                  ("upgraded package with an advisory absent upstream blocks",
+                   up, built([row("CVE-9", "curl", "8.1-2+deb13u7", b)]), 1, "blocked", "project", 1),
+                  ("upgraded package of another architecture blocks",
+                   up, built([row("CVE-1", "curl", "8.1-2+deb13u7", b, arch="arm64")]), 1, "blocked", "project", 1),
+                  ("upgraded package on another distribution release blocks",
+                   up, built([row("CVE-1", "curl", "8.1-2+deb13u7", b)], os_name="13.7"), 1, "blocked", "project", 1),
+                  ("upgraded package without a package URL blocks",
+                   up, built([row("CVE-1", "curl", "8.1-2+deb13u7", b, purl=False)]), 1, "blocked", "project", 1),
+                  ("rewritten Go binary in a project layer blocks",
+                   up, built([row("CVE-1", "curl", "8.1-2+deb13u4", a)], [row("CVE-2", "stdlib", "v1.0", b, purl=False)]),
+                   1, "blocked", "project", 1),
+                  ("finding without a layer blocks",
+                   up, built([{k: v for k, v in row("CVE-1", "curl", "8.1-2+deb13u4", a).items() if k != "Layer"}]),
+                   1, "blocked", "unknown", 1),
+                  ("base-layer finding absent upstream blocks",
+                   up, built([row("CVE-9", "curl", "8.1-2+deb13u4", a)]), 1, "blocked", "unknown", 1),
+                  ("built scan with zero packages fails", up, scan([a, b], [], [], packages=0) | {"Results": []}, 1, "error", None, 0),
+                  ("built scan on another base fails", up, scan([b, a], [], [], 1), 1, "error", None, 0),
+                  ("built scan without results fails", up, {"Metadata": {"DiffIDs": [a, b]}}, 1, "error", None, 0),
+                  ("unreadable built scan fails", up, "{", 1, "error", None, 0),
+                  ("empty built scan file fails", up, "", 1, "error", None, 0),
+                  ("upstream scan without layers fails", {"Metadata": {}, "Results": []}, built([]), 1, "error", None, 0),
               ]
               failures = 0
               with tempfile.TemporaryDirectory() as tmp:
                   tmp = Path(tmp)
-                  for name, upstream, built, want_rc, want_status, want_inherited in attribution_cases:
-                      for label, data in (("up.json", upstream), ("built.json", built)):
+                  for name, upstream, built_scan, want_rc, want_status, want_class, want_count in attribution_cases:
+                      for label, data in (("up.json", upstream), ("built.json", built_scan)):
                           (tmp / label).write_text(data if isinstance(data, str) else json.dumps(data), encoding="utf-8")
-                      rc, report = attribute(tmp / "up.json", tmp / "built.json", base)
-                      ok = (rc, report["status"], report["counts"]["inherited"]) == (want_rc, want_status, want_inherited)
+                      rc, report = attribute(tmp / "up.json", tmp / "built.json", base, approved)
+                      got_count = report["counts"][want_class] if want_class else sum(report["counts"].values())
+                      ok = (rc, report["status"], got_count) == (want_rc, want_status, want_count)
                       failures += not ok
                       print(f"{'PASS' if ok else 'FAIL'} {name}: rc={rc} status={report['status']} counts={report['counts']}")
                   today = datetime.date(2026, 11, 21)
                   good = {"dockerfile": str(tmp / "Dockerfile"), "base": base, "owner": "claude-cto",
-                          "reviewed": "2026-11-21", "review-by": "2026-12-21", "statement": "fixture"}
+                          "reviewed": "2026-11-21", "review-by": "2026-12-21",
+                          "unfixed-project-packages": ["python3.13"], "statement": "fixture"}
                   policy_cases = [
                       ("current disposition is accepted", {}, f"FROM {base}\nRUN true\n", None),
                       ("overdue disposition fails", {"reviewed": "2026-10-01", "review-by": "2026-10-31"}, f"FROM {base}\n", "review_overdue"),
@@ -348,6 +478,7 @@ jobs:
                       ("unknown field fails", {"extra": "x"}, f"FROM {base}\n", "invalid_disposition"),
                       ("tag-only base fails", {"base": "kindest/node:v0.0.0"}, "FROM kindest/node:v0.0.0\n", "invalid_disposition"),
                       ("unquoted date fails", {"reviewed": datetime.date(2026, 11, 21)}, f"FROM {base}\n", "invalid_disposition"),
+                      ("package pattern instead of a name fails", {"unfixed-project-packages": ["python3.*"]}, f"FROM {base}\n", "invalid_disposition"),
                   ]
                   import yaml
                   for name, change, dockerfile_text, want in policy_cases:
@@ -376,14 +507,15 @@ jobs:
           def main(argv):
               if argv == ["self-test"]:
                   return self_test()
-              today = datetime.datetime.now(datetime.timezone.utc).date()
+              today = datetime.datetime.now(datetime.UTC).date()
               if len(argv) == 3 and argv[0] == "disposition":
                   try:
                       entry = disposition(argv[1], argv[2], today)
                   except Refusal as exc:
                       print(f"::error::Kind harness disposition refused: {exc.reason}: {clean(exc.detail)}")
                       return 1
-                  print(f"Disposition for {argv[2]}: base {entry['base']}, owner {clean(entry['owner'])}, review by {entry['review-by']}")
+                  print(f"Disposition for {argv[2]}: base {entry['base']}, owner {clean(entry['owner'])}, "
+                        f"review by {entry['review-by']}, unfixed project packages {', '.join(entry['unfixed-project-packages'])}")
                   with open(os.environ["GITHUB_OUTPUT"], "a", encoding="utf-8") as handle:
                       handle.write(f"base={entry['base']}\n")
                   return 0
@@ -393,11 +525,11 @@ jobs:
                       entry = disposition(policy_path, dockerfile, today)
                   except Refusal as exc:
                       entry = {}
-                      rc, report = 1, {"schema": "kind-harness-attribution.v1", "base": "", "status": "error",
+                      rc, report = 1, {"schema": "kind-harness-attribution.v2", "base": "", "status": "error",
                                        "reason": exc.reason, "detail": exc.detail,
-                                       "counts": {"inherited": 0, "project": 0, "unknown": 0}, "findings": []}
+                                       "counts": {name: 0 for name in COUNTS}, "findings": []}
                   else:
-                      rc, report = attribute(upstream_path, built_path, entry["base"])
+                      rc, report = attribute(upstream_path, built_path, entry["base"], tuple(entry["unfixed-project-packages"]))
                   publish(report, entry, report_path)
                   return rc
               print("usage: attribute.py self-test | disposition POLICY DOCKERFILE | "
@@ -409,7 +541,7 @@ jobs:
               sys.exit(main(sys.argv[1:]))
           PY
 
-      - name: Prove inherited, project and missing-data paths
+      - name: Prove report-only, blocking and missing-data paths
         run: /usr/bin/python3 -I -B "$RUNNER_TEMP/kind-harness/attribute.py" self-test
 
       - name: Validate the recorded upstream disposition

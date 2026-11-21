@@ -7,13 +7,20 @@ misconfigurations:
     paths:
       - scripts/ci/Dockerfile.ubuntu-harness
     statement: The disposable Ubuntu lab boots systemd as root and supports privileged scenario setup.
-# Report-only disposition for HIGH/CRITICAL findings inherited unchanged from a
-# digest-pinned upstream base (designated approval, kube-dojo/kubedojo-labs#106).
-# The kind-harness-image job in .github/workflows/security.yml enforces it. A
-# finding is report-only only when Trivy reports the same package, version and
-# advisory for this exact digest and places the package in its layers.
-# Project-added or changed packages and unknown attribution block. A changed
-# digest, a review-by date in the past or a window over 30 days fails closed.
+# Report-only disposition for the kind harness (designated approvals on
+# kube-dojo/kubedojo-labs#106), enforced by the kind-harness-image job in
+# .github/workflows/security.yml. Every HIGH/CRITICAL row is still reported.
+# A row is report-only only when it is:
+# - inherited: same package, version and advisory reported for this exact
+#   digest, in the digest's layers;
+# - inherited-upgrade: a Debian package of the digest upgraded by the harness,
+#   with the same advisory reported for the same name, architecture and
+#   distribution in the digest and no fixed version for the upgrade;
+# - approved-unfixed: a project-installed package named exactly in
+#   unfixed-project-packages while Trivy reports no fixed version.
+# Every other row blocks, including downgrades, same-version rewrites and any
+# fixed version. Unknown attribution, missing scan data, a changed digest, a
+# review-by date in the past or a window over 30 days fail closed.
 # Review again on every kind release (.github/dependabot.yml opens a PR) and at
 # least every 30 days.
 inherited-base-images:
@@ -22,6 +29,14 @@ inherited-base-images:
     owner: claude-cto
     reviewed: "2026-11-21"
     review-by: "2026-12-21"
+    # python3 (with libexpat1) serves the lab scripts and the step driver in
+    # the node; these Debian builds have HIGH advisories without fixes.
+    unfixed-project-packages:
+      - python3.13
+      - python3.13-minimal
+      - libpython3.13-minimal
+      - libpython3.13-stdlib
+      - libexpat1
     statement: >-
       The kind v0.33.0 default node image for Kubernetes 1.37.0, the latest
       stable kind release. Its distribution packages and compiled runtime
