@@ -2,10 +2,14 @@
 # 7-day cooldown) as a prompt for the disposition review at a kind release.
 # The kind harness attribution job fails closed when the built image's layers
 # don't begin with the recorded digest's layers: a new kindest/node digest
-# fails with base_mismatch until the disposition in .trivyignore.yaml is
-# reviewed again. The only exception is a new image built on top of the old
-# one, whose extra layers are then attributed as project content. The enforced
-# bound is the disposition's 30-day review-by date (#106).
+# triggers base_mismatch whenever it loses that recorded layer prefix, until
+# the disposition in .trivyignore.yaml is reviewed again. Two cases keep the
+# recorded prefix without base_mismatch: a config-only digest change with the
+# same ordered layer DiffIDs (allowed for package attribution), and a new
+# image built on top of the old one (whose added suffix layers are attributed
+# as project content, blocking except under inherited-upgrade or
+# approved-unfixed). The enforced bound is the disposition's 30-day review-by
+# date (#106).
 version: 2
 updates:
   - package-ecosystem: docker

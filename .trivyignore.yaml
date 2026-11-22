@@ -32,9 +32,11 @@ misconfigurations:
 # Review again at the next kind release and at least every 30 days; only the
 # 30-day bound is enforced here. .github/dependabot.yml proposes newer
 # kindest/node images as a prompt for the release review; a new digest fails
-# with base_mismatch until the disposition is reviewed again (unless the new
-# image is built on top of the old one, whose extra layers are then attributed
-# as project content).
+# with base_mismatch whenever it loses the recorded layer prefix until the
+# disposition is reviewed again (a config-only digest change keeping the same
+# ordered layer DiffIDs passes for package attribution, and a new image built
+# on top of the old one has its added suffix layers attributed as project
+# content).
 inherited-base-images:
   - dockerfile: scripts/ci/Dockerfile.kind-harness
     base: kindest/node:v1.37.0@sha256:a1ed56cfb0e7b93589bdf97c8cd566405a265939e3620fc4f5de89adff580ae5
