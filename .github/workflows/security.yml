@@ -15,7 +15,7 @@ permissions:
 # fork boundary, so both image scans run only for same-repository heads.
 jobs:
   scan:
-    uses: learn-ukrainian/machinery/.github/workflows/fleet-security.yml@fc01f27ea07c31fa00958136d37bd94ea0fc6823
+    uses: learn-ukrainian/machinery/.github/workflows/fleet-security.yml@12f0ce5664024b1680ec9ffbfa1a2c6a4b078705
     with:
       run-actionlint: true
       run-zizmor: true
