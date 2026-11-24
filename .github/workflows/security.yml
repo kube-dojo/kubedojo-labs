@@ -1,0 +1,822 @@
+name: Lab Security
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+  merge_group:
+
+permissions:
+  contents: read
+
+# Static and secret scans run on every pull request, including forks: they only
+# read the checkout. Building a PR Dockerfile follows the scenario workflow's
+# fork boundary, so both image scans run only for same-repository heads.
+jobs:
+  scan:
+    uses: learn-ukrainian/machinery/.github/workflows/fleet-security.yml@12f0ce5664024b1680ec9ffbfa1a2c6a4b078705
+    with:
+      run-actionlint: true
+      run-zizmor: true
+      run-secret-scan: true
+      run-shellcheck: true
+      # Learner fixtures under cka-*/, ckad-*/, cks-*/, linux-*/ and prereq-*/
+      # are exercised by scenario CI. ShellCheck covers the harness and templates.
+      # Template verifiers contain unused example variables (SC2034).
+      shellcheck-paths: |
+        scripts
+        templates|error
+      # There are no package lockfiles. Scan the tracked infrastructure and
+      # the Ubuntu harness built by scenario CI. Every HIGH/CRITICAL finding in
+      # it blocks. The kind harness is scanned by kind-harness-image below.
+      run-trivy-iac: true
+      trivy-iac-targets: .
+      trivy-ignorefile: .trivyignore.yaml
+      run-trivy-image: ${{ github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository }}
+      trivy-image-targets: |
+        build|scripts/ci/Dockerfile.ubuntu-harness|scripts/ci
+
+  # The kind harness extends a digest-pinned kind node image whose own packages
+  # carry upstream HIGH/CRITICAL findings. This job scans the built harness and
+  # the recorded upstream digest with the fleet workflow's pinned Trivy, reports
+  # every row with its attribution and blocks on every row the disposition in
+  # .trivyignore.yaml does not make report-only (#106).
+  kind-harness-image:
+    name: Kind harness image attribution
+    if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    permissions:
+      contents: read
+    env:
+      # Same pins as the fleet workflow at the SHA used by the scan job above.
+      TRIVY_VERSION: "0.76.2"
+      TRIVY_LINUX_64BIT_SHA256: bc0fc726e017b8927a62b2d3531d7a84ee01769daf5c99ed866dced54089fdbf
+      TRIVY_DB_REPOSITORY: "mirror.gcr.io/aquasec/trivy-db:2,ghcr.io/aquasecurity/trivy-db:2"
+      # Pinned BuildKit Dockerfile frontend so no Dockerfile syntax directive can override it.
+      DOCKERFILE_FRONTEND: "docker.io/docker/dockerfile:1.29.0@sha256:572cebbc2b15e6f84c077742952674889cb63cd5e9b80abdffcbe587b6f19183"
+      POLICY: .trivyignore.yaml
+      DOCKERFILE: scripts/ci/Dockerfile.kind-harness
+      CONTEXT: scripts/ci
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Write the attribution check
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/kind-harness/home" "$RUNNER_TEMP/kind-harness/tmp" "$RUNNER_TEMP/kind-harness/cache"
+          cat > "$RUNNER_TEMP/kind-harness/attribute.py" <<'PY'
+          """Attribute kind harness Trivy findings to its pinned upstream base (kube-dojo/kubedojo-labs#106).
+
+          Every HIGH/CRITICAL row of the built harness is reported with an attribution
+          and a reason. Three attributions are report-only:
+
+          - inherited: Trivy reports the same package, version and advisory for the
+            exact digest recorded in .trivyignore.yaml and places the package in one of
+            that digest's layers.
+          - inherited-upgrade: the harness upgraded a Debian package that the digest
+            ships, the digest's scan reports the same advisory for the same package
+            identity (name, architecture, distribution), the installed version is newer
+            and Trivy reports no fixed version for the upgraded package.
+          - approved-unfixed: a Debian package the pinned digest does not ship, named
+            exactly in the disposition's unfixed-project-packages list, while Trivy
+            reports no fixed version.
+
+          Inherited rows are report-only whether or not a fix exists upstream (the first
+          designated decision on #106). Base binding is the filesystem layer prefix:
+          this check fails closed when the built image's layers don't begin with the
+          recorded digest's layers (base_mismatch), or when a suffix layer repeats a
+          prefix layer DiffID (ambiguous_layers). A different image config with the same
+          layer prefix is allowed for package attribution; this policy classifies Trivy
+          scanner findings and does not guarantee file-level integrity. Every finding in
+          a later (suffix) layer is project content, attributed only by the
+          inherited-upgrade and approved-unfixed rules, and blocks otherwise (including
+          downgrades, same-version rewrites, unmatched advisories and a fixed version on
+          an upgraded or approved package). A built scan that lacks the distribution or
+          any package the pinned digest ships, malformed or empty scan data, unknown
+          attribution and an overdue disposition fail closed. When the built scan is
+          readable, a refusal still reports its rows as unknown.
+          """
+          import datetime
+          import json
+          import math
+          import os
+          import re
+          import subprocess
+          import sys
+          import tempfile
+          from pathlib import Path
+          from urllib.parse import unquote
+
+          POLICY_KEY = "inherited-base-images"
+          FIELDS = {"dockerfile", "base", "owner", "reviewed", "review-by", "unfixed-project-packages", "statement"}
+          MAX_REVIEW_DAYS = 30
+          BASE_REF = re.compile(r"^[a-z0-9]+(?:[._/-][a-z0-9]+)*(?::[A-Za-z0-9._-]{1,128})?@sha256:[0-9a-f]{64}$")
+          DEB_NAME = re.compile(r"^[a-z0-9][a-z0-9+.-]+$")
+          DIFF_ID = re.compile(r"^sha256:[0-9a-f]{64}$")
+          DEB_PURL = re.compile(r"^pkg:deb/([a-z0-9.-]+)/([^@?/]+)@([^?]+)\?(.+)$")
+          ROW_FIELDS = ("VulnerabilityID", "PkgName", "InstalledVersion", "Severity")
+          REPORT_ONLY = ("inherited", "inherited-upgrade", "approved-unfixed")
+          COUNTS = (*REPORT_ONLY, "project", "unknown")
+
+
+          class Refusal(Exception):
+              """A typed fail-closed reason."""
+
+              def __init__(self, reason, detail):
+                  super().__init__(f"{reason}: {detail}")
+                  self.reason = reason
+                  self.detail = detail
+
+
+          def clean(value):
+              return re.sub(r"[\r\n\x00-\x1f\x7f]+", " ", str(value))
+
+
+          def iso_date(entry, key):
+              value = entry.get(key)
+              if not isinstance(value, str) or not re.fullmatch(r"\d{4}-\d{2}-\d{2}", value):
+                  raise Refusal("invalid_disposition", f"{key} must be a quoted YYYY-MM-DD string")
+              try:
+                  return datetime.date.fromisoformat(value)
+              except ValueError:
+                  raise Refusal("invalid_disposition", f"{key} is not a calendar date") from None
+
+
+          def load_yaml(policy_path):
+              """Parse YAML safely, refusing duplicate keys, merge keys and malformed scalars."""
+              try:
+                  import yaml
+              except ImportError:
+                  raise Refusal("policy_unreadable", "PyYAML is unavailable to the system interpreter") from None
+
+              class UniqueKeyLoader(yaml.SafeLoader):
+                  def construct_mapping(self, node, deep=False):
+                      if not isinstance(node, yaml.MappingNode):
+                          raise yaml.constructor.ConstructorError(
+                              None, None, f"expected a mapping node, but found {node.id}", node.start_mark
+                          )
+                      mapping = {}
+                      for key_node, value_node in node.value:
+                          if key_node.tag == "tag:yaml.org,2002:merge":
+                              raise yaml.constructor.ConstructorError(
+                                  "while constructing a mapping", node.start_mark,
+                                  "YAML merge keys are not allowed", key_node.start_mark,
+                              )
+                          key = self.construct_object(key_node, deep=True)
+                          if isinstance(key, float) and math.isnan(key):
+                              raise yaml.constructor.ConstructorError(
+                                  "while constructing a mapping", node.start_mark,
+                                  "NaN mapping key is not allowed", key_node.start_mark,
+                              )
+                          try:
+                              duplicate = key in mapping
+                          except TypeError as exc:
+                              raise yaml.constructor.ConstructorError(
+                                  "while constructing a mapping", node.start_mark,
+                                  f"found unhashable key ({exc})", key_node.start_mark,
+                              ) from None
+                          if duplicate:
+                              raise yaml.constructor.ConstructorError(
+                                  "while constructing a mapping", node.start_mark,
+                                  f"found duplicate key {key!r}", key_node.start_mark,
+                              )
+                          mapping[key] = self.construct_object(value_node, deep=deep)
+                      return mapping
+
+              try:
+                  return yaml.load(Path(policy_path).read_text(encoding="utf-8"), Loader=UniqueKeyLoader)
+              except (OSError, UnicodeDecodeError, yaml.YAMLError, ValueError, TypeError,
+                      LookupError, ArithmeticError, AttributeError, RecursionError) as exc:
+                  raise Refusal("policy_unreadable", type(exc).__name__) from None
+
+
+          def disposition(policy_path, dockerfile, today):
+              """Return the validated disposition entry keyed by Dockerfile path.
+
+              Base binding is enforced in attribute(), which fails closed when the built
+              image's layers don't begin with the recorded digest's layers.
+              """
+              data = load_yaml(policy_path)
+              entries = data.get(POLICY_KEY) if isinstance(data, dict) else None
+              if not isinstance(entries, list):
+                  raise Refusal("no_disposition", f"{policy_path} has no {POLICY_KEY} list")
+              if not all(isinstance(e, dict) for e in entries):
+                  raise Refusal("invalid_disposition", f"every {POLICY_KEY} entry must be a mapping")
+              matches = [e for e in entries if e.get("dockerfile") == dockerfile]
+              if len(matches) != 1:
+                  raise Refusal("no_disposition", f"expected exactly one entry for {dockerfile}, found {len(matches)}")
+              entry = matches[0]
+              if set(entry) != FIELDS:
+                  raise Refusal("invalid_disposition", f"fields must be exactly {sorted(FIELDS)}")
+              base = entry["base"]
+              if not isinstance(base, str) or not BASE_REF.fullmatch(base):
+                  raise Refusal("invalid_disposition", "base must be a digest-pinned image reference")
+              for key in ("owner", "statement"):
+                  if not isinstance(entry[key], str) or not entry[key].strip():
+                      raise Refusal("invalid_disposition", f"{key} must be a non-empty string")
+              names = entry["unfixed-project-packages"]
+              if (not isinstance(names, list) or not all(isinstance(n, str) and DEB_NAME.fullmatch(n) for n in names)
+                      or len(set(names)) != len(names)):
+                  raise Refusal("invalid_disposition", "unfixed-project-packages must list unique exact Debian package names")
+              reviewed = iso_date(entry, "reviewed")
+              review_by = iso_date(entry, "review-by")
+              if reviewed > today:
+                  raise Refusal("invalid_disposition", "reviewed date is in the future")
+              if (review_by - reviewed).days > MAX_REVIEW_DAYS or review_by < reviewed:
+                  raise Refusal("invalid_disposition", f"review-by must be within {MAX_REVIEW_DAYS} days of reviewed")
+              if today > review_by:
+                  raise Refusal("review_overdue", f"disposition expired on {review_by.isoformat()}; record a fresh review")
+              return entry
+
+
+          def load_scan(path, label):
+              try:
+                  report = json.loads(Path(path).read_text(encoding="utf-8"))
+              except (OSError, UnicodeDecodeError, ValueError, RecursionError) as exc:
+                  raise Refusal("missing_scan_data", f"{label} scan is unreadable ({type(exc).__name__})") from None
+              if not isinstance(report, dict) or not isinstance(report.get("Metadata"), dict):
+                  raise Refusal("missing_scan_data", f"{label} scan has no metadata")
+              diff_ids = report["Metadata"].get("DiffIDs")
+              if not isinstance(diff_ids, list) or not diff_ids or not all(isinstance(d, str) and DIFF_ID.fullmatch(d) for d in diff_ids):
+                  raise Refusal("missing_scan_data", f"{label} scan has no valid layer DiffIDs")
+              results = report.get("Results")
+              if not isinstance(results, list) or not all(isinstance(r, dict) for r in results):
+                  raise Refusal("missing_scan_data", f"{label} scan has no results list")
+              os_info = report["Metadata"].get("OS")
+              if not isinstance(os_info, dict) or not all(text(os_info.get(f)) for f in ("Family", "Name")):
+                  raise Refusal("missing_scan_data", f"{label} scan did not detect the distribution")
+              if "ImageID" in report["Metadata"] and not isinstance(report["Metadata"]["ImageID"], str):
+                  raise Refusal("missing_scan_data", f"{label} scan has a malformed image id")
+              inventory = set()
+              for result in results:
+                  # Trivy omits empty lists and an absent fixed version; a present field must have its type.
+                  if "Packages" in result and not isinstance(result["Packages"], list) or \
+                          "Vulnerabilities" in result and not isinstance(result["Vulnerabilities"], list):
+                      raise Refusal("missing_scan_data", f"{label} scan has a malformed result")
+                  if not all(text(result.get(f)) for f in ("Class", "Type", "Target")):
+                      raise Refusal("missing_scan_data", f"{label} scan has a result without class, type or target")
+                  debian = result["Class"] == "os-pkgs" and result["Type"] == "debian"
+                  for pkg in result.get("Packages", []):
+                      if not isinstance(pkg, dict) or not text(pkg.get("Name")):
+                          raise Refusal("missing_scan_data", f"{label} scan has a package record without a name")
+                      arch_ok = text(pkg.get("Arch")) if debian else isinstance(pkg.get("Arch", ""), str)
+                      if not arch_ok:
+                          raise Refusal("missing_scan_data", f"{label} scan has a package record with a missing or malformed architecture")
+                      inventory.add(package_key(result, pkg["Name"], pkg.get("Arch", "")))
+                  for vuln in result.get("Vulnerabilities", []):
+                      if not isinstance(vuln, dict) or not all(text(vuln.get(f)) for f in ROW_FIELDS):
+                          raise Refusal("missing_scan_data", f"{label} scan has a finding without package, version, advisory or severity")
+                      ident = vuln.get("PkgIdentifier")
+                      layer = vuln.get("Layer")
+                      if any(f in vuln and not isinstance(vuln[f], str) for f in ("FixedVersion", "PkgPath")) or \
+                              "Layer" in vuln and not (isinstance(layer, dict) and isinstance(layer.get("DiffID", ""), str)) or \
+                              "PkgIdentifier" in vuln and not (isinstance(ident, dict) and isinstance(ident.get("PURL", ""), str)):
+                          raise Refusal("missing_scan_data", f"{label} scan has a finding with a malformed optional field")
+              if not any(k[0] == "os-pkgs" for k in inventory):
+                  raise Refusal("missing_scan_data", f"{label} scan inventoried no distribution packages")
+              return report, diff_ids, results, inventory
+
+
+          def text(value):
+              return isinstance(value, str) and bool(value.strip())
+
+
+          def package_key(result, name, arch=""):
+              if result.get("Class") == "os-pkgs":
+                  return (result.get("Class"), result.get("Type"), "", name, arch)
+              return (result.get("Class"), result.get("Type"), result.get("Target"), name, "")
+
+
+          def key(result, vuln):
+              """Exact finding identity; a distribution row without a valid package URL has none."""
+              identity = ""
+              if result.get("Class") == "os-pkgs":
+                  identity = deb_identity(result, vuln)
+                  if identity is None:
+                      return None
+              target = "" if result.get("Class") == "os-pkgs" else result.get("Target")
+              return (result.get("Class"), result.get("Type"), target, vuln.get("PkgName"),
+                      vuln.get("PkgPath", ""), vuln.get("InstalledVersion"), vuln.get("VulnerabilityID"), identity)
+
+
+          def layer_of(vuln):
+              layer = vuln.get("Layer")
+              diff_id = layer.get("DiffID") if isinstance(layer, dict) else None
+              return diff_id if isinstance(diff_id, str) and DIFF_ID.fullmatch(diff_id) else None
+
+
+          def deb_identity(result, vuln):
+              """Return (distro namespace, name, arch, distro) from a Debian row's PURL, or None."""
+              if result.get("Class") != "os-pkgs" or result.get("Type") != "debian":
+                  return None
+              ident = vuln.get("PkgIdentifier")
+              purl = ident.get("PURL") if isinstance(ident, dict) else None
+              match = DEB_PURL.fullmatch(purl) if isinstance(purl, str) else None
+              if not match:
+                  return None
+              qualifiers = dict(part.split("=", 1) for part in match.group(4).split("&") if "=" in part)
+              name = unquote(match.group(2))
+              version = unquote(match.group(3))
+              if qualifiers.get("epoch"):
+                  version = f"{unquote(qualifiers['epoch'])}:{version}"
+              if name != vuln.get("PkgName") or version != vuln.get("InstalledVersion"):
+                  return None
+              if not qualifiers.get("arch") or not qualifiers.get("distro"):
+                  return None
+              return (match.group(1), name, unquote(qualifiers["arch"]), unquote(qualifiers["distro"]))
+
+
+          def deb_compare(left, right):
+              """Return -1, 0 or 1 using dpkg's own ordering; None when dpkg cannot decide."""
+              env = {"PATH": "/usr/bin:/bin", "LC_ALL": "C"}
+              for op, value in (("lt", -1), ("eq", 0), ("gt", 1)):
+                  try:
+                      proc = subprocess.run(["/usr/bin/dpkg", "--compare-versions", left, op, right],
+                                            env=env, capture_output=True, check=False, timeout=10)
+                  except (OSError, subprocess.TimeoutExpired):
+                      return None
+                  if proc.returncode == 0:
+                      return value
+                  if proc.returncode != 1 or proc.stderr:
+                      return None
+              return None
+
+
+          def attribute(upstream_path, built_path, base, approved=()):
+              """Return (exit code, report). Every refusal yields a non-zero exit and an error report."""
+              report = {"schema": "kind-harness-attribution.v2", "base": base, "status": "error", "reason": "",
+                        "approved_unfixed_packages": sorted(approved),
+                        "counts": {name: 0 for name in COUNTS}, "findings": []}
+              try:
+                  built, built_ids, built_results, built_inventory = load_scan(built_path, "built")
+                  upstream, up_ids, up_results, up_inventory = load_scan(upstream_path, "upstream")
+                  up_os, built_os = upstream["Metadata"]["OS"], built["Metadata"]["OS"]
+                  report["upstream"] = {"diff_ids": up_ids, "packages": len(up_inventory), "os": up_os}
+                  report["built"] = {"diff_ids": built_ids, "packages": len(built_inventory), "os": built_os,
+                                     "image_id": clean(built["Metadata"].get("ImageID", ""))}
+                  if built_ids[: len(up_ids)] != up_ids:
+                      raise Refusal("base_mismatch", "built image layers do not start with the pinned upstream layers")
+                  if set(built_ids[len(up_ids) :]) & set(up_ids):
+                      raise Refusal("ambiguous_layers", "built image suffix repeats a pinned upstream layer DiffID")
+                  if (up_os["Family"], up_os["Name"]) != (built_os["Family"], built_os["Name"]):
+                      raise Refusal("base_mismatch", "built image distribution differs from the pinned digest")
+                  lost = up_inventory - built_inventory
+                  if lost:
+                      raise Refusal("missing_scan_data", f"built scan lacks {len(lost)} package(s) the pinned digest ships, "
+                                    f"for example {clean(min(lost, key=str))}")
+                  distro = f"{built_os['Family']}-{built_os['Name']}"
+                  inherited = set()
+                  advisories = {}
+                  for result in up_results:
+                      for vuln in result.get("Vulnerabilities") or []:
+                          if layer_of(vuln) not in up_ids:
+                              raise Refusal("missing_scan_data", "upstream scan has a finding outside the pinned digest's layers")
+                          if key(result, vuln) is not None:
+                              inherited.add(key(result, vuln))
+                          identity = deb_identity(result, vuln)
+                          if identity is not None:
+                              advisories.setdefault((identity, vuln["VulnerabilityID"]), set()).add(vuln["InstalledVersion"])
+              except Refusal as exc:
+                  return 1, refusal_report(report, exc, built_path)
+              up_os_names = {k[3] for k in up_inventory if k[0] == "os-pkgs"}
+              base_layers = set(up_ids)
+              for result in built_results:
+                  for vuln in result.get("Vulnerabilities") or []:
+                      layer = layer_of(vuln)
+                      fixed = vuln.get("FixedVersion") or ""
+                      upstream_version = ""
+                      identity = deb_identity(result, vuln)
+                      if layer not in built_ids:
+                          attribution, reason = "unknown", "finding lacks a layer of the built image"
+                      elif layer in base_layers:
+                          if key(result, vuln) is not None and key(result, vuln) in inherited:
+                              attribution, reason = "inherited", "same package, version and advisory in the pinned digest's layers"
+                          else:
+                              attribution, reason = "unknown", "base-layer finding not reported for the pinned digest"
+                      elif (vuln["PkgName"] in approved and identity is not None and identity[3] == distro
+                            and vuln["PkgName"] not in up_os_names):
+                          if fixed:
+                              attribution, reason = "project", "approved project package now has a fixed version"
+                          else:
+                              attribution, reason = "approved-unfixed", "project-installed package listed in the disposition; no fixed version"
+                      else:
+                          versions = advisories.get((identity, vuln["VulnerabilityID"])) if identity else None
+                          if not versions:
+                              attribution, reason = "project", "project-added or changed package; advisory not in the pinned digest"
+                          elif len(versions) != 1:
+                              attribution, reason = "unknown", "pinned digest reports several versions of this package"
+                          else:
+                              upstream_version = next(iter(versions))
+                              order = deb_compare(vuln["InstalledVersion"], upstream_version)
+                              if order is None:
+                                  attribution, reason = "unknown", "dpkg could not compare the installed versions"
+                              elif order < 0:
+                                  attribution, reason = "project", "downgrade of a pinned digest package"
+                              elif order == 0:
+                                  attribution, reason = "project", "same-version rewrite in a project layer"
+                              elif fixed:
+                                  attribution, reason = "project", "upgraded package still has a fixed version available"
+                              else:
+                                  attribution, reason = "inherited-upgrade", "advisory inherited from the pinned digest; package upgraded; no fixed version"
+                      record(report, result, vuln, attribution, reason, upstream_version)
+              counts = report["counts"]
+              if counts["project"] or counts["unknown"]:
+                  report["status"] = "blocked"
+                  report["reason"] = "project_or_unknown_findings"
+                  return 1, report
+              report["status"] = "report_only" if any(counts[name] for name in REPORT_ONLY) else "clean"
+              return 0, report
+
+
+          def readable_rows(path):
+              """Yield (result, finding) mappings from a scan file without trusting its shape."""
+              try:
+                  data = json.loads(Path(path).read_text(encoding="utf-8"))
+              except (OSError, UnicodeDecodeError, ValueError, RecursionError):
+                  return
+              results = data.get("Results") if isinstance(data, dict) else None
+              for result in results if isinstance(results, list) else []:
+                  vulns = result.get("Vulnerabilities") if isinstance(result, dict) else None
+                  for vuln in vulns if isinstance(vulns, list) else []:
+                      if isinstance(vuln, dict):
+                          yield result, vuln
+
+
+          def refusal_report(report, exc, built_path):
+              """Fail closed with a typed reason, keeping every readable built row as unknown."""
+              report.update(status="error", reason=exc.reason, detail=exc.detail,
+                            counts={name: 0 for name in COUNTS}, findings=[])
+              for result, vuln in readable_rows(built_path):
+                  record(report, result, vuln, "unknown", f"attribution refused: {exc.reason}")
+              return report
+
+
+          def record(report, result, vuln, attribution, reason, upstream_version=""):
+              report["counts"][attribution] += 1
+              report["findings"].append({
+                  "attribution": attribution,
+                  "reason": reason,
+                  "vulnerability": clean(vuln.get("VulnerabilityID", "?")),
+                  "severity": clean(vuln.get("Severity", "?")),
+                  "package": clean(vuln.get("PkgName", "?")),
+                  "version": clean(vuln.get("InstalledVersion", "?")),
+                  "upstream_version": clean(upstream_version),
+                  "fixed": clean(vuln.get("FixedVersion") or "unfixed"),  # only rendered, never trusted
+                  "target": clean("" if result.get("Class") == "os-pkgs" else result.get("Target", "")),
+                  "layer": layer_of(vuln) or "",
+              })
+
+
+          def publish(report, entry, report_path):
+              Path(report_path).write_text(json.dumps(report, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+              for row in report["findings"]:
+                  version = row["version"] + (f" (upstream {row['upstream_version']})" if row["upstream_version"] else "")
+                  line = (f"{row['vulnerability']} ({row['severity']}) {row['package']} {version} "
+                          f"(fixed: {row['fixed']}) {row['target']}").rstrip()
+                  if row["attribution"] in REPORT_ONLY:
+                      print(f"{row['attribution']}, report-only: {line}: {row['reason']}")
+                  else:
+                      print(f"::error::{row['attribution']} kind harness finding blocks: {line}: {row['reason']}")
+              if report["status"] == "error":
+                  print(f"::error::Kind harness attribution failed closed: {report['reason']}: {clean(report.get('detail', ''))}")
+              counts = report["counts"]
+              summary = [
+                  "### Kind harness image attribution",
+                  "",
+                  f"- Status: **{report['status']}**" + (f" ({report['reason']})" if report["reason"] else ""),
+                  f"- Upstream base: `{report['base']}`",
+                  f"- Owner: {clean(entry.get('owner', ''))}; review by {clean(entry.get('review-by', ''))}",
+                  "- Report-only: " + "; ".join(f"{name} {counts[name]}" for name in REPORT_ONLY),
+                  f"- Blocking: project {counts['project']}; unknown {counts['unknown']}",
+                  "- Every row with its reason: `kind-harness-attribution` artifact",
+                  "",
+              ]
+              print("\n".join(summary))
+              if os.environ.get("GITHUB_STEP_SUMMARY"):
+                  with open(os.environ["GITHUB_STEP_SUMMARY"], "a", encoding="utf-8") as handle:
+                      handle.write("\n".join(summary) + "\n")
+
+
+          def self_test():
+              """Prove report-only, blocking and fail-closed paths on owned fixtures."""
+              a, b, d = "sha256:" + "a" * 64, "sha256:" + "b" * 64, "sha256:" + "d" * 64
+              base = "kindest/node:v0.0.0@sha256:" + "c" * 64
+              approved = ("python3.13",)
+
+              def row(vid, pkg, ver, layer, fixed="", purl=True, arch="amd64", distro="debian-13.6"):
+                  vuln = {"VulnerabilityID": vid, "PkgName": pkg, "InstalledVersion": ver, "Severity": "HIGH",
+                          "Layer": {"DiffID": layer}}
+                  if fixed:
+                      vuln["FixedVersion"] = fixed
+                  if purl:
+                      epoch, _, plain = ver.rpartition(":")
+                      qualifiers = f"arch={arch}&distro={distro}" + (f"&epoch={epoch}" if epoch else "")
+                      vuln["PkgIdentifier"] = {"PURL": f"pkg:deb/debian/{pkg}@{plain.replace('+', '%2B')}?{qualifiers}"}
+                  return vuln
+
+              def scan(ids, os_vulns, go_vulns, packages=2, os_name="13.6", names=("p",), arch="amd64"):
+                  return {"Metadata": {"DiffIDs": ids, "OS": {"Family": "debian", "Name": os_name}}, "Results": [
+                      {"Target": "img (debian 13.6)", "Class": "os-pkgs", "Type": "debian",
+                       "Packages": [{"Name": n, "Arch": arch} for n in names for _ in range(packages)], "Vulnerabilities": os_vulns},
+                      {"Target": "usr/bin/kubelet", "Class": "lang-pkgs", "Type": "gobinary",
+                       "Packages": [{"Name": "stdlib"}], "Vulnerabilities": go_vulns}]}
+
+              go = [row("CVE-2", "stdlib", "v1.0", a, purl=False)]
+              up = scan([a], [row("CVE-1", "curl", "8.1-2+deb13u4", a)], go)
+              def built(os_vulns, go_vulns=go, **kw):
+                  return scan([a, b], os_vulns, go_vulns, **kw)
+
+              def edited(data, edit):
+                  edit(data)
+                  return data
+
+              shipped = scan([a], [row("CVE-3", "python3.13", "3.13.5-2", a)], go, names=("p", "python3.13"))
+
+              attribution_cases = [
+                  ("inherited finding is reported, not blocking",
+                   up, built([row("CVE-1", "curl", "8.1-2+deb13u4", a)]), 0, "report_only", "inherited", 2),
+                  ("upgraded package keeping an inherited unfixed advisory is reported",
+                   up, built([row("CVE-1", "curl", "8.1-2+deb13u7", b)]), 0, "report_only", "inherited-upgrade", 1),
+                  ("approved project package without a fix is reported",
+                   up, built([row("CVE-3", "python3.13", "3.13.5-2", b)]), 0, "report_only", "approved-unfixed", 1),
+                  ("approved project package with a fixed version blocks",
+                   up, built([row("CVE-3", "python3.13", "3.13.5-2", b, fixed="3.13.5-3")]), 1, "blocked", "project", 1),
+                  ("unlisted project package blocks",
+                   up, built([row("CVE-4", "libexpat1", "2.9.0-1", b)]), 1, "blocked", "project", 1),
+                  ("upgraded package with an epoch keeping an inherited unfixed advisory is reported",
+                   scan([a], [row("CVE-5", "perl-base", "1:5.40-1", a)], go),
+                   built([row("CVE-5", "perl-base", "1:5.40-2", b)]), 0, "report_only", "inherited-upgrade", 1),
+                  ("upgraded package with a fixed version blocks",
+                   up, built([row("CVE-1", "curl", "8.1-2+deb13u7", b, fixed="8.1-2+deb13u9")]), 1, "blocked", "project", 1),
+                  ("downgraded package blocks",
+                   up, built([row("CVE-1", "curl", "8.1-2+deb13u1", b)]), 1, "blocked", "project", 1),
+                  ("same-version rewrite in a project layer blocks",
+                   up, built([row("CVE-1", "curl", "8.1-2+deb13u4", b)]), 1, "blocked", "project", 1),
+                  ("upgraded package with an advisory absent upstream blocks",
+                   up, built([row("CVE-9", "curl", "8.1-2+deb13u7", b)]), 1, "blocked", "project", 1),
+                  ("upgraded package of another architecture blocks",
+                   up, built([row("CVE-1", "curl", "8.1-2+deb13u7", b, arch="arm64")]), 1, "blocked", "project", 1),
+                  ("built scan on another distribution release fails and keeps its rows",
+                   up, built([row("CVE-1", "curl", "8.1-2+deb13u7", b)], os_name="13.7"), 1, "error", "unknown", 2),
+                  ("upstream scan without distribution packages fails and keeps the built rows",
+                   edited(scan([a], [], go), lambda d: d["Results"].pop(0)), built([]), 1, "error", "unknown", 1),
+                  ("distribution package of another architecture in the built scan fails and keeps the built rows",
+                   up, built([], arch="arm64"), 1, "error", "unknown", 1),
+                  ("explicit null fixed version fails",
+                   up, built([row("CVE-3", "python3.13", "3.13.5-2", b) | {"FixedVersion": None}]), 1, "error", None, 0),
+                  ("whitespace advisory id fails",
+                   up, built([row(" ", "python3.13", "3.13.5-2", b)]), 1, "error", None, 0),
+                  ("built scan without the OS package inventory fails",
+                   up, edited(built([]), lambda d: d["Results"].pop(0)), 1, "error", None, 0),
+                  ("built scan without a detected distribution fails",
+                   up, edited(built([]), lambda d: d["Metadata"].pop("OS")), 1, "error", None, 0),
+                  ("approved name shipped by the pinned digest follows the upgrade rules",
+                   shipped, built([row("CVE-3", "python3.13", "3.13.5-2", b)], names=("p", "python3.13")),
+                   1, "blocked", "project", 1),
+                  ("approved package from another distribution blocks",
+                   up, built([row("CVE-3", "python3.13", "3.13.5-2", b, distro="debian-12")]), 1, "blocked", "project", 1),
+                  ("null package record fails",
+                   up, edited(built([]), lambda d: d["Results"][0]["Packages"].append(None)), 1, "error", None, 0),
+                  ("package record without a name fails",
+                   up, edited(built([]), lambda d: d["Results"][0]["Packages"].append({"Version": "1"})), 1, "error", None, 0),
+                  ("non-string fixed version fails",
+                   up, built([row("CVE-3", "python3.13", "3.13.5-2", b) | {"FixedVersion": False}]), 1, "error", None, 0),
+                  ("blank advisory id fails",
+                   up, built([row("", "python3.13", "3.13.5-2", b)]), 1, "error", None, 0),
+                  ("upstream finding outside the digest's layers fails and keeps the built rows",
+                   scan([a], [row("CVE-1", "curl", "8.1-2+deb13u4", b)], go), built([]), 1, "error", "unknown", 1),
+                  ("upgraded package without a package URL blocks",
+                   up, built([row("CVE-1", "curl", "8.1-2+deb13u7", b, purl=False)]), 1, "blocked", "project", 1),
+                  ("rewritten Go binary in a project layer blocks",
+                   up, built([row("CVE-1", "curl", "8.1-2+deb13u4", a)], [row("CVE-2", "stdlib", "v1.0", b, purl=False)]),
+                   1, "blocked", "project", 1),
+                  ("base-layer finding of another architecture blocks",
+                   up, built([row("CVE-1", "curl", "8.1-2+deb13u4", a, arch="arm64")]), 1, "blocked", "unknown", 1),
+                  ("base-layer distribution finding without a package URL blocks",
+                   up, built([row("CVE-1", "curl", "8.1-2+deb13u4", a, purl=False)]), 1, "blocked", "unknown", 1),
+                  ("blank distribution name fails",
+                   up, edited(built([]), lambda d: d["Metadata"]["OS"].update(Name=" ")), 1, "error", None, 0),
+                  ("Debian package without an architecture fails",
+                   up, edited(built([]), lambda d: d["Results"][0]["Packages"][0].pop("Arch")), 1, "error", None, 0),
+                  ("scans that both lack Debian architectures fail",
+                   edited(scan([a], [], go), lambda d: [x.pop("Arch", None) for x in d["Results"][0]["Packages"]]),
+                   edited(built([]), lambda d: [x.pop("Arch", None) for x in d["Results"][0]["Packages"]]), 1, "error", None, 0),
+                  ("scans that both have a blank distribution name fail",
+                   edited(scan([a], [], go), lambda d: d["Metadata"]["OS"].update(Name=" ")),
+                   edited(built([]), lambda d: d["Metadata"]["OS"].update(Name=" ")), 1, "error", None, 0),
+                  ("null package URL fails",
+                   up, built([row("CVE-3", "python3.13", "3.13.5-2", b) | {"PkgIdentifier": {"PURL": None}}]), 1, "error", None, 0),
+                  ("non-string package path fails",
+                   up, built([], [row("CVE-2", "stdlib", "v1.0", a, purl=False) | {"PkgPath": ["x"]}]), 1, "error", None, 0),
+                  ("null image id fails",
+                   up, edited(built([]), lambda d: d["Metadata"].update(ImageID=None)), 1, "error", None, 0),
+                  ("refused built scan keeps every readable row",
+                   up, built([row("CVE-1", "curl", "8.1-2+deb13u4", a), row("CVE-3", "python3.13", "3.13.5-2", b) | {"FixedVersion": None}]),
+                   1, "error", None, 0),
+                  ("finding without a layer blocks",
+                   up, built([{k: v for k, v in row("CVE-1", "curl", "8.1-2+deb13u4", a).items() if k != "Layer"}]),
+                   1, "blocked", "unknown", 1),
+                  ("base-layer finding absent upstream blocks",
+                   up, built([row("CVE-9", "curl", "8.1-2+deb13u4", a)]), 1, "blocked", "unknown", 1),
+                  ("built scan with zero packages fails", up, scan([a, b], [], [], packages=0) | {"Results": []}, 1, "error", None, 0),
+                  ("built scan on another base fails", up, scan([b, a], [], [], 1), 1, "error", None, 0, "base_mismatch"),
+                  ("wrong layer prefix refuses with base_mismatch",
+                   scan([a, b], [row("CVE-1", "curl", "8.1-2+deb13u4", a)], go),
+                   scan([a, d], [row("CVE-1", "curl", "8.1-2+deb13u4", a)], go), 1, "error", None, 0, "base_mismatch"),
+                  ("multistage build with a non-exempt suffix finding blocks",
+                   up,
+                   scan([a, b, d],
+                        [row("CVE-1", "curl", "8.1-2+deb13u4", a), row("CVE-3", "python3.13", "3.13.5-2", b)],
+                        go + [row("CVE-10", "helper", "v0.1", d, purl=False)]),
+                   1, "blocked", "project", 1),
+                  ("suffix layer repeating a prefix DiffID refuses",
+                   up, scan([a, b, a], [row("CVE-1", "curl", "8.1-2+deb13u4", a)], go), 1, "error", None, 0, "ambiguous_layers"),
+                  ("built scan without results fails", up, {"Metadata": {"DiffIDs": [a, b]}}, 1, "error", None, 0),
+                  ("unreadable built scan fails", up, "{", 1, "error", None, 0),
+                  ("empty built scan file fails", up, "", 1, "error", None, 0),
+                  ("upstream scan without layers fails and keeps the built rows", {"Metadata": {}, "Results": []}, built([]), 1, "error", "unknown", 1),
+              ]
+              failures = 0
+              with tempfile.TemporaryDirectory() as tmp:
+                  tmp = Path(tmp)
+                  for name, upstream, built_scan, want_rc, want_status, want_class, want_count, *rest in attribution_cases:
+                      want_reason = rest[0] if rest else None
+                      for label, data in (("up.json", upstream), ("built.json", built_scan)):
+                          (tmp / label).write_text(data if isinstance(data, str) else json.dumps(data), encoding="utf-8")
+                      rc, report = attribute(tmp / "up.json", tmp / "built.json", base, approved)
+                      if want_class is None:  # a refusal keeps every readable built row as unknown, and nothing else
+                          want_class, want_count = "unknown", sum(1 for _ in readable_rows(tmp / "built.json"))
+                          ok_rest = sum(report["counts"].values()) == report["counts"]["unknown"]
+                      else:
+                          ok_rest = True
+                      ok_reason = want_reason is None or report["reason"] == want_reason
+                      got_count = report["counts"][want_class]
+                      ok = ok_rest and ok_reason and (rc, report["status"], got_count) == (want_rc, want_status, want_count)
+                      failures += not ok
+                      print(f"{'PASS' if ok else 'FAIL'} {name}: rc={rc} status={report['status']} reason={report['reason']} counts={report['counts']}")
+                  today = datetime.date(2026, 11, 21)
+                  good = {"dockerfile": "scripts/ci/Dockerfile.kind-harness", "base": base, "owner": "claude-cto",
+                          "reviewed": "2026-11-21", "review-by": "2026-12-21",
+                          "unfixed-project-packages": ["python3.13"], "statement": "fixture"}
+                  policy_cases = [
+                      ("current disposition is accepted", {}, None),
+                      ("overdue disposition fails", {"reviewed": "2026-10-01", "review-by": "2026-10-31"}, "review_overdue"),
+                      ("window over 30 days fails", {"review-by": "2027-01-21"}, "invalid_disposition"),
+                      ("unknown field fails", {"extra": "x"}, "invalid_disposition"),
+                      ("tag-only base fails", {"base": "kindest/node:v0.0.0"}, "invalid_disposition"),
+                      ("unquoted date fails", {"reviewed": datetime.date(2026, 11, 21)}, "invalid_disposition"),
+                      ("package pattern instead of a name fails", {"unfixed-project-packages": ["python3.*"]}, "invalid_disposition"),
+                  ]
+                  import yaml
+                  for name, change, want in policy_cases:
+                      (tmp / "policy.yaml").write_text(yaml.safe_dump({POLICY_KEY: [{**good, **change}]}), encoding="utf-8")
+                      try:
+                          disposition(tmp / "policy.yaml", good["dockerfile"], today)
+                          got = None
+                      except Refusal as exc:
+                          got = exc.reason
+                      ok = got == want
+                      failures += not ok
+                      print(f"{'PASS' if ok else 'FAIL'} {name}: refusal={got}")
+                  (tmp / "policy.yaml").write_text("misconfigurations: []\n", encoding="utf-8")
+                  try:
+                      disposition(tmp / "policy.yaml", good["dockerfile"], today)
+                      got = None
+                  except Refusal as exc:
+                      got = exc.reason
+                  failures += got != "no_disposition"
+                  print(f"{'PASS' if got == 'no_disposition' else 'FAIL'} missing disposition fails: refusal={got}")
+                  (tmp / "built.json").write_text(json.dumps(built([row("CVE-1", "curl", "8.1-2+deb13u4", a)])), encoding="utf-8")
+                  _, rc, report = run_attribution(tmp / "policy.yaml", good["dockerfile"], tmp / "up.json", tmp / "built.json", today)
+                  ok = (rc, report["status"], report["reason"], report["counts"]["unknown"]) == (1, "error", "no_disposition", 2)
+                  failures += not ok
+                  print(f"{'PASS' if ok else 'FAIL'} disposition refusal keeps the readable built rows: rc={rc} counts={report['counts']}")
+              print(f"attribution self-test: {failures} failure(s)")
+              return 1 if failures else 0
+
+
+          def run_attribution(policy_path, dockerfile, upstream_path, built_path, today):
+              """Return (disposition entry or {}, exit code, report) for the attribute command."""
+              try:
+                  entry = disposition(policy_path, dockerfile, today)
+              except Refusal as exc:
+                  empty = {"schema": "kind-harness-attribution.v2", "base": "", "approved_unfixed_packages": []}
+                  return {}, 1, refusal_report(empty, exc, built_path)
+              rc, report = attribute(upstream_path, built_path, entry["base"], tuple(entry["unfixed-project-packages"]))
+              return entry, rc, report
+
+
+          def main(argv):
+              if argv == ["self-test"]:
+                  return self_test()
+              today = datetime.datetime.now(datetime.UTC).date()
+              if len(argv) == 3 and argv[0] == "disposition":
+                  try:
+                      entry = disposition(argv[1], argv[2], today)
+                  except Refusal as exc:
+                      print(f"::error::Kind harness disposition refused: {exc.reason}: {clean(exc.detail)}")
+                      return 1
+                  print(f"Disposition for {argv[2]}: base {entry['base']}, owner {clean(entry['owner'])}, "
+                        f"review by {entry['review-by']}, unfixed project packages {', '.join(entry['unfixed-project-packages'])}")
+                  with open(os.environ["GITHUB_OUTPUT"], "a", encoding="utf-8") as handle:
+                      handle.write(f"base={entry['base']}\n")
+                  return 0
+              if len(argv) == 6 and argv[0] == "attribute":
+                  policy_path, dockerfile, upstream_path, built_path, report_path = argv[1:]
+                  entry, rc, report = run_attribution(policy_path, dockerfile, upstream_path, built_path, today)
+                  publish(report, entry, report_path)
+                  return rc
+              print("usage: attribute.py self-test | disposition POLICY DOCKERFILE | "
+                    "attribute POLICY DOCKERFILE UPSTREAM_JSON BUILT_JSON REPORT_JSON", file=sys.stderr)
+              return 2
+
+
+          if __name__ == "__main__":
+              sys.exit(main(sys.argv[1:]))
+          PY
+
+      - name: Prove report-only, blocking and missing-data paths
+        run: /usr/bin/python3 -I -B "$RUNNER_TEMP/kind-harness/attribute.py" self-test
+
+      - name: Validate the recorded upstream disposition
+        id: disposition
+        run: /usr/bin/python3 -I -B "$RUNNER_TEMP/kind-harness/attribute.py" disposition "$POLICY" "$DOCKERFILE"
+
+      - name: Install pinned Trivy
+        run: |
+          set -euo pipefail
+          work="$RUNNER_TEMP/kind-harness"
+          curl --fail --silent --show-error --location --proto '=https' --tlsv1.2 \
+            --retry 10 --retry-all-errors --retry-delay 5 --retry-max-time 120 \
+            --connect-timeout 20 --max-time 60 --output "$work/trivy.tar.gz" \
+            "https://github.com/aquasecurity/trivy/releases/download/v${TRIVY_VERSION}/trivy_${TRIVY_VERSION}_Linux-64bit.tar.gz"
+          printf '%s  %s\n' "$TRIVY_LINUX_64BIT_SHA256" "$work/trivy.tar.gz" | sha256sum --check --strict
+          tar -xzf "$work/trivy.tar.gz" -C "$work" trivy
+          reported="$(env -i PATH=/usr/bin:/bin HOME="$work/home" "$work/trivy" --config "" --version | head -n 1)"
+          if [ "$reported" != "Version: ${TRIVY_VERSION}" ]; then
+            echo "::error::Expected trivy Version: ${TRIVY_VERSION}, got: ${reported}"
+            exit 1
+          fi
+
+      - name: Scan the built harness and its upstream base
+        env:
+          BASE_REF: ${{ steps.disposition.outputs.base }}
+        run: |
+          set -euo pipefail
+          work="$RUNNER_TEMP/kind-harness"
+          DOCKER_BUILDKIT=1 docker build --no-cache \
+            --build-arg "BUILDKIT_SYNTAX=$DOCKERFILE_FRONTEND" \
+            --file "$DOCKERFILE" --tag kind-harness-scan:local "$CONTEXT"
+          platform="$(docker image inspect --format '{{.Os}}/{{.Architecture}}' kind-harness-scan:local)"
+          if ! [[ "$platform" =~ ^[a-z0-9]+/[a-z0-9]+$ ]]; then
+            echo "::error::Unexpected built image platform '${platform}'; failing closed"
+            exit 1
+          fi
+          docker save --output "$work/built.tar" kind-harness-scan:local
+          trivy() {
+            env -i PATH=/usr/bin:/bin HOME="$work/home" TMPDIR="$work/tmp" "$work/trivy" image --config "" \
+              --cache-dir "$work/cache" --disable-telemetry --skip-version-check --quiet --no-progress "$@"
+          }
+          trivy --download-db-only --db-repository "$TRIVY_DB_REPOSITORY"
+          # No ignore file: attribution is the only report-only path.
+          : > "$work/no-ignores"
+          scan_image() {
+            local name="$1" rc=0
+            shift
+            trivy --skip-db-update --db-repository "$TRIVY_DB_REPOSITORY" --scanners vuln \
+              --severity HIGH,CRITICAL --list-all-pkgs --ignorefile "$work/no-ignores" \
+              --format json --output "$work/$name.json" "$@" 2> "$work/$name.stderr" || rc=$?
+            if [ "$rc" -ne 0 ]; then
+              echo "::error::trivy image exited $rc on the $name image ($(wc -l < "$work/$name.stderr") stderr line(s) withheld)"
+              return 1
+            fi
+          }
+          scan_image upstream --image-src remote --platform "$platform" "$BASE_REF"
+          scan_image built --input "$work/built.tar"
+
+      - name: Attribute findings to the pinned upstream base
+        id: attribute
+        if: ${{ !cancelled() && steps.disposition.outcome == 'success' }}
+        run: |
+          mkdir -p "$RUNNER_TEMP/kind-harness/report"
+          /usr/bin/python3 -I -B "$RUNNER_TEMP/kind-harness/attribute.py" attribute "$POLICY" "$DOCKERFILE" \
+            "$RUNNER_TEMP/kind-harness/upstream.json" "$RUNNER_TEMP/kind-harness/built.json" \
+            "$RUNNER_TEMP/kind-harness/report/kind-harness-attribution.json"
+
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        if: ${{ !cancelled() && steps.attribute.outcome != 'skipped' }}
+        with:
+          name: kind-harness-attribution
+          path: ${{ runner.temp }}/kind-harness/report/kind-harness-attribution.json
+          if-no-files-found: error
+          retention-days: 30
+
+      - name: Remove tools, images and scan results
+        if: always()
+        run: |
+          rm -rf "$RUNNER_TEMP/kind-harness"
+          docker image rm -f kind-harness-scan:local > /dev/null 2>&1 || true
